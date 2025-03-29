@@ -12,7 +12,7 @@ image = "hitch.png"
 
 
 ## Motivation
-
+To build a cheap, ultra secure, convienient motorcycle carrier
 
 
 ## Methodology
