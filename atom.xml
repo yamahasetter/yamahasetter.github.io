@@ -1,0 +1,554 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en">
+    <title></title>
+    <link rel="self" type="application/atom+xml" href="https://example.org/atom.xml"/>
+    <link rel="alternate" type="text/html" href="https://example.org"/>
+    <generator uri="https://www.getzola.org/">Zola</generator>
+    <updated>2025-01-20T00:00:00+00:00</updated>
+    <id>https://example.org/atom.xml</id>
+    <entry xml:lang="en">
+        <title>Fourier Neural Operators</title>
+        <published>2025-01-20T00:00:00+00:00</published>
+        <updated>2025-01-20T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            Alyn Musselman
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://example.org/blog/fourier-neural-operators/"/>
+        <id>https://example.org/blog/fourier-neural-operators/</id>
+        
+        <content type="html" xml:base="https://example.org/blog/fourier-neural-operators/">&lt;h2 id=&quot;motivation&quot;&gt;Motivation&lt;&#x2F;h2&gt;
+&lt;h2 id=&quot;methodology&quot;&gt;Methodology&lt;&#x2F;h2&gt;
+&lt;h2 id=&quot;results&quot;&gt;Results&lt;&#x2F;h2&gt;
+</content>
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>Statistical Analysis of LRC</title>
+        <published>2024-12-20T00:00:00+00:00</published>
+        <updated>2024-12-20T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            Alyn Musselman
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://example.org/blog/statistical-analysis-of-lrc/"/>
+        <id>https://example.org/blog/statistical-analysis-of-lrc/</id>
+        
+        <content type="html" xml:base="https://example.org/blog/statistical-analysis-of-lrc/">&lt;h2 id=&quot;motivation&quot;&gt;Motivation&lt;&#x2F;h2&gt;
+&lt;h2 id=&quot;methodology&quot;&gt;Methodology&lt;&#x2F;h2&gt;
+&lt;h2 id=&quot;results&quot;&gt;Results&lt;&#x2F;h2&gt;
+</content>
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>Uncertainty Quantificaton of Stochastic Nonlinear PDEs</title>
+        <published>2024-09-20T00:00:00+00:00</published>
+        <updated>2024-09-20T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            Alyn Musselman
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://example.org/blog/uncertainty-quantification-of-nonlinear-pde/"/>
+        <id>https://example.org/blog/uncertainty-quantification-of-nonlinear-pde/</id>
+        
+        <content type="html" xml:base="https://example.org/blog/uncertainty-quantification-of-nonlinear-pde/">&lt;h2 id=&quot;motivation&quot;&gt;Motivation&lt;&#x2F;h2&gt;
+&lt;h2 id=&quot;methodology&quot;&gt;Methodology&lt;&#x2F;h2&gt;
+&lt;h2 id=&quot;results&quot;&gt;Results&lt;&#x2F;h2&gt;
+</content>
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>Homeomorphic AutoEncoder</title>
+        <published>2024-09-10T00:00:00+00:00</published>
+        <updated>2024-09-10T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            Alyn Musselman
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://example.org/blog/autoencoder-coordinate-mappings/"/>
+        <id>https://example.org/blog/autoencoder-coordinate-mappings/</id>
+        
+        <content type="html" xml:base="https://example.org/blog/autoencoder-coordinate-mappings/">&lt;h2 id=&quot;motivation&quot;&gt;Motivation&lt;&#x2F;h2&gt;
+&lt;h2 id=&quot;methodology&quot;&gt;Methodology&lt;&#x2F;h2&gt;
+&lt;h2 id=&quot;results&quot;&gt;Results&lt;&#x2F;h2&gt;
+</content>
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>Gershgorin Circle Plotter</title>
+        <published>2024-02-02T00:00:00+00:00</published>
+        <updated>2024-02-02T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            Alyn Musselman
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://example.org/blog/gershgorin-cirlce-plotter/"/>
+        <id>https://example.org/blog/gershgorin-cirlce-plotter/</id>
+        
+        <content type="html" xml:base="https://example.org/blog/gershgorin-cirlce-plotter/">&lt;h2 id=&quot;motivation&quot;&gt;Motivation&lt;&#x2F;h2&gt;
+&lt;h2 id=&quot;methodology&quot;&gt;Methodology&lt;&#x2F;h2&gt;
+&lt;h2 id=&quot;results&quot;&gt;Results&lt;&#x2F;h2&gt;
+</content>
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>Pi from Monte Carlo</title>
+        <published>2022-10-10T00:00:00+00:00</published>
+        <updated>2022-10-10T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            Alyn Musselman
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://example.org/blog/pi-from-monte-carlo/"/>
+        <id>https://example.org/blog/pi-from-monte-carlo/</id>
+        
+        <content type="html" xml:base="https://example.org/blog/pi-from-monte-carlo/">&lt;h2 id=&quot;motivation&quot;&gt;Motivation&lt;&#x2F;h2&gt;
+&lt;p&gt;Typically when someone thinks of a random process they don&#x27;t think that anything orderly could come from it. However, depending on the restraints imposed upon a random process it is very possible to recreate orderly structures. In fact, this is one of the fundamental philosophies of the theory of thermodynamics, condensed matter theory and other stochastic models in physics. A toy problem that shows how order can be derived from a random process is shown in this project, where I approximated pi with a bunch of (psuedo)random numbers.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;methodology&quot;&gt;Methodology&lt;&#x2F;h2&gt;
+&lt;p&gt;For simple projects like this, I really like to use Mathematica. It has really great plotting support and tons of built in functions that you don&#x27;t have to import.&lt;&#x2F;p&gt;
+&lt;p&gt;To start the project, we need to generate random numbers that lie within a unit square. Since the unit square is 2D, we actually need to generate 2-tuples of random numbers where each element is between -1 and 1.&lt;&#x2F;p&gt;
+&lt;p&gt;Once we can generate these pairs, we want to count how many of them lie within the unit circle. Recall that by definition the unit disk is generated by all points such that the 2-norm of the points is less than or equal to one:&lt;&#x2F;p&gt;
+&lt;p&gt;$$ \{ \sqrt{x^2 + y^2} \leq 1 ~ | ~ x,y \in R \} $$&lt;&#x2F;p&gt;
+&lt;p&gt;We also need to count the number of random points that landed outside of the unit circle. To do this we simply count the complement of the set of points in the unit disk:&lt;&#x2F;p&gt;
+&lt;p&gt;$$ \{ \sqrt{x^2 + y^2} \geq 1 ~ | ~ x,y \in R \} $$&lt;&#x2F;p&gt;
+&lt;p&gt;Now from here, recall the area of a disk is $ \pi r^2 $ and in our case since $ r =1 $ the area of our disk is just $\pi$. Now also notice that the area of the square is 1. Thus if we take the ratio of points inside the circle, and divide them by the points outside the circle but inside the square, we should get something approximating $\pi$.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;results&quot;&gt;Results&lt;&#x2F;h2&gt;
+</content>
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>Compass App with Variable Heading</title>
+        <published>2022-08-10T00:00:00+00:00</published>
+        <updated>2022-08-10T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            Alyn Musslelman
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://example.org/blog/point-me-there-app/"/>
+        <id>https://example.org/blog/point-me-there-app/</id>
+        
+        <content type="html" xml:base="https://example.org/blog/point-me-there-app/">&lt;h2 id=&quot;motivation&quot;&gt;Motivation&lt;&#x2F;h2&gt;
+&lt;p&gt;When I was working for doordash I would always run into this problem where I was too close to the delivery address for the map to help. Despite being able to see details like house numbers on google maps, it can be really dificult to physically reach those destinations when you&#x27;ve lost your bearing in a dense area. This app was designed to solve that problem. I was originally going to add a physical &quot;hand&quot; that a user could place to the dash of their car, link to the app, and have it point in the direction you needed to drive. I&#x27;ve yet to get to that part though.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;methodology&quot;&gt;Methodology&lt;&#x2F;h2&gt;
+&lt;p&gt;The first thing I needed to do to start this project was choose my development stack. Since I was using an Android phone, I decided to use Android Studio with Java for oop and the layouts within the app were written in xml. To add the maps feature I used Google Maps API, and to get a search bar that returned coordinates I used the Google Places API. To get the real time precise location of the user I also used the Google Maps API.&lt;&#x2F;p&gt;
+&lt;p&gt;The techincal aspects of this project were intents, managing security within the APIs, generating a heading from a pair of coordinates and implementing the rotating graphic that gave the heading to the user.&lt;&#x2F;p&gt;
+&lt;p&gt;Intents are a very complicated presentation for one of the most basic mobile programming features. They are simply the feature that allows a user to go from one page within an app to another. For example, if you have a news feed app and a user is scrolling through articles, the feature that takes the user from the list of articles to the one they tapped on is called the intent. In my case, I needed to create an intent that took a user from the maps page to the compass page once a valid pin&#x2F;address were loaded onto the map.&lt;&#x2F;p&gt;
+&lt;p&gt;To generate the heading, I got to apply some fun math.&lt;&#x2F;p&gt;
+&lt;p&gt;To present the changing heading to the user I just forked a piece of code from a tutorial and swapped the image to this one of Mickey Mouse&#x27;s hand:&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;results&quot;&gt;Results&lt;&#x2F;h2&gt;
+</content>
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>Hydrogen Orbitals Simulation</title>
+        <published>2022-03-15T00:00:00+00:00</published>
+        <updated>2022-03-15T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            Alyn Musselman
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://example.org/blog/hydrogen-atom-orbitals/"/>
+        <id>https://example.org/blog/hydrogen-atom-orbitals/</id>
+        
+        <content type="html" xml:base="https://example.org/blog/hydrogen-atom-orbitals/">&lt;h2 id=&quot;motivation&quot;&gt;Motivation&lt;&#x2F;h2&gt;
+&lt;p&gt;One of the major introductory concepts to quantum mechanics is that of the standing wave. It comes in many forms in the introductory lessons, but one of the more profound ones arrives in Schrodinger&#x27;s Time Depedent Equation:&lt;&#x2F;p&gt;
+&lt;p&gt;$i \hbar \frac{\partial \Psi }{\partial t} = - \frac{\hbar^2 }{2m} \nabla^2 \Psi + V \Psi$&lt;&#x2F;p&gt;
+&lt;p&gt;To a physicist this equation is profound beyond belief, but to a mathematician, this equation is nothing other than the Diffusion Equation with a .&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;methodology&quot;&gt;Methodology&lt;&#x2F;h2&gt;
+&lt;h2 id=&quot;results&quot;&gt;Results&lt;&#x2F;h2&gt;
+</content>
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>PWM PCB</title>
+        <published>2022-03-15T00:00:00+00:00</published>
+        <updated>2022-03-15T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            Alyn Musselman
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://example.org/blog/pwm-pcb/"/>
+        <id>https://example.org/blog/pwm-pcb/</id>
+        
+        <content type="html" xml:base="https://example.org/blog/pwm-pcb/">&lt;h2 id=&quot;motivation&quot;&gt;Motivation&lt;&#x2F;h2&gt;
+&lt;p&gt;While designing the drone, I was constantly thinking of all the cool things I could do with it; fly through hoops, do flips, harrass my girlfriend, install a camera with facial recognition autonomous flight and small explosives, but I could also drop things if I had the right doohickey. So I decided to build said doohickey using the smallest servo motor I could find. The only problem was how to get the servo to drop something since it communicates via PWM. This inspired me to make my own PWM.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;methodology&quot;&gt;Methodology&lt;&#x2F;h2&gt;
+&lt;h2 id=&quot;results&quot;&gt;Results&lt;&#x2F;h2&gt;
+</content>
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>3D Printed Hexcopter</title>
+        <published>2022-01-01T00:00:00+00:00</published>
+        <updated>2022-01-01T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            Alyn Musselman
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://example.org/blog/3d-printed-hexcopter/"/>
+        <id>https://example.org/blog/3d-printed-hexcopter/</id>
+        
+        <content type="html" xml:base="https://example.org/blog/3d-printed-hexcopter/">&lt;h2 id=&quot;motivation&quot;&gt;Motivation&lt;&#x2F;h2&gt;
+&lt;p&gt;I wanted to get into FPV drones, but I thought it would be boring to just buy a drone. So I decided to look into 3D printing them instead. To my suprise, successully printing a performance quadcopter frame is extrmeley difficult. Not only due to force dynamics accross a frame, but also impulse dynamics, flexion, aerodynamics, mass limitations, geometry limitations, etc. Having just purchased a resin 3D printer though, I was able to take advantage of geometries that an FDM printer would be (nearly) incapable of achieving. These geometries allowed me to design a frame that equalized thrust forces with frame torsion&#x2F;flexion to achieve stable flight dynamics.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;methodology&quot;&gt;Methodology&lt;&#x2F;h2&gt;
+&lt;p&gt;Insofar as I am aware, I am the only person to have designed and 3D printed a micro hexacopter. Thus, being the first, my only goal was to create a proof of concept.&lt;&#x2F;p&gt;
+&lt;p&gt;I didn&#x27;t really have a clear picture of what I wanted the design to look like, so I decided to think about features that would be required for function. These variables would drive parameters of the frame. Driving variables for say, frame size, would be determined by the off-the-shelf parts I purchased like baterries and circuits. Another equally important variable would be thrust output from the motor-blade combination I chose. This variable would determine the ideal material properties of the &quot;arms&quot; on the frame, like how stiff they needed to be, which is a function of their aspect ratio (length vs thickness).&lt;&#x2F;p&gt;
+&lt;p&gt;I decided to first designed a frame that accepted the FC+ESP I purchased (Flywoo GOKU HEX GN405 Nano 13A STACK). Another element that would determine the frame size was the baterry. Since I wanted this drone to be as small as possible, a 1S baterry would be used. Lastly, the motors would determine the profiles of the end of the &quot;arms&quot;.&lt;&#x2F;p&gt;
+&lt;p&gt;My personal prototyping process typically begins with guarenteeing dimensions. So naturally the first model I printed was primarily to verify fitment and appealing proportions of the aforementioned parts, and it looked like this:&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;example.org&#x2F;blog&#x2F;3d-printed-hexcopter&#x2F;drone2.jpg&quot; alt=&quot;red drone image&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;It was not pretty, and it revealed plenty of design flaws that I had unknowingly introduced into the design of this project. Luckily, that is the entire purpose of R&amp;amp;D. I course corrected, and after something like 10 CAD prototypes I found one I liked enough to print:&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;example.org&#x2F;blog&#x2F;3d-printed-hexcopter&#x2F;drone5.jpg&quot; alt=&quot;drone one printer&quot; &#x2F;&gt;
+&lt;img src=&quot;https:&#x2F;&#x2F;example.org&#x2F;blog&#x2F;3d-printed-hexcopter&#x2F;drone4.jpg&quot; alt=&quot;drone in hand&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;This model was much more realistic. The geometries showcased the abilities of the resin printer, the mass was minimilized, and its proportions were more appealing.&lt;&#x2F;p&gt;
+&lt;p&gt;After a few more finishing touches, I was able to get the final result!&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;example.org&#x2F;blog&#x2F;3d-printed-hexcopter&#x2F;drone8.jpg&quot; alt=&quot;drone in hand&quot; &#x2F;&gt;
+&lt;img src=&quot;https:&#x2F;&#x2F;example.org&#x2F;blog&#x2F;3d-printed-hexcopter&#x2F;drone6.jpg&quot; alt=&quot;drone turned on&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;results&quot;&gt;Results&lt;&#x2F;h2&gt;
+&lt;p&gt;Unfortunately, like some of the other projects in this library, this one has taken a back seat while I finish my academic career. Currently, the only remaining tasks for me to finish on this project are firmware related. I need to download, learn, and use BetaFlight to flash the reciever on the drone, as well as my controller.&lt;&#x2F;p&gt;
+</content>
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>Transformer Bitcoin Trading Bot</title>
+        <published>2021-12-15T00:00:00+00:00</published>
+        <updated>2021-12-15T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            Alyn Musselman
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://example.org/blog/bitcoin-trade-bot/"/>
+        <id>https://example.org/blog/bitcoin-trade-bot/</id>
+        
+        <content type="html" xml:base="https://example.org/blog/bitcoin-trade-bot/">&lt;h2 id=&quot;motivation&quot;&gt;Motivation&lt;&#x2F;h2&gt;
+&lt;p&gt;I chose to make this project because I needed to get more familiar with ML. I had read all about CNN&#x27;s, Auto Encoders, Variational Auto Encoders, LSTM&#x27;s, RNN&#x27;s and even built a couple of them, but I wanted to make a stand alone ML project. I chose the transformer architecture for 2 reasons. Firstly, it was the most complex architecture out at the time. Secondly, it seemed to handle time-series data fairly well and with lower training cost than some of the other models.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;methodology&quot;&gt;Methodology&lt;&#x2F;h2&gt;
+&lt;p&gt;To do this project I needed to:
+- Build the model from scratch
+- Collect + Cleanup old Bitcoin data
+- Tokenize the data
+- Batchify the training data
+- Train the model
+- Test the model
+- Let it loose&lt;&#x2F;p&gt;
+&lt;p&gt;Building the model from scratch took a long time, even with the many tutorials I used:
+https:&#x2F;&#x2F;nlp.seas.harvard.edu&#x2F;2018&#x2F;04&#x2F;03&#x2F;attention.html
+https:&#x2F;&#x2F;jalammar.github.io&#x2F;illustrated-transformer&#x2F;
+https:&#x2F;&#x2F;rscircus.github.io&#x2F;posts&#x2F;2020-02-22-transformer&#x2F;&lt;&#x2F;p&gt;
+&lt;p&gt;Luckily the article &quot;The Annotated Transformer&quot; was so detailed that once I had built the model outlined there I only needed to do the data-handling in order to train the model.&lt;&#x2F;p&gt;
+&lt;p&gt;The dataset I used was taken from this Kaggle page:
+https:&#x2F;&#x2F;www.kaggle.com&#x2F;datasets&#x2F;mczielinski&#x2F;bitcoin-historical-data&lt;&#x2F;p&gt;
+&lt;p&gt;There were quite a few NaN and 0 values in the dataset that had to be removed, but lucky for me there ended up being just enough data remaining to train the model.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;results&quot;&gt;Results&lt;&#x2F;h2&gt;
+</content>
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>Rail Gun</title>
+        <published>2021-02-10T00:00:00+00:00</published>
+        <updated>2021-02-10T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            Thomas Weitzel
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://example.org/blog/rail-gun/"/>
+        <id>https://example.org/blog/rail-gun/</id>
+        
+        <content type="html" xml:base="https://example.org/blog/rail-gun/">&lt;h2 id=&quot;motivation&quot;&gt;Motivation&lt;&#x2F;h2&gt;
+&lt;p&gt;I had just finished reading the entirety of the E&amp;amp;M section of Giancoli&#x27;s introduction to physics. I felt that there was only one way to confirm that I had learned anything, and that was to build something with my newfound tools. I chose to build a rail gun to showcase this toolkit.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;methodology&quot;&gt;Methodology&lt;&#x2F;h2&gt;
+&lt;h2 id=&quot;results&quot;&gt;Results&lt;&#x2F;h2&gt;
+</content>
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>Motorycle Hitch Lift</title>
+        <published>2021-01-05T00:00:00+00:00</published>
+        <updated>2021-01-05T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            Alyn Musselman
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://example.org/blog/motorcycle-hitch-lift/"/>
+        <id>https://example.org/blog/motorcycle-hitch-lift/</id>
+        
+        <content type="html" xml:base="https://example.org/blog/motorcycle-hitch-lift/">&lt;h2 id=&quot;motivation&quot;&gt;Motivation&lt;&#x2F;h2&gt;
+&lt;p&gt;Build a cheap, ultra secure, convienient motorcycle carrier that raises and lowers.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;methodology&quot;&gt;Methodology&lt;&#x2F;h2&gt;
+&lt;p&gt;The requirements for this project were as follows:
+- Mount directly to the frame or footpegs of the bike
+- Minimize localized stressors to ensure no stress fractures occur
+- Rear wheels of bike need to be as high as possible to preserve off-road depart angle.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;results&quot;&gt;Results&lt;&#x2F;h2&gt;
+</content>
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>Ribbon Burner</title>
+        <published>2020-01-20T00:00:00+00:00</published>
+        <updated>2020-01-20T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            Alyn Musselman
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://example.org/blog/ribbon-burner/"/>
+        <id>https://example.org/blog/ribbon-burner/</id>
+        
+        <content type="html" xml:base="https://example.org/blog/ribbon-burner/">&lt;h2 id=&quot;motivation&quot;&gt;Motivation&lt;&#x2F;h2&gt;
+&lt;p&gt;A friend of mine told me he wanted to start forging knives in his back yard. Having spent a large portion of my youth blacksmithing and another large portion of my young adulthood welding, I had picked up a few novel methods of heating aparatuses from people I had run into over the years. One of these aparatuses was called a &quot;ribbon burner&quot;, and I was told that it was the most efficient way to heat a surface well above Curie temperatures. This conversation with my friend initiated me to design my own version of this burner. Unfortunately, I realized that my knowledge of fluid dynamics was insufficient to optimize any design of this project. I have made substantial progress on the project, even attempting a first-run prototype, but it ultimately failed. I will be taking a fluid dynamics course in the near future, and I expect it to contain all of the information I&#x27;ve been looking for in order to finally complete this project.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;methodology&quot;&gt;Methodology&lt;&#x2F;h2&gt;
+&lt;h2 id=&quot;results&quot;&gt;Results&lt;&#x2F;h2&gt;
+</content>
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>Terms</title>
+        <published>2020-01-08T00:00:00+00:00</published>
+        <updated>2020-01-08T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            Thomas Weitzel
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://example.org/pages/terms/"/>
+        <id>https://example.org/pages/terms/</id>
+        
+        <content type="html" xml:base="https://example.org/pages/terms/">&lt;p&gt;&lt;em&gt;These terms have been last updated on January 8, 2020&lt;&#x2F;em&gt;.&lt;&#x2F;p&gt;
+&lt;p&gt;All content on this web site is for informational purposes only.&lt;&#x2F;p&gt;
+&lt;p&gt;As the owner of this web site, I ...&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;make no representations as to the accuracy or completeness of any information on this site or by following any link.&lt;&#x2F;li&gt;
+&lt;li&gt;will not be liable for any errors or omissions in this information, nor for the availability of this information.&lt;&#x2F;li&gt;
+&lt;li&gt;will not be liable for any losses, injuries, or damages from the display or use of this information.&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;These terms are subject to change at any time and without notice.&lt;&#x2F;p&gt;
+</content>
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>Motorcycles</title>
+        <published>2020-01-01T00:00:00+00:00</published>
+        <updated>2020-01-01T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            Alyn Musselman
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://example.org/blog/motorcycles/"/>
+        <id>https://example.org/blog/motorcycles/</id>
+        
+        <content type="html" xml:base="https://example.org/blog/motorcycles/">&lt;h2 id=&quot;motivation&quot;&gt;Motivation&lt;&#x2F;h2&gt;
+&lt;p&gt;I have been around motorcyles for most of my life. I got my motorcycle operator permit just weeks after turning 18 and have owned 5 motorcycles since then. As any true enthusiast can tell you, the best part of having a thing is customizing it. In this case, I did not just customize, but actually build from the ground up three independent motorcycles.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;methodology&quot;&gt;Methodology&lt;&#x2F;h2&gt;
+&lt;h2 id=&quot;results&quot;&gt;Results&lt;&#x2F;h2&gt;
+</content>
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>Hobbie Projects</title>
+        <published>2019-07-16T00:00:00+00:00</published>
+        <updated>2019-07-16T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            Alyn Musselman
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://example.org/blog/hobbie-projects/"/>
+        <id>https://example.org/blog/hobbie-projects/</id>
+        
+        <content type="html" xml:base="https://example.org/blog/hobbie-projects/">&lt;h2 id=&quot;animator-s-table&quot;&gt;Animator&#x27;s Table&lt;&#x2F;h2&gt;
+&lt;p&gt;A friend of mine introduced me to this neat little contraption called an Animator&#x27;s Table. They were used by the very first Disney animators, and are even used today by very niche artists. I told my friend I was up for the challenge if he paid for the parts, and he agreed! After designing the table in SketchUp (the first CAD software I used) I was able to bring it to life in the real world.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;flip-up-bus-window&quot;&gt;Flip-Up Bus Window&lt;&#x2F;h2&gt;
+&lt;p&gt;My brother bought a 40 foot school bus to do a conversion on. One of the stand-out features of these busses are the poor ventilation. So I decided to help out and design, fab, and finish the best bus window ever. It needed to be waterproof at 60mph, have hydraulic lifts, be at least 6 feet long (with a vertical nonlinear contour), weight under 200lbs, be UV-resistant, and the hardware could not cost more than 300 dollars. Well, I did it all for 75 bucks (plexiglass seperate).&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;example.org&#x2F;blog&#x2F;hobbie-projects&#x2F;bus4.jpg&quot; alt=&quot;this is a photo please work&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+</content>
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>About</title>
+        <published>2019-03-11T00:00:00+00:00</published>
+        <updated>2019-03-11T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            Alyn Musselman
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://example.org/pages/about/"/>
+        <id>https://example.org/pages/about/</id>
+        
+        <content type="html" xml:base="https://example.org/pages/about/">&lt;h2 id=&quot;&quot;&gt;&lt;&#x2F;h2&gt;
+</content>
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>Imprint</title>
+        <published>2019-03-11T00:00:00+00:00</published>
+        <updated>2019-03-11T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            Thomas Weitzel
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://example.org/pages/imprint/"/>
+        <id>https://example.org/pages/imprint/</id>
+        
+        <content type="html" xml:base="https://example.org/pages/imprint/">&lt;!-- Add two spaces after each line to enforce line break --&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;em&gt;Thomas Weitzel&lt;&#x2F;em&gt;&lt;br &#x2F;&gt;
+&lt;em&gt;Theodor-Heuss-Str. 21&lt;&#x2F;em&gt;&lt;br &#x2F;&gt;
+&lt;em&gt;63225 Langen (Hesse)&lt;&#x2F;em&gt;&lt;br &#x2F;&gt;
+&lt;em&gt;Germany&lt;&#x2F;em&gt;&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;p&gt;Copying and redistribution of all my pages for private, non-commercial use is permitted provided this notice is attached.
+See section &lt;a href=&quot;https:&#x2F;&#x2F;example.org&#x2F;pages&#x2F;imprint&#x2F;#copyright&quot;&gt;Copyright&lt;&#x2F;a&gt; for more information.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;disclaimer&quot;&gt;Disclaimer&lt;&#x2F;h2&gt;
+&lt;h3 id=&quot;liability-for-content&quot;&gt;Liability for content&lt;&#x2F;h3&gt;
+&lt;p&gt;As a service provider I&#x27;m responsible according to Article 7(1) TMG (Germany) for my own contents on these pages according to the general laws.
+According to Article 8 to 10 TMG (Germany) I am not obliged to monitor transmitted or stored third-party information or to investigate circumstances that indicate an illegal activity.
+Obligations to remove or block the use of information under general law remain unaffected.
+A liability in this regard is only possible from the date of knowledge of a specific infringement.
+Upon notification of violations, I will remove such content immediately.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;liability-for-links&quot;&gt;Liability for links&lt;&#x2F;h3&gt;
+&lt;p&gt;My website contains links to external websites of third parties over whose contents I have no influence.
+Therefore, I&#x27;m not liable for these external contents.
+The provider or operator of these pages is always responsible for the contents of the linked pages.
+At the time of linking I have checked the linked pages for possible legal violations.
+Illegal content was not recognizable at the time of linking.
+A permanent control of the content of the linked pages is not reasonable without concrete evidence of an infringement.
+Upon notification of violations, I will remove such links immediately.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;copyright&quot;&gt;Copyright&lt;&#x2F;h3&gt;
+&lt;p&gt;The content and works created by me on these pages are subject to copyright law.
+Reproduction, adaptation, distribution, and any kind of exploitation outside the limits of copyright require my written consent.
+Downloads and copies of these pages are for private, non-commercial use only.
+As far as it wasn&#x27;t me who created the contents on these pages, I respect the copyright of third parties.
+In particular, content of third parties is marked as such.
+Still, should you be aware of a copyright infringement, please let me know.
+Upon notification of violations, I will remove such content immediately.&lt;&#x2F;p&gt;
+</content>
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>Privacy Policy</title>
+        <published>2019-03-11T00:00:00+00:00</published>
+        <updated>2019-03-11T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            Thomas Weitzel
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://example.org/pages/privacy/"/>
+        <id>https://example.org/pages/privacy/</id>
+        
+        <content type="html" xml:base="https://example.org/pages/privacy/">&lt;h3 id=&quot;data-protection&quot;&gt;Data protection&lt;&#x2F;h3&gt;
+&lt;p&gt;The use of my website is possible without providing personal data.
+If personal data can be entered (for example: name, address, or email addresses), this is on a voluntary basis.
+These data will not be disclosed to third parties without your explicit consent.&lt;&#x2F;p&gt;
+&lt;p&gt;Data transmission in the Internet (e.g.
+in the communication by email) can have security gaps.
+A complete protection of the data from access by third parties is not possible.
+The use of contact data published in the imprint by third parties for sending me unsolicited advertising and information materials is hereby prohibited.
+I reserve the right to take legal action in the event of unsolicited promotional information, such as spam emails.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;hosting&quot;&gt;Hosting&lt;&#x2F;h3&gt;
+&lt;p&gt;I host my website at netcup. The provider is netcup GmbH, Daimlerstr. 25, 76185 Karlsruhe, referred to as &quot;netcup&quot;.&lt;&#x2F;p&gt;
+&lt;p&gt;Details on netcup&#x27;s privacy policy can be found on their homepage under &lt;a href=&quot;https:&#x2F;&#x2F;www.netcup.eu&#x2F;kontakt&#x2F;datenschutzerklaerung.php&quot;&gt;privacy policy&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
+&lt;p&gt;The use of netcup is based on Article 6(1)(f) GDPR.
+I have a legitimate interest that my website is available to visitors as reliably as possible.
+If consent was requested, data processing takes place exclusively based on Article 6(1)(a) GDPR.
+Consent can be revoked at any time.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;data-processing&quot;&gt;Data processing&lt;&#x2F;h3&gt;
+&lt;p&gt;I have signed a data processing contract with netcup.
+This contract is required by privacy law and guarantees, that data of visitors of my website will be processed in compliance with the GDPR.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;responsible-controller&quot;&gt;Responsible controller&lt;&#x2F;h3&gt;
+&lt;p&gt;The person responsible for data processing on this website is the person named in the [imprint]({{&amp;lt; relref &quot;imprint&quot; &amp;gt;}}).
+The &quot;responsible controller&quot; means the natural or legal person who decides on the processing of data (for example: name, address, or email addresses).&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;information-cancellation-deletion&quot;&gt;Information, cancellation, deletion&lt;&#x2F;h3&gt;
+&lt;p&gt;At any time you have the right to free information about your stored personal data, its origins, recipients, and the purpose of the data processing, as well as a right to correction or deletion of this data.
+You can contact me at any time via the address given in the imprint for further questions on the subject of your personal data.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;log-files-on-the-server&quot;&gt;Log files on the server&lt;&#x2F;h3&gt;
+&lt;p&gt;The web server stores information in its log files, some of which your browser transmits to me.
+These are:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;the IP address of your computer&lt;&#x2F;li&gt;
+&lt;li&gt;the time of the request&lt;&#x2F;li&gt;
+&lt;li&gt;the name of the requested page&lt;&#x2F;li&gt;
+&lt;li&gt;a status code (if the request was successful or not)&lt;&#x2F;li&gt;
+&lt;li&gt;the referrer URL&lt;&#x2F;li&gt;
+&lt;li&gt;the browser type, browser version and other information sent by your browser&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;This data can not be used to identify a specific person.
+I will not merge this data with other data sources.
+I reserve the right to check this data retrospectively, if I become aware of illegal use of my website.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;ssl-encryption&quot;&gt;SSL encryption&lt;&#x2F;h3&gt;
+&lt;p&gt;This site uses SSL encryption for security reasons and to protect the transmission of sensitive content, such as the requests you send to me.
+An encrypted connection can be recognized by the fact that the address in the address bar of the browser starts with &lt;code&gt;https:&#x2F;&#x2F;&lt;&#x2F;code&gt; and a lock symbol nearby.
+If SSL encryption is enabled, the data you submit to me can not be read by third parties.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;cookies&quot;&gt;Cookies&lt;&#x2F;h3&gt;
+&lt;p&gt;This site uses functional cookies only on pages where math formulas are displayed with the help of the &lt;a href=&quot;https:&#x2F;&#x2F;www.mathjax.org&#x2F;&quot;&gt;MathJax&lt;&#x2F;a&gt; library.
+These cookies are only used in the context of MathJax and the display of math formulas.
+The readability of the website represents a legitimate interest within the meaning of Article 6(1)(f) GDPR.
+I do not use any other cookies on this website.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;embedded-content-from-other-websites&quot;&gt;Embedded content from other websites&lt;&#x2F;h3&gt;
+&lt;p&gt;Posts on this site may contain embedded content (e.g. videos, pictures, comments, etc.).
+Embedded content from other websites behaves just as if the visitor had visited the other website.&lt;&#x2F;p&gt;
+&lt;p&gt;These websites may collect information about you, use cookies, embed additional third-party tracking services, and record your interaction with this embedded content, if you have an account and are logged in to this other site.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;what-rights-do-you-have-to-your-data&quot;&gt;What rights do you have to your data?&lt;&#x2F;h3&gt;
+&lt;p&gt;You may request that I export your personal information, including any data you have provided to me.
+In addition, you may request the deletion of any personal information I have stored about you.
+This does not include the data that I need to keep for administrative, legal, or security-related purposes.&lt;&#x2F;p&gt;
+</content>
+        
+    </entry>
+</feed>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en">
+    <title> - Statistics</title>
+    <link rel="self" type="application/atom+xml" href="https://example.org/tags/statistics/atom.xml"/>
+    <link rel="alternate" type="text/html" href="https://example.org"/>
+    <generator uri="https://www.getzola.org/">Zola</generator>
+    <updated>2024-12-20T00:00:00+00:00</updated>
+    <id>https://example.org/tags/statistics/atom.xml</id>
+    <entry xml:lang="en">
+        <title>Statistical Analysis of LRC</title>
+        <published>2024-12-20T00:00:00+00:00</published>
+        <updated>2024-12-20T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            Alyn Musselman
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://example.org/blog/statistical-analysis-of-lrc/"/>
+        <id>https://example.org/blog/statistical-analysis-of-lrc/</id>
+        
+        <content type="html" xml:base="https://example.org/blog/statistical-analysis-of-lrc/">&lt;h2 id=&quot;motivation&quot;&gt;Motivation&lt;&#x2F;h2&gt;
+&lt;h2 id=&quot;methodology&quot;&gt;Methodology&lt;&#x2F;h2&gt;
+&lt;h2 id=&quot;results&quot;&gt;Results&lt;&#x2F;h2&gt;
+</content>
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>Uncertainty Quantificaton of Stochastic Nonlinear PDEs</title>
+        <published>2024-09-20T00:00:00+00:00</published>
+        <updated>2024-09-20T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            Alyn Musselman
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://example.org/blog/uncertainty-quantification-of-nonlinear-pde/"/>
+        <id>https://example.org/blog/uncertainty-quantification-of-nonlinear-pde/</id>
+        
+        <content type="html" xml:base="https://example.org/blog/uncertainty-quantification-of-nonlinear-pde/">&lt;h2 id=&quot;motivation&quot;&gt;Motivation&lt;&#x2F;h2&gt;
+&lt;h2 id=&quot;methodology&quot;&gt;Methodology&lt;&#x2F;h2&gt;
+&lt;h2 id=&quot;results&quot;&gt;Results&lt;&#x2F;h2&gt;
+</content>
+        
+    </entry>
+</feed>

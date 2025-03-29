@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en">
+    <title> - Fusion360</title>
+    <link rel="self" type="application/atom+xml" href="https://example.org/tags/fusion360/atom.xml"/>
+    <link rel="alternate" type="text/html" href="https://example.org"/>
+    <generator uri="https://www.getzola.org/">Zola</generator>
+    <updated>2022-01-01T00:00:00+00:00</updated>
+    <id>https://example.org/tags/fusion360/atom.xml</id>
+    <entry xml:lang="en">
+        <title>3D Printed Hexcopter</title>
+        <published>2022-01-01T00:00:00+00:00</published>
+        <updated>2022-01-01T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            Alyn Musselman
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://example.org/blog/3d-printed-hexcopter/"/>
+        <id>https://example.org/blog/3d-printed-hexcopter/</id>
+        
+        <content type="html" xml:base="https://example.org/blog/3d-printed-hexcopter/">&lt;h2 id=&quot;motivation&quot;&gt;Motivation&lt;&#x2F;h2&gt;
+&lt;p&gt;I wanted to get into FPV drones, but I thought it would be boring to just buy a drone. So I decided to look into 3D printing them instead. To my suprise, successully printing a performance quadcopter frame is extrmeley difficult. Not only due to force dynamics accross a frame, but also impulse dynamics, flexion, aerodynamics, mass limitations, geometry limitations, etc. Having just purchased a resin 3D printer though, I was able to take advantage of geometries that an FDM printer would be (nearly) incapable of achieving. These geometries allowed me to design a frame that equalized thrust forces with frame torsion&#x2F;flexion to achieve stable flight dynamics.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;methodology&quot;&gt;Methodology&lt;&#x2F;h2&gt;
+&lt;p&gt;Insofar as I am aware, I am the only person to have designed and 3D printed a micro hexacopter. Thus, being the first, my only goal was to create a proof of concept.&lt;&#x2F;p&gt;
+&lt;p&gt;I didn&#x27;t really have a clear picture of what I wanted the design to look like, so I decided to think about features that would be required for function. These variables would drive parameters of the frame. Driving variables for say, frame size, would be determined by the off-the-shelf parts I purchased like baterries and circuits. Another equally important variable would be thrust output from the motor-blade combination I chose. This variable would determine the ideal material properties of the &quot;arms&quot; on the frame, like how stiff they needed to be, which is a function of their aspect ratio (length vs thickness).&lt;&#x2F;p&gt;
+&lt;p&gt;I decided to first designed a frame that accepted the FC+ESP I purchased (Flywoo GOKU HEX GN405 Nano 13A STACK). Another element that would determine the frame size was the baterry. Since I wanted this drone to be as small as possible, a 1S baterry would be used. Lastly, the motors would determine the profiles of the end of the &quot;arms&quot;.&lt;&#x2F;p&gt;
+&lt;p&gt;My personal prototyping process typically begins with guarenteeing dimensions. So naturally the first model I printed was primarily to verify fitment and appealing proportions of the aforementioned parts, and it looked like this:&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;example.org&#x2F;blog&#x2F;3d-printed-hexcopter&#x2F;drone2.jpg&quot; alt=&quot;red drone image&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;It was not pretty, and it revealed plenty of design flaws that I had unknowingly introduced into the design of this project. Luckily, that is the entire purpose of R&amp;amp;D. I course corrected, and after something like 10 CAD prototypes I found one I liked enough to print:&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;example.org&#x2F;blog&#x2F;3d-printed-hexcopter&#x2F;drone5.jpg&quot; alt=&quot;drone one printer&quot; &#x2F;&gt;
+&lt;img src=&quot;https:&#x2F;&#x2F;example.org&#x2F;blog&#x2F;3d-printed-hexcopter&#x2F;drone4.jpg&quot; alt=&quot;drone in hand&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;This model was much more realistic. The geometries showcased the abilities of the resin printer, the mass was minimilized, and its proportions were more appealing.&lt;&#x2F;p&gt;
+&lt;p&gt;After a few more finishing touches, I was able to get the final result!&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;example.org&#x2F;blog&#x2F;3d-printed-hexcopter&#x2F;drone8.jpg&quot; alt=&quot;drone in hand&quot; &#x2F;&gt;
+&lt;img src=&quot;https:&#x2F;&#x2F;example.org&#x2F;blog&#x2F;3d-printed-hexcopter&#x2F;drone6.jpg&quot; alt=&quot;drone turned on&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;results&quot;&gt;Results&lt;&#x2F;h2&gt;
+&lt;p&gt;Unfortunately, like some of the other projects in this library, this one has taken a back seat while I finish my academic career. Currently, the only remaining tasks for me to finish on this project are firmware related. I need to download, learn, and use BetaFlight to flash the reciever on the drone, as well as my controller.&lt;&#x2F;p&gt;
+</content>
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>Rail Gun</title>
+        <published>2021-02-10T00:00:00+00:00</published>
+        <updated>2021-02-10T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            Thomas Weitzel
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://example.org/blog/rail-gun/"/>
+        <id>https://example.org/blog/rail-gun/</id>
+        
+        <content type="html" xml:base="https://example.org/blog/rail-gun/">&lt;h2 id=&quot;motivation&quot;&gt;Motivation&lt;&#x2F;h2&gt;
+&lt;p&gt;I had just finished reading the entirety of the E&amp;amp;M section of Giancoli&#x27;s introduction to physics. I felt that there was only one way to confirm that I had learned anything, and that was to build something with my newfound tools. I chose to build a rail gun to showcase this toolkit.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;methodology&quot;&gt;Methodology&lt;&#x2F;h2&gt;
+&lt;h2 id=&quot;results&quot;&gt;Results&lt;&#x2F;h2&gt;
+</content>
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>Ribbon Burner</title>
+        <published>2020-01-20T00:00:00+00:00</published>
+        <updated>2020-01-20T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            Alyn Musselman
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://example.org/blog/ribbon-burner/"/>
+        <id>https://example.org/blog/ribbon-burner/</id>
+        
+        <content type="html" xml:base="https://example.org/blog/ribbon-burner/">&lt;h2 id=&quot;motivation&quot;&gt;Motivation&lt;&#x2F;h2&gt;
+&lt;p&gt;A friend of mine told me he wanted to start forging knives in his back yard. Having spent a large portion of my youth blacksmithing and another large portion of my young adulthood welding, I had picked up a few novel methods of heating aparatuses from people I had run into over the years. One of these aparatuses was called a &quot;ribbon burner&quot;, and I was told that it was the most efficient way to heat a surface well above Curie temperatures. This conversation with my friend initiated me to design my own version of this burner. Unfortunately, I realized that my knowledge of fluid dynamics was insufficient to optimize any design of this project. I have made substantial progress on the project, even attempting a first-run prototype, but it ultimately failed. I will be taking a fluid dynamics course in the near future, and I expect it to contain all of the information I&#x27;ve been looking for in order to finally complete this project.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;methodology&quot;&gt;Methodology&lt;&#x2F;h2&gt;
+&lt;h2 id=&quot;results&quot;&gt;Results&lt;&#x2F;h2&gt;
+</content>
+        
+    </entry>
+</feed>

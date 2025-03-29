@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en">
+    <title> - math</title>
+    <link rel="self" type="application/atom+xml" href="https://example.org/tags/math/atom.xml"/>
+    <link rel="alternate" type="text/html" href="https://example.org"/>
+    <generator uri="https://www.getzola.org/">Zola</generator>
+    <updated>2025-01-20T00:00:00+00:00</updated>
+    <id>https://example.org/tags/math/atom.xml</id>
+    <entry xml:lang="en">
+        <title>Fourier Neural Operators</title>
+        <published>2025-01-20T00:00:00+00:00</published>
+        <updated>2025-01-20T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            Alyn Musselman
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://example.org/blog/fourier-neural-operators/"/>
+        <id>https://example.org/blog/fourier-neural-operators/</id>
+        
+        <content type="html" xml:base="https://example.org/blog/fourier-neural-operators/">&lt;h2 id=&quot;motivation&quot;&gt;Motivation&lt;&#x2F;h2&gt;
+&lt;h2 id=&quot;methodology&quot;&gt;Methodology&lt;&#x2F;h2&gt;
+&lt;h2 id=&quot;results&quot;&gt;Results&lt;&#x2F;h2&gt;
+</content>
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>Statistical Analysis of LRC</title>
+        <published>2024-12-20T00:00:00+00:00</published>
+        <updated>2024-12-20T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            Alyn Musselman
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://example.org/blog/statistical-analysis-of-lrc/"/>
+        <id>https://example.org/blog/statistical-analysis-of-lrc/</id>
+        
+        <content type="html" xml:base="https://example.org/blog/statistical-analysis-of-lrc/">&lt;h2 id=&quot;motivation&quot;&gt;Motivation&lt;&#x2F;h2&gt;
+&lt;h2 id=&quot;methodology&quot;&gt;Methodology&lt;&#x2F;h2&gt;
+&lt;h2 id=&quot;results&quot;&gt;Results&lt;&#x2F;h2&gt;
+</content>
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>Uncertainty Quantificaton of Stochastic Nonlinear PDEs</title>
+        <published>2024-09-20T00:00:00+00:00</published>
+        <updated>2024-09-20T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            Alyn Musselman
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://example.org/blog/uncertainty-quantification-of-nonlinear-pde/"/>
+        <id>https://example.org/blog/uncertainty-quantification-of-nonlinear-pde/</id>
+        
+        <content type="html" xml:base="https://example.org/blog/uncertainty-quantification-of-nonlinear-pde/">&lt;h2 id=&quot;motivation&quot;&gt;Motivation&lt;&#x2F;h2&gt;
+&lt;h2 id=&quot;methodology&quot;&gt;Methodology&lt;&#x2F;h2&gt;
+&lt;h2 id=&quot;results&quot;&gt;Results&lt;&#x2F;h2&gt;
+</content>
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>Homeomorphic AutoEncoder</title>
+        <published>2024-09-10T00:00:00+00:00</published>
+        <updated>2024-09-10T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            Alyn Musselman
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://example.org/blog/autoencoder-coordinate-mappings/"/>
+        <id>https://example.org/blog/autoencoder-coordinate-mappings/</id>
+        
+        <content type="html" xml:base="https://example.org/blog/autoencoder-coordinate-mappings/">&lt;h2 id=&quot;motivation&quot;&gt;Motivation&lt;&#x2F;h2&gt;
+&lt;h2 id=&quot;methodology&quot;&gt;Methodology&lt;&#x2F;h2&gt;
+&lt;h2 id=&quot;results&quot;&gt;Results&lt;&#x2F;h2&gt;
+</content>
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>Gershgorin Circle Plotter</title>
+        <published>2024-02-02T00:00:00+00:00</published>
+        <updated>2024-02-02T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            Alyn Musselman
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://example.org/blog/gershgorin-cirlce-plotter/"/>
+        <id>https://example.org/blog/gershgorin-cirlce-plotter/</id>
+        
+        <content type="html" xml:base="https://example.org/blog/gershgorin-cirlce-plotter/">&lt;h2 id=&quot;motivation&quot;&gt;Motivation&lt;&#x2F;h2&gt;
+&lt;h2 id=&quot;methodology&quot;&gt;Methodology&lt;&#x2F;h2&gt;
+&lt;h2 id=&quot;results&quot;&gt;Results&lt;&#x2F;h2&gt;
+</content>
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>Pi from Monte Carlo</title>
+        <published>2022-10-10T00:00:00+00:00</published>
+        <updated>2022-10-10T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            Alyn Musselman
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://example.org/blog/pi-from-monte-carlo/"/>
+        <id>https://example.org/blog/pi-from-monte-carlo/</id>
+        
+        <content type="html" xml:base="https://example.org/blog/pi-from-monte-carlo/">&lt;h2 id=&quot;motivation&quot;&gt;Motivation&lt;&#x2F;h2&gt;
+&lt;p&gt;Typically when someone thinks of a random process they don&#x27;t think that anything orderly could come from it. However, depending on the restraints imposed upon a random process it is very possible to recreate orderly structures. In fact, this is one of the fundamental philosophies of the theory of thermodynamics, condensed matter theory and other stochastic models in physics. A toy problem that shows how order can be derived from a random process is shown in this project, where I approximated pi with a bunch of (psuedo)random numbers.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;methodology&quot;&gt;Methodology&lt;&#x2F;h2&gt;
+&lt;p&gt;For simple projects like this, I really like to use Mathematica. It has really great plotting support and tons of built in functions that you don&#x27;t have to import.&lt;&#x2F;p&gt;
+&lt;p&gt;To start the project, we need to generate random numbers that lie within a unit square. Since the unit square is 2D, we actually need to generate 2-tuples of random numbers where each element is between -1 and 1.&lt;&#x2F;p&gt;
+&lt;p&gt;Once we can generate these pairs, we want to count how many of them lie within the unit circle. Recall that by definition the unit disk is generated by all points such that the 2-norm of the points is less than or equal to one:&lt;&#x2F;p&gt;
+&lt;p&gt;$$ \{ \sqrt{x^2 + y^2} \leq 1 ~ | ~ x,y \in R \} $$&lt;&#x2F;p&gt;
+&lt;p&gt;We also need to count the number of random points that landed outside of the unit circle. To do this we simply count the complement of the set of points in the unit disk:&lt;&#x2F;p&gt;
+&lt;p&gt;$$ \{ \sqrt{x^2 + y^2} \geq 1 ~ | ~ x,y \in R \} $$&lt;&#x2F;p&gt;
+&lt;p&gt;Now from here, recall the area of a disk is $ \pi r^2 $ and in our case since $ r =1 $ the area of our disk is just $\pi$. Now also notice that the area of the square is 1. Thus if we take the ratio of points inside the circle, and divide them by the points outside the circle but inside the square, we should get something approximating $\pi$.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;results&quot;&gt;Results&lt;&#x2F;h2&gt;
+</content>
+        
+    </entry>
+</feed>

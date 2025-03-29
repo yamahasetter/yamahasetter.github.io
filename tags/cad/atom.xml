@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en">
+    <title> - CAD</title>
+    <link rel="self" type="application/atom+xml" href="https://example.org/tags/cad/atom.xml"/>
+    <link rel="alternate" type="text/html" href="https://example.org"/>
+    <generator uri="https://www.getzola.org/">Zola</generator>
+    <updated>2019-07-16T00:00:00+00:00</updated>
+    <id>https://example.org/tags/cad/atom.xml</id>
+    <entry xml:lang="en">
+        <title>Hobbie Projects</title>
+        <published>2019-07-16T00:00:00+00:00</published>
+        <updated>2019-07-16T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            Alyn Musselman
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://example.org/blog/hobbie-projects/"/>
+        <id>https://example.org/blog/hobbie-projects/</id>
+        
+        <content type="html" xml:base="https://example.org/blog/hobbie-projects/">&lt;h2 id=&quot;animator-s-table&quot;&gt;Animator&#x27;s Table&lt;&#x2F;h2&gt;
+&lt;p&gt;A friend of mine introduced me to this neat little contraption called an Animator&#x27;s Table. They were used by the very first Disney animators, and are even used today by very niche artists. I told my friend I was up for the challenge if he paid for the parts, and he agreed! After designing the table in SketchUp (the first CAD software I used) I was able to bring it to life in the real world.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;flip-up-bus-window&quot;&gt;Flip-Up Bus Window&lt;&#x2F;h2&gt;
+&lt;p&gt;My brother bought a 40 foot school bus to do a conversion on. One of the stand-out features of these busses are the poor ventilation. So I decided to help out and design, fab, and finish the best bus window ever. It needed to be waterproof at 60mph, have hydraulic lifts, be at least 6 feet long (with a vertical nonlinear contour), weight under 200lbs, be UV-resistant, and the hardware could not cost more than 300 dollars. Well, I did it all for 75 bucks (plexiglass seperate).&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;example.org&#x2F;blog&#x2F;hobbie-projects&#x2F;bus4.jpg&quot; alt=&quot;this is a photo please work&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+</content>
+        
+    </entry>
+</feed>
