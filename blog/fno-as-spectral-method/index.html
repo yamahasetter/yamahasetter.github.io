@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en">
+<head>
+  
+  
+  
+  
+  
+
+  <meta charset="UTF-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge" />
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name=generator content="Zola v0.19.1">
+
+  
+    <meta name="description" content="A single FNO layer trained on the heat equation rediscovers the analytic amplification factor and self-selects the active POD modes.">
+  
+
+  <title>Alyn Musselman</title>
+  <link rel="stylesheet" href="/css/generated.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+  <link rel="stylesheet" href="/css/custom.css">
+  
+    <link rel="icon" href="&#x2F;img&#x2F;yin-yang.svg" />
+  
+
+  
+    <link rel="alternate" type="application/atom+xml" title="Atom Feed for https://yamahasetter.github.io" href="/atom.xml" />
+  
+
+  <script defer src="/js/zolarwind/logic.js" integrity="sha384-GYtsrgYVRYoxdEL+C+79KROm+MCl1ArSzQnqVnPTV78UNz5a1vFxAEiKbobXhQlw"></script>
+  
+    <!-- Calculate sha384: openssl dgst -sha384 -binary FILENAME.EXT | openssl base64 -A -->
+    <link rel="stylesheet" href="/js/katex/katex.min.css" integrity="sha384-GvrOXuhMATgEsSwCs4smul74iXGOixntILdUW9XmUC6+HX0sLNAK3q71HotJqlAn">
+    <script defer src="/js/katex/katex.min.js" integrity="sha384-cpW21h6RZv/phavutF+AuVYrr+dA8xD9zs6FwLpaCct6O9ctzYFfFr4dgmgccOTx"></script>
+    <script defer src="/js/katex/contrib/auto-render.min.js" integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05"></script>
+    <script defer src="/js/katex-config.js" integrity="sha384-YTwoxG+UASh+luh6A7HRGGG9fiJpEYcH1r0/xbJP0wfpH/E4eU3lG9mg4U5OUz9S"></script>
+  
+  
+</head>
+<body>
+  
+
+  
+
+
+<header class="sticky top-0 w-full z-10">
+  <nav class="pf-nav bg-gray-600">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        <div class="flex items-center">
+          <div class="flex-shrink-0">
+            <a href="/" aria-label="Go to homepage">
+              <div class="h-8 w-8 text-gray-200 hover:text-white fill-current">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor">
+                  <path d="M3 12L5 10M5 10L12 3L19 10M5 10V20C5 20.5523 5.44772 21 6 21H9M19 10L21 12M19 10V20C19 20.5523 18.5523 21 18 21H15M9 21C9.55228 21 10 20.5523 10 20V16C10 15.4477 10.4477 15 11 15H13C13.5523 15 14 15.4477 14 16V20C14 20.5523 14.4477 21 15 21M9 21H15" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </div>
+            </a>
+          </div>
+          <div class="hidden md:block">
+            <div class="ml-8 flex items-baseline">
+              
+                
+                  
+                    <a class="px-3 py-2 ml-2 rounded-md font-medium text-gray-200 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-600" href="/pages/imprint/" title="Imprint">Imprint</a>
+                  
+                
+                  
+                    <a class="px-3 py-2 ml-2 rounded-md font-medium text-gray-200 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-600" href="/pages/about/" title="About">About</a>
+                  
+                
+              
+            </div>
+          </div>
+        </div>
+        <div class="-mr-2 flex md:hidden">
+          <button id="toggleMobileMenu" class="icon inline-flex items-center justify-center p-2 rounded-md text-gray-200 hover:text-white hover:bg-gray-700 focus:outline-none focus:bg-gray-700 focus:text-white" aria-label="Menu">
+            <span id="mobile-icon-menu-unselected">
+              <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            </span>
+            <span id="mobile-icon-menu-selected" class="hidden">
+              <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+    
+      <div id="mobile-menu" class="hidden md:hidden px-2 pt-2 pb-3 sm:px-3">
+        
+          
+            <a class="mt-1 block px-3 py-2 rounded-md font-medium text-gray-200 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-600" href="/pages/imprint/" title="Imprint">Imprint</a>
+          
+        
+          
+            <a class="mt-1 block px-3 py-2 rounded-md font-medium text-gray-200 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-600" href="/pages/about/" title="About">About</a>
+          
+        
+      </div>
+    
+  </nav>
+</header>
+
+  <div id="content">
+    
+
+  
+
+  <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
+    <article class="prose">
+      <div class="flex justify-center items-center bg-gray-100 rounded-md">
+        <img class="w-auto h-full object-contain" src="poster.png" alt="Fourier Neural Operators Are a Reduced-Order Spectral Method">
+      </div>
+      <h1>Fourier Neural Operators Are a Reduced-Order Spectral Method</h1>
+      <div>
+        <p>
+          <span class="mr-2 text-sm">
+            <time datetime="2026-06-20">June 20, 2026</time> &middot;
+            861 words &middot;
+            5 minutes reading time
+          </span>
+          <span class="text-sm leading-5 font-medium text-indigo-600">
+
+  
+    
+      <span class="mr-2 badge badge-green"><a href="https://yamahasetter.github.io/tags/pytorch/">Pytorch</a></span>
+    
+      <span class="mr-2 badge badge-green"><a href="https://yamahasetter.github.io/tags/math/">math</a></span>
+    
+  
+
+</span>
+
+        </p>
+      </div>
+
+      <div>
+        <h2 id="abstract">Abstract</h2>
+<p>A Fourier Neural Operator (FNO) learns a mapping $G_\theta : A \to U$ between
+function spaces. Here I show that, with a few modifications, a single FNO layer
+reduces to the canonical <strong>Fourier spectral method</strong>. A single FNO
+integral-kernel layer is trained on heat-equation snapshots $u^n \to u^{n+1}$,
+with no physics supplied, and the result is striking:</p>
+<ol>
+<li>The learned weights $R_\theta$ match the analytic <strong>amplification factor</strong>
+$M_m = 1/(1 + \Delta t, k_m^2)$ to ~$10^{-7}$, showing the FNO recovers the
+Fourier spectral method.</li>
+<li>Only the active POD modes ($k = 1, 2, 3$) are learned; the rest stay ~0.</li>
+<li>Truncating $R_\theta$ to those three modes reproduces the full solution
+through time.</li>
+<li>Taken together: the FNO, at its core, is a reduced-order Fourier spectral
+method.</li>
+</ol>
+<p><img src="https://yamahasetter.github.io/blog/fno-as-spectral-method/poster.png" alt="Project poster" /></p>
+<h2 id="the-fourier-spectral-method">The Fourier Spectral Method</h2>
+<p>On a periodic grid of $N$ points, the discrete Fourier transform (DFT) pair is</p>
+<p>$$
+\hat{u}<em>m = \sum</em>{j=1}^{N} u_j, e^{-i k_m x_j},
+\qquad
+u_j = \frac{1}{N}\sum_{m} \hat{u}_m, e^{i k_m x_j},
+$$</p>
+<p>where $u_j = u(x_j)$ is the field sampled at grid point $x_j$; $\hat{u}_m$ is the
+$m$-th Fourier coefficient ($-N/2 &lt; m \le N/2$); and $k_m = 2\pi m / L$ is the
+wavenumber of mode $m$ on a domain of length $L$. Differentiation is <strong>diagonal</strong>
+in this basis:</p>
+<p>$$
+\frac{\partial}{\partial x} \to i k_m,
+\qquad
+\frac{\partial^2}{\partial x^2} \to -k_m^2,
+$$</p>
+<p>so each spatial derivative becomes a multiplication of $\hat{u}_m$ by a known
+function of $k_m$ — the source of the method's spectral accuracy.</p>
+<h2 id="the-fno-layer-and-integral-kernel-operator">The FNO Layer and Integral Kernel Operator</h2>
+<p>A single FNO layer maps $v_\ell(x) \mapsto v_{\ell+1}(x)$ via</p>
+<p>$$
+v_{\ell+1}(x) = \sigma!\Big( W v_\ell(x) + (\mathcal{K} v_\ell)(x) \Big),
+$$</p>
+<p>with activation $\sigma$, local linear transform $W$, and <strong>integral kernel
+operator</strong> $\mathcal{K}$ applied in Fourier space:</p>
+<p>$$
+(\mathcal{K} v_\ell)(x) = \mathcal{F}^{-1}!\big(, R_\theta \cdot \mathcal{F}(v_\ell), \big).
+$$</p>
+<p>Here $R_\theta$ is a <strong>learned</strong> complex weight per retained mode. The operator's
+structure is: FFT $\to$ multiply each mode by a weight $\to$ inverse FFT.</p>
+<h2 id="connecting-m-m-and-r-theta">Connecting $M_m$ and $R_\theta$</h2>
+<p>The kernel operator begins with an FFT and ends with an inverse FFT, with a
+per-mode multiplication between — exactly the structure of a spectral update,
+$u^{n+1} = \mathcal{F}^{-1}(M_m \cdot \mathcal{F}(u^n))$. They are the same
+operation; only the multiplier's origin differs: $R_\theta$ is <strong>learned</strong>,
+$M_m$ is the <strong>analytic amplification factor</strong> of the PDE update. We recover the
+spectral method by dropping $\sigma$ and $W$, keeping all modes, and setting
+$R_\theta = M_m$.</p>
+<h2 id="the-heat-equation">The Heat Equation</h2>
+<p>On a periodic domain,</p>
+<p>$$
+\frac{\partial u}{\partial t} = \frac{\partial^2 u}{\partial x^2}.
+$$</p>
+<p><strong>Analytic solution.</strong> With $u(x,t) = \hat{u}_m(t),e^{i k_m x}$, each mode obeys
+$\dot{\hat{u}}_m = -k_m^2 \hat{u}_m$, so $\hat{u}_m(t) = \hat{u}_m(0),e^{-k_m^2 t}$.
+For the initial condition $u(x,0) = \sin(x) + 0.5\sin(2x) + 0.3\sin(3x)$ this
+gives the closed form (our ground truth)</p>
+<p>$$
+u(x,t) = e^{-t}\sin(x) + 0.5,e^{-4t}\sin(2x) + 0.3,e^{-9t}\sin(3x),
+$$</p>
+<p>which excites exactly three wavenumbers, $k = 1, 2, 3$.</p>
+<p><img src="https://yamahasetter.github.io/blog/fno-as-spectral-method/analytic.png" alt="Analytic solution" /></p>
+<p><strong>Spectral solution.</strong> The DFT sends $\partial_{xx} \to -k_m^2$, giving
+$\dot{\hat{u}}_m = -k_m^2 \hat{u}_m$. A backward (implicit) Euler step,
+$(\hat{u}_m^{,n+1} - \hat{u}_m^{,n})/\Delta t = -k_m^2 \hat{u}_m^{,n+1}$,
+yields</p>
+<p>$$
+\hat{u}_m^{,n+1} = M_m, \hat{u}_m^{,n},
+\qquad
+M_m = \frac{1}{1 + \Delta t, k_m^2},
+$$</p>
+<p>the amplification factor that $R_\theta$ must reproduce.</p>
+<pre data-lang="python" style="background-color:#191919;color:#f8f8f2;" class="language-python "><code class="language-python" data-lang="python"><span>uhat </span><span style="color:#ff5e5e;">= </span><span>np.fft.</span><span style="color:#e9fdac;">fft</span><span>(u0)                 </span><span style="color:#6d6d6d;"># FFT of initial condition (once)
+</span><span>M    </span><span style="color:#ff5e5e;">= </span><span style="color:#fdb082;">1.0 </span><span style="color:#ff5e5e;">/ </span><span>(</span><span style="color:#fdb082;">1.0 </span><span style="color:#ff5e5e;">+ </span><span>dt </span><span style="color:#ff5e5e;">* </span><span>k</span><span style="color:#ff5e5e;">**</span><span style="color:#fdb082;">2</span><span>)        </span><span style="color:#6d6d6d;"># amplification factor per mode
+</span><span style="color:#ff5e5e;">for </span><span>n </span><span style="color:#ff5e5e;">in </span><span style="color:#6699cc;">range</span><span>(nsteps):
+</span><span>    uhat </span><span style="color:#ff5e5e;">= </span><span>uhat </span><span style="color:#ff5e5e;">* </span><span>M                   </span><span style="color:#6d6d6d;"># backsolve in Fourier space
+</span><span>u </span><span style="color:#ff5e5e;">= </span><span>np.</span><span style="color:#e9fdac;">real</span><span>(np.fft.</span><span style="color:#e9fdac;">ifft</span><span>(uhat))        </span><span style="color:#6d6d6d;"># inverse FFT to physical space
+</span></code></pre>
+<p><img src="https://yamahasetter.github.io/blog/fno-as-spectral-method/fourier.png" alt="Fourier spectral solution" /></p>
+<h2 id="results">Results</h2>
+<p>I train a single integral-kernel layer (no $W$, no activation) on the snapshot
+pairs $u^n \to u^{n+1}$ generated above, learning one complex weight $R_\theta$
+per Fourier mode.</p>
+<p><strong>The FNO recovers the spectral method.</strong> On the modes the data actually excites
+($k = 1, 2, 3$), the learned weights match the analytic amplification factor,
+$R_\theta = M_m$, to ~$10^{-7}$. The network rediscovers
+$1/(1 + \Delta t, k_m^2)$ from data alone.</p>
+<p><img src="https://yamahasetter.github.io/blog/fno-as-spectral-method/full_fno.png" alt="Full FNO result" /></p>
+<p><strong>The FNO self-selects the active modes.</strong> A proper orthogonal decomposition
+(POD) of the solution trajectory shows it is rank 3: only three singular values
+are nonzero, and the leading POD modes are exactly $\sin x, \sin 2x, \sin 3x$.
+The heat equation is linear and diagonal in Fourier space, so unexcited modes
+start at zero and stay there — during training those weights receive no gradient
+and remain ~0. The layer therefore learns only the modes it needs, which is
+precisely the subspace POD identifies.</p>
+<p><strong>Truncation is lossless.</strong> Zeroing every weight outside $k = 1, 2, 3$ and
+rolling the kernel forward reproduces the full solution through time to the same
+~$10^{-7}$ accuracy. A three-parameter spectral kernel captures the entire
+dynamics — the FNO, at its core, is a reduced-order Fourier spectral method.</p>
+<p><img src="https://yamahasetter.github.io/blog/fno-as-spectral-method/trunc_fno.png" alt="Truncated FNO result" /></p>
+
+      </div>
+    </article>
+  </div>
+
+
+  <script type="application/ld+json">
+{
+   "@context": "https://schema.org"
+  ,"@type": "BlogPosting"
+  ,"mainEntityOfPage": {
+     "@type": "WebPage"
+    ,"@id": "https://yamahasetter.github.io/blog/fno-as-spectral-method/"
+  }
+  ,"headline": "Fourier Neural Operators Are a Reduced-Order Spectral Method"
+  ,"datePublished": "2026-06-20"
+  ,"dateModified": "2026-06-20"
+  
+  ,"author": [
+    
+      {
+         "@type": "Person"
+        ,"name": "Alyn Musselman"
+      }
+      
+    
+  ]
+  ,"publisher": [
+    
+      {
+         "@type": "Person"
+        ,"name": "Alyn Musselman"
+      }
+      
+    
+  ]
+  
+  ,"description": "A single FNO layer trained on the heat equation rediscovers the analytic amplification factor and self-selects the active POD modes."
+  ,"articleBody": "AbstractA Fourier Neural Operator (FNO) learns a mapping $G_\theta : A \to U$ betweenfunction spaces. Here I show that, with a few modifications, a single FNO layerreduces to the canonical Fourier spectral method. A single FNOintegral-kernel layer is trained on heat-equation snapshots $u^n \to u^{n+1}$,with no physics supplied, and the result is striking:The learned weights $R_\theta$ match the analytic amplification factor$M_m = 1&#x2F;(1 + \Delta t, k_m^2)$ to ~$10^{-7}$, showing the FNO recovers theFourier spectral method.Only the active POD modes ($k = 1, 2, 3$) are learned; the rest stay ~0.Truncating $R_\theta$ to those three modes reproduces the full solutionthrough time.Taken together: the FNO, at its core, is a reduced-order Fourier spectralmethod.The Fourier Spectral MethodOn a periodic grid of $N$ points, the discrete Fourier transform (DFT) pair is$$\hat{u}m = \sum{j=1}^{N} u_j, e^{-i k_m x_j},\qquadu_j = \frac{1}{N}\sum_{m} \hat{u}_m, e^{i k_m x_j},$$where $u_j = u(x_j)$ is the field sampled at grid point $x_j$; $\hat{u}_m$ is the$m$-th Fourier coefficient ($-N&#x2F;2 &amp;lt; m \le N&#x2F;2$); and $k_m = 2\pi m &#x2F; L$ is thewavenumber of mode $m$ on a domain of length $L$. Differentiation is diagonalin this basis:$$\frac{\partial}{\partial x} \to i k_m,\qquad\frac{\partial^2}{\partial x^2} \to -k_m^2,$$so each spatial derivative becomes a multiplication of $\hat{u}_m$ by a knownfunction of $k_m$ — the source of the method&#x27;s spectral accuracy.The FNO Layer and Integral Kernel OperatorA single FNO layer maps $v_\ell(x) \mapsto v_{\ell+1}(x)$ via$$v_{\ell+1}(x) = \sigma!\Big( W v_\ell(x) + (\mathcal{K} v_\ell)(x) \Big),$$with activation $\sigma$, local linear transform $W$, and integral kerneloperator $\mathcal{K}$ applied in Fourier space:$$(\mathcal{K} v_\ell)(x) = \mathcal{F}^{-1}!\big(, R_\theta \cdot \mathcal{F}(v_\ell), \big).$$Here $R_\theta$ is a learned complex weight per retained mode. The operator&#x27;sstructure is: FFT $\to$ multiply each mode by a weight $\to$ inverse FFT.Connecting $M_m$ and $R_\theta$The kernel operator begins with an FFT and ends with an inverse FFT, with aper-mode multiplication between — exactly the structure of a spectral update,$u^{n+1} = \mathcal{F}^{-1}(M_m \cdot \mathcal{F}(u^n))$. They are the sameoperation; only the multiplier&#x27;s origin differs: $R_\theta$ is learned,$M_m$ is the analytic amplification factor of the PDE update. We recover thespectral method by dropping $\sigma$ and $W$, keeping all modes, and setting$R_\theta = M_m$.The Heat EquationOn a periodic domain,$$\frac{\partial u}{\partial t} = \frac{\partial^2 u}{\partial x^2}.$$Analytic solution. With $u(x,t) = \hat{u}_m(t),e^{i k_m x}$, each mode obeys$\dot{\hat{u}}_m = -k_m^2 \hat{u}_m$, so $\hat{u}_m(t) = \hat{u}_m(0),e^{-k_m^2 t}$.For the initial condition $u(x,0) = \sin(x) + 0.5\sin(2x) + 0.3\sin(3x)$ thisgives the closed form (our ground truth)$$u(x,t) = e^{-t}\sin(x) + 0.5,e^{-4t}\sin(2x) + 0.3,e^{-9t}\sin(3x),$$which excites exactly three wavenumbers, $k = 1, 2, 3$.Spectral solution. The DFT sends $\partial_{xx} \to -k_m^2$, giving$\dot{\hat{u}}_m = -k_m^2 \hat{u}_m$. A backward (implicit) Euler step,$(\hat{u}_m^{,n+1} - \hat{u}_m^{,n})&#x2F;\Delta t = -k_m^2 \hat{u}_m^{,n+1}$,yields$$\hat{u}_m^{,n+1} = M_m, \hat{u}_m^{,n},\qquadM_m = \frac{1}{1 + \Delta t, k_m^2},$$the amplification factor that $R_\theta$ must reproduce.uhat = np.fft.fft(u0)                 # FFT of initial condition (once)M    = 1.0 &#x2F; (1.0 + dt * k**2)        # amplification factor per modefor n in range(nsteps):    uhat = uhat * M                   # backsolve in Fourier spaceu = np.real(np.fft.ifft(uhat))        # inverse FFT to physical spaceResultsI train a single integral-kernel layer (no $W$, no activation) on the snapshotpairs $u^n \to u^{n+1}$ generated above, learning one complex weight $R_\theta$per Fourier mode.The FNO recovers the spectral method. On the modes the data actually excites($k = 1, 2, 3$), the learned weights match the analytic amplification factor,$R_\theta = M_m$, to ~$10^{-7}$. The network rediscovers$1&#x2F;(1 + \Delta t, k_m^2)$ from data alone.The FNO self-selects the active modes. A proper orthogonal decomposition(POD) of the solution trajectory shows it is rank 3: only three singular valuesare nonzero, and the leading POD modes are exactly $\sin x, \sin 2x, \sin 3x$.The heat equation is linear and diagonal in Fourier space, so unexcited modesstart at zero and stay there — during training those weights receive no gradientand remain ~0. The layer therefore learns only the modes it needs, which isprecisely the subspace POD identifies.Truncation is lossless. Zeroing every weight outside $k = 1, 2, 3$ androlling the kernel forward reproduces the full solution through time to the same~$10^{-7}$ accuracy. A three-parameter spectral kernel captures the entiredynamics — the FNO, at its core, is a reduced-order Fourier spectral method."
+  
+    ,"image": "https://yamahasetter.github.io/blog/fno-as-spectral-method/poster.png"
+  
+}
+</script>
+
+
+
+  </div>
+  <footer>
+  <!-- Social Media Icons -->
+  
+    <div class="mt-4 flex justify-center">
+      
+        
+          <a
+            
+            href="https:&#x2F;&#x2F;github.com&#x2F;yamahasetter" title="Github"
+            
+              class="text-gray-400 hover:text-gray-500">
+            
+            <span class="sr-only">github</span>
+            <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 1024 1024"><path d="M8 0C3.58 0 0 3.58 0 8C0 11.54 2.29 14.53 5.47 15.59C5.87 15.66 6.02 15.42 6.02 15.21C6.02 15.02 6.01 14.39 6.01 13.72C4 14.09 3.48 13.23 3.32 12.78C3.23 12.55 2.84 11.84 2.5 11.65C2.22 11.5 1.82 11.13 2.49 11.12C3.12 11.11 3.57 11.7 3.72 11.94C4.44 13.15 5.59 12.81 6.05 12.6C6.12 12.08 6.33 11.73 6.56 11.53C4.78 11.33 2.92 10.64 2.92 7.58C2.92 6.71 3.23 5.99 3.74 5.43C3.66 5.23 3.38 4.41 3.82 3.31C3.82 3.31 4.49 3.1 6.02 4.13C6.66 3.95 7.34 3.86 8.02 3.86C8.7 3.86 9.38 3.95 10.02 4.13C11.55 3.09 12.22 3.31 12.22 3.31C12.66 4.41 12.38 5.23 12.3 5.43C12.81 5.99 13.12 6.7 13.12 7.58C13.12 10.65 11.25 11.33 9.47 11.53C9.76 11.78 10.01 12.26 10.01 13.01C10.01 14.08 10 14.94 10 15.21C10 15.42 10.15 15.67 10.55 15.59C13.71 14.53 16 11.53 16 8C16 3.58 12.42 0 8 0Z" transform="scale(64)"/></svg>
+          </a>
+        
+      
+        
+          <a
+            
+            href="https:&#x2F;&#x2F;www.linkedin.com&#x2F;in&#x2F;alyn-m-b14b17152&#x2F;" title="Linkedin"
+            
+              class="ml-8 text-gray-400 hover:text-gray-500">
+            
+            <span class="sr-only">linkedin</span>
+            <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 1024 1024"><path d="M0 1.146C0 .513.526 0 1.175 0h13.65C15.474 0 16 .513 16 1.146v13.708c0 .633-.526 1.146-1.175 1.146H1.175C.526 16 0 15.487 0 14.854zm4.943 12.248V6.169H2.542v7.225zm-1.2-8.212c.837 0 1.358-.554 1.358-1.248-.015-.709-.52-1.248-1.342-1.248S2.4 3.226 2.4 3.934c0 .694.521 1.248 1.327 1.248zm4.908 8.212V9.359c0-.216.016-.432.08-.586.173-.431.568-.878 1.232-.878.869 0 1.216.662 1.216 1.634v3.865h2.401V9.25c0-2.22-1.184-3.252-2.764-3.252-1.274 0-1.845.7-2.165 1.193v.025h-.016l.016-.025V6.169h-2.4c.03.678 0 7.225 0 7.225z" transform="scale(64)"/></svg>
+          </a>
+        
+      
+        
+          <a
+            
+            href="https:&#x2F;&#x2F;stackoverflow.com&#x2F;users&#x2F;16188373&#x2F;try-hard" title="Stackoverflow"
+            
+              class="ml-8 text-gray-400 hover:text-gray-500">
+            
+            <span class="sr-only">stackoverflow</span>
+            <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 73.099998 86.599998"><g transform="translate(-22.6,-14.9)"><path d="m 84.4,93.8 0,-23.2 7.7,0 0,30.9 -69.5,0 0,-30.9 7.7,0 0,23.2 z"/><path d="m 38.8,68.4 37.8,7.9 1.6,-7.6 -37.8,-7.9 -1.6,7.6 z m 5,-18 35,16.3 3.2,-7 -35,-16.4 -3.2,7.1 z M 53.5,33.2 83.2,57.9 88.1,52 58.4,27.3 53.5,33.2 Z m 19.2,-18.3 -6.2,4.6 23,31 6.2,-4.6 -23,-31 z M 38,86 l 38.6,0 0,-7.7 -38.6,0 0,7.7 z"/></g></svg>
+          </a>
+        
+      
+        
+      
+        
+      
+    </div>
+  
+  <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8 text-center">
+    
+      <p class="text-center text-base leading-6">
+        
+          
+          <a href="&#x2F;pages&#x2F;privacy&#x2F;">Privacy Policy</a>
+        
+           &middot; 
+          <a href="&#x2F;pages&#x2F;terms&#x2F;">Terms</a>
+        
+      </p>
+    
+    
+    <div class="mt-4">
+      <p class="text-center text-base leading-6 text-gray-400">
+        Copyright 2026 by Thomas Weitzel
+      </p>
+    </div>
+    
+  </div>
+</footer>
+
+</body>
+</html>

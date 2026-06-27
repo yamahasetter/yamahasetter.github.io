@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en">
+<head>
+  
+  
+  
+  
+  
+
+  <meta charset="UTF-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge" />
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name=generator content="Zola v0.19.1">
+
+  
+    <meta name="description" content="A desktop app for interactive image filtering, channel adjustment, and live histogram&#x2F;Fourier analysis.">
+  
+
+  <title>Alyn Musselman</title>
+  <link rel="stylesheet" href="/css/generated.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+  <link rel="stylesheet" href="/css/custom.css">
+  
+    <link rel="icon" href="&#x2F;img&#x2F;yin-yang.svg" />
+  
+
+  
+    <link rel="alternate" type="application/atom+xml" title="Atom Feed for https://yamahasetter.github.io" href="/atom.xml" />
+  
+
+  <script defer src="/js/zolarwind/logic.js" integrity="sha384-GYtsrgYVRYoxdEL+C+79KROm+MCl1ArSzQnqVnPTV78UNz5a1vFxAEiKbobXhQlw"></script>
+  
+    <!-- Calculate sha384: openssl dgst -sha384 -binary FILENAME.EXT | openssl base64 -A -->
+    <link rel="stylesheet" href="/js/katex/katex.min.css" integrity="sha384-GvrOXuhMATgEsSwCs4smul74iXGOixntILdUW9XmUC6+HX0sLNAK3q71HotJqlAn">
+    <script defer src="/js/katex/katex.min.js" integrity="sha384-cpW21h6RZv/phavutF+AuVYrr+dA8xD9zs6FwLpaCct6O9ctzYFfFr4dgmgccOTx"></script>
+    <script defer src="/js/katex/contrib/auto-render.min.js" integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05"></script>
+    <script defer src="/js/katex-config.js" integrity="sha384-YTwoxG+UASh+luh6A7HRGGG9fiJpEYcH1r0/xbJP0wfpH/E4eU3lG9mg4U5OUz9S"></script>
+  
+  
+</head>
+<body>
+  
+
+  
+
+
+<header class="sticky top-0 w-full z-10">
+  <nav class="pf-nav bg-gray-600">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        <div class="flex items-center">
+          <div class="flex-shrink-0">
+            <a href="/" aria-label="Go to homepage">
+              <div class="h-8 w-8 text-gray-200 hover:text-white fill-current">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor">
+                  <path d="M3 12L5 10M5 10L12 3L19 10M5 10V20C5 20.5523 5.44772 21 6 21H9M19 10L21 12M19 10V20C19 20.5523 18.5523 21 18 21H15M9 21C9.55228 21 10 20.5523 10 20V16C10 15.4477 10.4477 15 11 15H13C13.5523 15 14 15.4477 14 16V20C14 20.5523 14.4477 21 15 21M9 21H15" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </div>
+            </a>
+          </div>
+          <div class="hidden md:block">
+            <div class="ml-8 flex items-baseline">
+              
+                
+                  
+                    <a class="px-3 py-2 ml-2 rounded-md font-medium text-gray-200 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-600" href="/pages/imprint/" title="Imprint">Imprint</a>
+                  
+                
+                  
+                    <a class="px-3 py-2 ml-2 rounded-md font-medium text-gray-200 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-600" href="/pages/about/" title="About">About</a>
+                  
+                
+              
+            </div>
+          </div>
+        </div>
+        <div class="-mr-2 flex md:hidden">
+          <button id="toggleMobileMenu" class="icon inline-flex items-center justify-center p-2 rounded-md text-gray-200 hover:text-white hover:bg-gray-700 focus:outline-none focus:bg-gray-700 focus:text-white" aria-label="Menu">
+            <span id="mobile-icon-menu-unselected">
+              <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            </span>
+            <span id="mobile-icon-menu-selected" class="hidden">
+              <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+    
+      <div id="mobile-menu" class="hidden md:hidden px-2 pt-2 pb-3 sm:px-3">
+        
+          
+            <a class="mt-1 block px-3 py-2 rounded-md font-medium text-gray-200 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-600" href="/pages/imprint/" title="Imprint">Imprint</a>
+          
+        
+          
+            <a class="mt-1 block px-3 py-2 rounded-md font-medium text-gray-200 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-600" href="/pages/about/" title="About">About</a>
+          
+        
+      </div>
+    
+  </nav>
+</header>
+
+  <div id="content">
+    
+
+  
+
+  <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
+    <article class="prose">
+      <div class="flex justify-center items-center bg-gray-100 rounded-md">
+        <img class="w-auto h-full object-contain" src="app_example.png" alt="A Real-Time Image Analyzer in PyQt">
+      </div>
+      <h1>A Real-Time Image Analyzer in PyQt</h1>
+      <div>
+        <p>
+          <span class="mr-2 text-sm">
+            <time datetime="2025-10-28">October 28, 2025</time> &middot;
+            612 words &middot;
+            4 minutes reading time
+          </span>
+          <span class="text-sm leading-5 font-medium text-indigo-600">
+
+  
+    
+      <span class="mr-2 badge badge-green"><a href="https://yamahasetter.github.io/tags/python/">Python</a></span>
+    
+      <span class="mr-2 badge badge-green"><a href="https://yamahasetter.github.io/tags/math/">math</a></span>
+    
+  
+
+</span>
+
+        </p>
+      </div>
+
+      <div>
+        <h2 id="motivation">Motivation</h2>
+<p>I wanted a small, self-contained desktop tool to interactively explore what
+happens to an image when you tweak its color channels or blur it — and to see
+those changes reflected immediately in the image's statistics. Rather than
+re-running a script every time, the goal was a live GUI: drag in an image, move a
+slider, and watch both the picture and its analytics update in real time.</p>
+<p>The result is a PyQt6 + PyQtGraph application that pairs a drag-and-drop image
+canvas with two live plots — an RGB histogram and a 2D Fourier spectrum — driven
+by a handful of NumPy image operations.</p>
+<p><img src="https://yamahasetter.github.io/blog/pyqt-image-analyzer/app_example.png" alt="The image analyzer in action" /></p>
+<h2 id="methodology">Methodology</h2>
+<p>The app is split cleanly into two pieces: a set of pure NumPy image functions
+(<code>image_fncs.py</code>) and the PyQt GUI that wires them to widgets (<code>pyqt_gui.py</code>).
+Images are loaded as <code>float32</code> RGBA arrays so that repeated transformations don't
+accumulate integer-rounding error, and only clipped back to <code>uint8</code> at display
+time.</p>
+<h3 id="the-image-operations">The image operations</h3>
+<p><strong>Channel intensity.</strong> Each RGB slider scales one color channel by a factor
+$\alpha = v/100$, where $v$ is the slider value. For channel $c$,</p>
+<p>$$
+I'<em>{c}(x,y) = \alpha , I</em>{c}(x,y),
+$$</p>
+<p>leaving the other channels untouched. This is the cheapest of the operations —
+a single broadcast multiply.</p>
+<pre data-lang="python" style="background-color:#191919;color:#f8f8f2;" class="language-python "><code class="language-python" data-lang="python"><span style="font-style:italic;color:#ff5e5e;">def </span><span style="color:#8cdaff;">color_intensity</span><span>(</span><span style="font-style:italic;color:#fc9354;">image</span><span>, </span><span style="font-style:italic;color:#fc9354;">channel</span><span>, </span><span style="font-style:italic;color:#fc9354;">intensity</span><span>):
+</span><span>    adjusted_image </span><span style="color:#ff5e5e;">= </span><span>image[:, :, :</span><span style="color:#fdb082;">3</span><span>].</span><span style="color:#e9fdac;">copy</span><span>()
+</span><span>    adjusted_image[:, :, channel] </span><span style="color:#ff5e5e;">= </span><span>adjusted_image[:, :, channel] </span><span style="color:#ff5e5e;">* </span><span>intensity
+</span><span>    </span><span style="color:#ff5e5e;">return </span><span>adjusted_image
+</span></code></pre>
+<p><strong>Box blur.</strong> The blur is an unnormalized-kernel box filter of radius $r$. Each
+output pixel is the mean of its neighbors within a $(r{+}1)\times(r{+}1)$ window,</p>
+<p>$$
+I'(x,y) = \frac{1}{|\mathcal{N}|} \sum_{(i,j)\in \mathcal{N}(x,y)} I(i,j),
+$$</p>
+<p>where $\mathcal{N}(x,y)$ is the set of in-bounds neighbors. It's implemented with
+explicit loops, which is transparent but $O(W H r^2)$ — the most expensive
+control in the app, and a natural candidate for a separable-kernel or FFT-based
+speedup.</p>
+<h3 id="the-live-analytics">The live analytics</h3>
+<p><strong>RGB histogram.</strong> For each channel the app computes a normalized 256-bin
+histogram (a density estimate of the pixel-intensity distribution) and draws all
+three as filled curves:</p>
+<pre data-lang="python" style="background-color:#191919;color:#f8f8f2;" class="language-python "><code class="language-python" data-lang="python"><span style="font-style:italic;color:#ff5e5e;">def </span><span style="color:#8cdaff;">image_histogram</span><span>(</span><span style="font-style:italic;color:#fc9354;">image</span><span>):
+</span><span>    hist, bins </span><span style="color:#ff5e5e;">= </span><span>np.</span><span style="color:#e9fdac;">empty</span><span>((</span><span style="color:#fdb082;">3</span><span>, </span><span style="color:#fdb082;">256</span><span>)), </span><span style="color:#ff8942;">None
+</span><span>    </span><span style="color:#ff5e5e;">for </span><span>color </span><span style="color:#ff5e5e;">in </span><span style="color:#6699cc;">range</span><span>(</span><span style="color:#fdb082;">3</span><span>):
+</span><span>        hist[color], bins </span><span style="color:#ff5e5e;">= </span><span>np.</span><span style="color:#e9fdac;">histogram</span><span>(
+</span><span>            image[:, :, color].</span><span style="color:#e9fdac;">flatten</span><span>(), </span><span style="font-style:italic;color:#fc9354;">bins</span><span style="color:#ff5e5e;">=</span><span style="color:#fdb082;">256</span><span>, </span><span style="font-style:italic;color:#fc9354;">range</span><span style="color:#ff5e5e;">=</span><span>(</span><span style="color:#fdb082;">0</span><span>, </span><span style="color:#fdb082;">256</span><span>), </span><span style="font-style:italic;color:#fc9354;">density</span><span style="color:#ff5e5e;">=</span><span style="color:#ff8942;">True</span><span>)
+</span><span>    </span><span style="color:#ff5e5e;">return </span><span>hist, bins
+</span></code></pre>
+<p><strong>Fourier spectrum.</strong> The image is converted to grayscale by averaging the
+channels, then run through a 2D FFT. The zero-frequency component is shifted to
+the center and the magnitude is log-scaled for display:</p>
+<p>$$
+F(u,v) = \mathcal{F}{,g(x,y),}, \qquad
+S(u,v) = \log!\big(1 + |,\text{fftshift}(F),|\big),
+$$</p>
+<p>with $g = (R + G + B)/3$. The $\log(1+\lvert\cdot\rvert)$ compression is what
+makes the spectrum legible — raw FFT magnitudes span many orders of magnitude and
+would otherwise show only the DC spike.</p>
+<pre data-lang="python" style="background-color:#191919;color:#f8f8f2;" class="language-python "><code class="language-python" data-lang="python"><span style="font-style:italic;color:#ff5e5e;">def </span><span style="color:#8cdaff;">grayscale_fft</span><span>(</span><span style="font-style:italic;color:#fc9354;">image</span><span>):
+</span><span>    gray </span><span style="color:#ff5e5e;">= </span><span>(image[:, :, </span><span style="color:#fdb082;">0</span><span>] </span><span style="color:#ff5e5e;">+ </span><span>image[:, :, </span><span style="color:#fdb082;">1</span><span>] </span><span style="color:#ff5e5e;">+ </span><span>image[:, :, </span><span style="color:#fdb082;">2</span><span>]) </span><span style="color:#ff5e5e;">/ </span><span style="color:#fdb082;">3.0
+</span><span>    fft </span><span style="color:#ff5e5e;">= </span><span>np.fft.</span><span style="color:#e9fdac;">fft2</span><span>(gray)
+</span><span>    fft_shifted </span><span style="color:#ff5e5e;">= </span><span>np.fft.</span><span style="color:#e9fdac;">fftshift</span><span>(fft)
+</span><span>    </span><span style="color:#ff5e5e;">return </span><span>np.</span><span style="color:#e9fdac;">log1p</span><span>(np.</span><span style="color:#e9fdac;">abs</span><span>(fft_shifted)).</span><span style="color:#e9fdac;">astype</span><span>(np.float32)
+</span></code></pre>
+<h3 id="the-gui">The GUI</h3>
+<p>The interface is a <code>QMainWindow</code> with the image canvas on the left and a vertical
+stack on the right holding the two PyQtGraph plots, four sliders (R, G, B, and
+Blur), and a reset button. Images arrive via drag-and-drop: <code>dropEvent</code> reads the
+file into a QImage, exposes the raw buffer as a NumPy array, and keeps both an
+untouched original and a working copy. Every slider movement re-derives the
+working copy from the original, re-renders the canvas, and refreshes both plots,
+so the histogram and spectrum always track exactly what's on screen.</p>
+<h2 id="results">Results</h2>
+<p>The finished app loads any dropped image and responds to channel and blur
+adjustments in real time, with the histogram and Fourier spectrum updating live
+alongside the picture. It's a compact demonstration of coupling NumPy
+image processing to a responsive PyQt/PyQtGraph front end — and a clean base to
+extend with more filters (the box blur, in particular, is the obvious first
+target for an FFT-based reimplementation).</p>
+<p>Dependencies are minimal: PyQt6, PyQtGraph, and NumPy, with Jupyter and
+Matplotlib used only for the unit tests.</p>
+
+      </div>
+    </article>
+  </div>
+
+
+  <script type="application/ld+json">
+{
+   "@context": "https://schema.org"
+  ,"@type": "BlogPosting"
+  ,"mainEntityOfPage": {
+     "@type": "WebPage"
+    ,"@id": "https://yamahasetter.github.io/blog/pyqt-image-analyzer/"
+  }
+  ,"headline": "A Real-Time Image Analyzer in PyQt"
+  ,"datePublished": "2025-10-28"
+  ,"dateModified": "2025-10-28"
+  
+  ,"author": [
+    
+      {
+         "@type": "Person"
+        ,"name": "Alyn Musselman"
+      }
+      
+    
+  ]
+  ,"publisher": [
+    
+      {
+         "@type": "Person"
+        ,"name": "Alyn Musselman"
+      }
+      
+    
+  ]
+  
+  ,"description": "A desktop app for interactive image filtering, channel adjustment, and live histogram&#x2F;Fourier analysis."
+  ,"articleBody": "MotivationI wanted a small, self-contained desktop tool to interactively explore whathappens to an image when you tweak its color channels or blur it — and to seethose changes reflected immediately in the image&#x27;s statistics. Rather thanre-running a script every time, the goal was a live GUI: drag in an image, move aslider, and watch both the picture and its analytics update in real time.The result is a PyQt6 + PyQtGraph application that pairs a drag-and-drop imagecanvas with two live plots — an RGB histogram and a 2D Fourier spectrum — drivenby a handful of NumPy image operations.MethodologyThe app is split cleanly into two pieces: a set of pure NumPy image functions(image_fncs.py) and the PyQt GUI that wires them to widgets (pyqt_gui.py).Images are loaded as float32 RGBA arrays so that repeated transformations don&#x27;taccumulate integer-rounding error, and only clipped back to uint8 at displaytime.The image operationsChannel intensity. Each RGB slider scales one color channel by a factor$\alpha = v&#x2F;100$, where $v$ is the slider value. For channel $c$,$$I&#x27;{c}(x,y) = \alpha , I{c}(x,y),$$leaving the other channels untouched. This is the cheapest of the operations —a single broadcast multiply.def color_intensity(image, channel, intensity):    adjusted_image = image[:, :, :3].copy()    adjusted_image[:, :, channel] = adjusted_image[:, :, channel] * intensity    return adjusted_imageBox blur. The blur is an unnormalized-kernel box filter of radius $r$. Eachoutput pixel is the mean of its neighbors within a $(r{+}1)\times(r{+}1)$ window,$$I&#x27;(x,y) = \frac{1}{|\mathcal{N}|} \sum_{(i,j)\in \mathcal{N}(x,y)} I(i,j),$$where $\mathcal{N}(x,y)$ is the set of in-bounds neighbors. It&#x27;s implemented withexplicit loops, which is transparent but $O(W H r^2)$ — the most expensivecontrol in the app, and a natural candidate for a separable-kernel or FFT-basedspeedup.The live analyticsRGB histogram. For each channel the app computes a normalized 256-binhistogram (a density estimate of the pixel-intensity distribution) and draws allthree as filled curves:def image_histogram(image):    hist, bins = np.empty((3, 256)), None    for color in range(3):        hist[color], bins = np.histogram(            image[:, :, color].flatten(), bins=256, range=(0, 256), density=True)    return hist, binsFourier spectrum. The image is converted to grayscale by averaging thechannels, then run through a 2D FFT. The zero-frequency component is shifted tothe center and the magnitude is log-scaled for display:$$F(u,v) = \mathcal{F}{,g(x,y),}, \qquadS(u,v) = \log!\big(1 + |,\text{fftshift}(F),|\big),$$with $g = (R + G + B)&#x2F;3$. The $\log(1+\lvert\cdot\rvert)$ compression is whatmakes the spectrum legible — raw FFT magnitudes span many orders of magnitude andwould otherwise show only the DC spike.def grayscale_fft(image):    gray = (image[:, :, 0] + image[:, :, 1] + image[:, :, 2]) &#x2F; 3.0    fft = np.fft.fft2(gray)    fft_shifted = np.fft.fftshift(fft)    return np.log1p(np.abs(fft_shifted)).astype(np.float32)The GUIThe interface is a QMainWindow with the image canvas on the left and a verticalstack on the right holding the two PyQtGraph plots, four sliders (R, G, B, andBlur), and a reset button. Images arrive via drag-and-drop: dropEvent reads thefile into a QImage, exposes the raw buffer as a NumPy array, and keeps both anuntouched original and a working copy. Every slider movement re-derives theworking copy from the original, re-renders the canvas, and refreshes both plots,so the histogram and spectrum always track exactly what&#x27;s on screen.ResultsThe finished app loads any dropped image and responds to channel and bluradjustments in real time, with the histogram and Fourier spectrum updating livealongside the picture. It&#x27;s a compact demonstration of coupling NumPyimage processing to a responsive PyQt&#x2F;PyQtGraph front end — and a clean base toextend with more filters (the box blur, in particular, is the obvious firsttarget for an FFT-based reimplementation).Dependencies are minimal: PyQt6, PyQtGraph, and NumPy, with Jupyter andMatplotlib used only for the unit tests."
+  
+    ,"image": "https://yamahasetter.github.io/blog/pyqt-image-analyzer/app_example.png"
+  
+}
+</script>
+
+
+
+  </div>
+  <footer>
+  <!-- Social Media Icons -->
+  
+    <div class="mt-4 flex justify-center">
+      
+        
+          <a
+            
+            href="https:&#x2F;&#x2F;github.com&#x2F;yamahasetter" title="Github"
+            
+              class="text-gray-400 hover:text-gray-500">
+            
+            <span class="sr-only">github</span>
+            <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 1024 1024"><path d="M8 0C3.58 0 0 3.58 0 8C0 11.54 2.29 14.53 5.47 15.59C5.87 15.66 6.02 15.42 6.02 15.21C6.02 15.02 6.01 14.39 6.01 13.72C4 14.09 3.48 13.23 3.32 12.78C3.23 12.55 2.84 11.84 2.5 11.65C2.22 11.5 1.82 11.13 2.49 11.12C3.12 11.11 3.57 11.7 3.72 11.94C4.44 13.15 5.59 12.81 6.05 12.6C6.12 12.08 6.33 11.73 6.56 11.53C4.78 11.33 2.92 10.64 2.92 7.58C2.92 6.71 3.23 5.99 3.74 5.43C3.66 5.23 3.38 4.41 3.82 3.31C3.82 3.31 4.49 3.1 6.02 4.13C6.66 3.95 7.34 3.86 8.02 3.86C8.7 3.86 9.38 3.95 10.02 4.13C11.55 3.09 12.22 3.31 12.22 3.31C12.66 4.41 12.38 5.23 12.3 5.43C12.81 5.99 13.12 6.7 13.12 7.58C13.12 10.65 11.25 11.33 9.47 11.53C9.76 11.78 10.01 12.26 10.01 13.01C10.01 14.08 10 14.94 10 15.21C10 15.42 10.15 15.67 10.55 15.59C13.71 14.53 16 11.53 16 8C16 3.58 12.42 0 8 0Z" transform="scale(64)"/></svg>
+          </a>
+        
+      
+        
+          <a
+            
+            href="https:&#x2F;&#x2F;www.linkedin.com&#x2F;in&#x2F;alyn-m-b14b17152&#x2F;" title="Linkedin"
+            
+              class="ml-8 text-gray-400 hover:text-gray-500">
+            
+            <span class="sr-only">linkedin</span>
+            <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 1024 1024"><path d="M0 1.146C0 .513.526 0 1.175 0h13.65C15.474 0 16 .513 16 1.146v13.708c0 .633-.526 1.146-1.175 1.146H1.175C.526 16 0 15.487 0 14.854zm4.943 12.248V6.169H2.542v7.225zm-1.2-8.212c.837 0 1.358-.554 1.358-1.248-.015-.709-.52-1.248-1.342-1.248S2.4 3.226 2.4 3.934c0 .694.521 1.248 1.327 1.248zm4.908 8.212V9.359c0-.216.016-.432.08-.586.173-.431.568-.878 1.232-.878.869 0 1.216.662 1.216 1.634v3.865h2.401V9.25c0-2.22-1.184-3.252-2.764-3.252-1.274 0-1.845.7-2.165 1.193v.025h-.016l.016-.025V6.169h-2.4c.03.678 0 7.225 0 7.225z" transform="scale(64)"/></svg>
+          </a>
+        
+      
+        
+          <a
+            
+            href="https:&#x2F;&#x2F;stackoverflow.com&#x2F;users&#x2F;16188373&#x2F;try-hard" title="Stackoverflow"
+            
+              class="ml-8 text-gray-400 hover:text-gray-500">
+            
+            <span class="sr-only">stackoverflow</span>
+            <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 73.099998 86.599998"><g transform="translate(-22.6,-14.9)"><path d="m 84.4,93.8 0,-23.2 7.7,0 0,30.9 -69.5,0 0,-30.9 7.7,0 0,23.2 z"/><path d="m 38.8,68.4 37.8,7.9 1.6,-7.6 -37.8,-7.9 -1.6,7.6 z m 5,-18 35,16.3 3.2,-7 -35,-16.4 -3.2,7.1 z M 53.5,33.2 83.2,57.9 88.1,52 58.4,27.3 53.5,33.2 Z m 19.2,-18.3 -6.2,4.6 23,31 6.2,-4.6 -23,-31 z M 38,86 l 38.6,0 0,-7.7 -38.6,0 0,7.7 z"/></g></svg>
+          </a>
+        
+      
+        
+      
+        
+      
+    </div>
+  
+  <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8 text-center">
+    
+      <p class="text-center text-base leading-6">
+        
+          
+          <a href="&#x2F;pages&#x2F;privacy&#x2F;">Privacy Policy</a>
+        
+           &middot; 
+          <a href="&#x2F;pages&#x2F;terms&#x2F;">Terms</a>
+        
+      </p>
+    
+    
+    <div class="mt-4">
+      <p class="text-center text-base leading-6 text-gray-400">
+        Copyright 2026 by Thomas Weitzel
+      </p>
+    </div>
+    
+  </div>
+</footer>
+
+</body>
+</html>

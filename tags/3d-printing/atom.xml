@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en">
+    <title> - 3D Printing</title>
+    <link rel="self" type="application/atom+xml" href="https://yamahasetter.github.io/tags/3d-printing/atom.xml"/>
+    <link rel="alternate" type="text/html" href="https://yamahasetter.github.io"/>
+    <generator uri="https://www.getzola.org/">Zola</generator>
+    <updated>2022-01-01T00:00:00+00:00</updated>
+    <id>https://yamahasetter.github.io/tags/3d-printing/atom.xml</id>
+    <entry xml:lang="en">
+        <title>3D Printed Hexcopter</title>
+        <published>2022-01-01T00:00:00+00:00</published>
+        <updated>2022-01-01T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            Alyn Musselman
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://yamahasetter.github.io/blog/3d-printed-hexcopter/"/>
+        <id>https://yamahasetter.github.io/blog/3d-printed-hexcopter/</id>
+        
+        <content type="html" xml:base="https://yamahasetter.github.io/blog/3d-printed-hexcopter/">&lt;h2 id=&quot;motivation&quot;&gt;Motivation&lt;&#x2F;h2&gt;
+&lt;p&gt;I wanted to get into FPV drones, but buying one off the shelf felt boring, so I
+decided to design and 3D print my own instead. To my surprise, printing a
+performance multirotor frame turns out to be extremely difficult — it isn&#x27;t just
+a matter of geometry. A frame has to survive steady thrust loads, the impulse
+loading of hard maneuvers and crashes, torsional flex, and aerodynamic drag, all
+while staying as light as possible. Every one of those constraints pulls the
+design in a different direction.&lt;&#x2F;p&gt;
+&lt;p&gt;What made the project feasible was the resin printer I had just bought. Resin
+(SLA) printing resolves fine features and complex curved geometries that a
+filament (FDM) printer can&#x27;t reliably produce, and it does so without the weak
+layer-adhesion planes that make FDM parts split under load. Those capabilities
+let me design a frame that balances thrust forces against frame torsion and
+flexion, which is the key to stable flight: if the arms flex unpredictably under
+load, the flight controller is constantly fighting a moving target.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;methodology&quot;&gt;Methodology&lt;&#x2F;h2&gt;
+&lt;p&gt;As far as I&#x27;m aware, I&#x27;m the only person to have designed and 3D printed a micro
+&lt;em&gt;hexacopter&lt;&#x2F;em&gt; specifically, so with no prior art to copy my goal was simply a
+working proof of concept.&lt;&#x2F;p&gt;
+&lt;p&gt;I didn&#x27;t start with a fixed picture of the final shape. Instead I worked
+backwards from function: I listed the features the frame had to provide, and let
+those requirements drive its parameters. The overall frame size, for instance,
+was set by the off-the-shelf parts I had to package — the flight controller stack
+and the battery. The arm design, on the other hand, was driven by thrust: the
+motor-and-propeller combination determined how much force each arm had to carry,
+which in turn set the stiffness the arms needed, and therefore their aspect ratio
+(length versus cross-sectional thickness).&lt;&#x2F;p&gt;
+&lt;p&gt;Concretely, the build was organized around three component choices:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Flight controller &#x2F; ESC stack&lt;&#x2F;strong&gt; — a Flywoo GOKU HEX GN405 Nano 13A stack,
+whose mounting footprint fixed the size of the frame&#x27;s center body.&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;strong&gt;Battery&lt;&#x2F;strong&gt; — a single-cell (1S) pack, chosen to keep the craft as small and
+light as possible.&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;strong&gt;Motors and propellers&lt;&#x2F;strong&gt; — these set the thrust per arm, and so dictated the
+profile and stiffness of each arm tip.&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;yamahasetter.github.io&#x2F;blog&#x2F;3d-printed-hexcopter&#x2F;Frame.png&quot; alt=&quot;The frame design in Fusion 360&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;My prototyping process usually begins by locking down dimensions, so the first
+print existed only to verify fitment and proportions of those parts rather than
+final aesthetics. It was not pretty, and it surfaced plenty of design flaws I
+hadn&#x27;t realized I&#x27;d baked in — which is exactly what a first prototype is for.&lt;&#x2F;p&gt;
+&lt;p&gt;I course-corrected through roughly ten CAD iterations before landing on a design
+worth committing to. Each revision traded a little against the others: thinning
+the arms to save mass, then thickening them again where flex showed up; reshaping
+the body to fit the stack more tightly; refining the curves to take advantage of
+what the resin printer could actually hold. The result was far more realistic —
+the geometry showed off the resolution of the resin process, the mass was
+minimized, and the proportions finally looked right.&lt;&#x2F;p&gt;
+&lt;p&gt;After a few more finishing touches, I had a complete airframe with the
+electronics installed:&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;yamahasetter.github.io&#x2F;blog&#x2F;3d-printed-hexcopter&#x2F;drone6.jpg&quot; alt=&quot;The finished, powered-up hexcopter&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;results&quot;&gt;Results&lt;&#x2F;h2&gt;
+&lt;p&gt;The mechanical and design side of the project is essentially complete: the frame
+prints cleanly, packages all of the electronics, and holds together as intended.
+Like several other projects in this library, the remaining work has taken a back
+seat to finishing my academic career, and what&#x27;s left is entirely on the firmware
+side. To get it flying I still need to set up BetaFlight, flash and configure the
+flight controller, and bind the receiver to my transmitter so the craft can be
+armed and tuned. Those are well-trodden steps for a standard build — the hard,
+novel part, designing a printable micro hexcopter frame that flies, is done.&lt;&#x2F;p&gt;
+</content>
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>Rail Gun</title>
+        <published>2021-02-10T00:00:00+00:00</published>
+        <updated>2021-02-10T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            Thomas Weitzel
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://yamahasetter.github.io/blog/rail-gun/"/>
+        <id>https://yamahasetter.github.io/blog/rail-gun/</id>
+        
+        <content type="html" xml:base="https://yamahasetter.github.io/blog/rail-gun/">&lt;h2 id=&quot;motivation&quot;&gt;Motivation&lt;&#x2F;h2&gt;
+&lt;p&gt;I had just finished reading the entirety of the E&amp;amp;M section of Giancoli&#x27;s introduction to physics. I felt that there was only one way to confirm that I had learned anything, and that was to build something with my newfound tools. I chose to build a rail gun to showcase this toolkit.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;methodology&quot;&gt;Methodology&lt;&#x2F;h2&gt;
+&lt;h2 id=&quot;results&quot;&gt;Results&lt;&#x2F;h2&gt;
+</content>
+        
+    </entry>
+</feed>

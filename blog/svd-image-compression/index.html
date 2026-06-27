@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en">
+<head>
+  
+  
+  
+  
+  
+
+  <meta charset="UTF-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge" />
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name=generator content="Zola v0.19.1">
+
+  
+    <meta name="description" content="Using LAPACK to take the singular value decomposition of a high-resolution image and compress it by low-rank truncation.">
+  
+
+  <title>Alyn Musselman</title>
+  <link rel="stylesheet" href="/css/generated.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+  <link rel="stylesheet" href="/css/custom.css">
+  
+    <link rel="icon" href="&#x2F;img&#x2F;yin-yang.svg" />
+  
+
+  
+    <link rel="alternate" type="application/atom+xml" title="Atom Feed for https://yamahasetter.github.io" href="/atom.xml" />
+  
+
+  <script defer src="/js/zolarwind/logic.js" integrity="sha384-GYtsrgYVRYoxdEL+C+79KROm+MCl1ArSzQnqVnPTV78UNz5a1vFxAEiKbobXhQlw"></script>
+  
+    <!-- Calculate sha384: openssl dgst -sha384 -binary FILENAME.EXT | openssl base64 -A -->
+    <link rel="stylesheet" href="/js/katex/katex.min.css" integrity="sha384-GvrOXuhMATgEsSwCs4smul74iXGOixntILdUW9XmUC6+HX0sLNAK3q71HotJqlAn">
+    <script defer src="/js/katex/katex.min.js" integrity="sha384-cpW21h6RZv/phavutF+AuVYrr+dA8xD9zs6FwLpaCct6O9ctzYFfFr4dgmgccOTx"></script>
+    <script defer src="/js/katex/contrib/auto-render.min.js" integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05"></script>
+    <script defer src="/js/katex-config.js" integrity="sha384-YTwoxG+UASh+luh6A7HRGGG9fiJpEYcH1r0/xbJP0wfpH/E4eU3lG9mg4U5OUz9S"></script>
+  
+  
+</head>
+<body>
+  
+
+  
+
+
+<header class="sticky top-0 w-full z-10">
+  <nav class="pf-nav bg-gray-600">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        <div class="flex items-center">
+          <div class="flex-shrink-0">
+            <a href="/" aria-label="Go to homepage">
+              <div class="h-8 w-8 text-gray-200 hover:text-white fill-current">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor">
+                  <path d="M3 12L5 10M5 10L12 3L19 10M5 10V20C5 20.5523 5.44772 21 6 21H9M19 10L21 12M19 10V20C19 20.5523 18.5523 21 18 21H15M9 21C9.55228 21 10 20.5523 10 20V16C10 15.4477 10.4477 15 11 15H13C13.5523 15 14 15.4477 14 16V20C14 20.5523 14.4477 21 15 21M9 21H15" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </div>
+            </a>
+          </div>
+          <div class="hidden md:block">
+            <div class="ml-8 flex items-baseline">
+              
+                
+                  
+                    <a class="px-3 py-2 ml-2 rounded-md font-medium text-gray-200 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-600" href="/pages/imprint/" title="Imprint">Imprint</a>
+                  
+                
+                  
+                    <a class="px-3 py-2 ml-2 rounded-md font-medium text-gray-200 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-600" href="/pages/about/" title="About">About</a>
+                  
+                
+              
+            </div>
+          </div>
+        </div>
+        <div class="-mr-2 flex md:hidden">
+          <button id="toggleMobileMenu" class="icon inline-flex items-center justify-center p-2 rounded-md text-gray-200 hover:text-white hover:bg-gray-700 focus:outline-none focus:bg-gray-700 focus:text-white" aria-label="Menu">
+            <span id="mobile-icon-menu-unselected">
+              <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            </span>
+            <span id="mobile-icon-menu-selected" class="hidden">
+              <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+    
+      <div id="mobile-menu" class="hidden md:hidden px-2 pt-2 pb-3 sm:px-3">
+        
+          
+            <a class="mt-1 block px-3 py-2 rounded-md font-medium text-gray-200 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-600" href="/pages/imprint/" title="Imprint">Imprint</a>
+          
+        
+          
+            <a class="mt-1 block px-3 py-2 rounded-md font-medium text-gray-200 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-600" href="/pages/about/" title="About">About</a>
+          
+        
+      </div>
+    
+  </nav>
+</header>
+
+  <div id="content">
+    
+
+  
+
+  <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
+    <article class="prose">
+      <div class="flex justify-center items-center bg-gray-100 rounded-md">
+        <img class="w-auto h-full object-contain" src="K_160.png" alt="Image Compression with the SVD in C++">
+      </div>
+      <h1>Image Compression with the SVD in C++</h1>
+      <div>
+        <p>
+          <span class="mr-2 text-sm">
+            <time datetime="2024-03-20">March 20, 2024</time> &middot;
+            662 words &middot;
+            4 minutes reading time
+          </span>
+          <span class="text-sm leading-5 font-medium text-indigo-600">
+
+  
+    
+      <span class="mr-2 badge badge-green"><a href="https://yamahasetter.github.io/tags/math/">math</a></span>
+    
+      <span class="mr-2 badge badge-green"><a href="https://yamahasetter.github.io/tags/statistics/">Statistics</a></span>
+    
+  
+
+</span>
+
+        </p>
+      </div>
+
+      <div>
+        <h2 id="motivation">Motivation</h2>
+<p>The singular value decomposition is one of the most useful factorizations in
+numerical linear algebra, and image compression is its most visual demo. A
+grayscale image is just a matrix of pixel intensities; the SVD lets you keep only
+the handful of directions that carry the most information and throw the rest
+away. This was the SVD half of my AM213A final project: load a high-resolution
+image as a matrix in C++, compute its SVD with <strong>LAPACK</strong>, and reconstruct it at
+a sequence of ranks to watch quality trade against compression.</p>
+<p>The test image is a $1279 \times 1920$ grayscale photo of a dog, read in as a
+matrix of doubles.</p>
+<h2 id="the-math">The Math</h2>
+<p>Any real $m \times n$ matrix $A$ factors as</p>
+<p>$$
+A = U \Sigma V^{T},
+$$</p>
+<p>where $U \in \mathbb{R}^{m\times m}$ and $V \in \mathbb{R}^{n\times n}$ are
+orthogonal and $\Sigma$ is diagonal with the singular values
+$\sigma_1 \ge \sigma_2 \ge \dots \ge 0$ on its diagonal. Because the singular
+values are sorted, the sum</p>
+<p>$$
+A = \sum_{i=1}^{r} \sigma_i, u_i v_i^{T}
+$$</p>
+<p>is dominated by its first few terms. The <strong>rank-$K$ truncation</strong> keeps only the
+$K$ largest singular values,</p>
+<p>$$
+A_K = \sum_{i=1}^{K} \sigma_i, u_i v_i^{T},
+$$</p>
+<p>which the Eckart–Young theorem guarantees is the <em>best</em> rank-$K$ approximation of
+$A$ in both the spectral and Frobenius norms. In practice I built $A_K$ by zeroing
+out every diagonal entry of $\Sigma$ past index $K$ and re-multiplying
+$U \Sigma_K V^{T}$.</p>
+<p>The savings: instead of storing $m \times n$ numbers, a rank-$K$ image needs only
+$K(m + n + 1)$ — the kept columns of $U$, rows of $V^{T}$, and singular values.
+For this image, $K = 160$ stores roughly 12% of the original data.</p>
+<h2 id="the-c-implementation">The C++ Implementation</h2>
+<p>The heavy lifting is done by <code>dgesvd</code>, the LAPACK double-precision SVD routine,
+called here through Apple's Accelerate framework. (LAPACK is the modern successor
+to the original LINPACK library.) The workflow in <code>driver.cpp</code>:</p>
+<ol>
+<li>Read the <code>.dat</code> pixel file into a <code>vector&lt;vector&lt;double&gt;&gt;</code>, then flatten it
+into a <strong>column-major</strong> <code>double*</code> array — the layout LAPACK expects.</li>
+<li>Call <code>dgesvd_</code> with <code>JOBU = JOBVT = 'A'</code> to get the full $U$, $\Sigma$, and
+$V^{T}$.</li>
+<li>Rebuild $\Sigma$ as a diagonal matrix, then loop over a list of target ranks,
+zeroing the tail of $\Sigma$ and reconstructing.</li>
+</ol>
+<pre data-lang="cpp" style="background-color:#191919;color:#f8f8f2;" class="language-cpp "><code class="language-cpp" data-lang="cpp"><span style="font-style:italic;color:#fbdfb5;">char</span><span> JOBU </span><span style="color:#ff5e5e;">= </span><span style="color:#ffffff;">&#39;</span><span style="color:#fbe3bf;">A</span><span style="color:#ffffff;">&#39;</span><span>, JOBVT </span><span style="color:#ff5e5e;">= </span><span style="color:#ffffff;">&#39;</span><span style="color:#fbe3bf;">A</span><span style="color:#ffffff;">&#39;</span><span>;
+</span><span style="font-style:italic;color:#fbdfb5;">int</span><span> M </span><span style="color:#ff5e5e;">= </span><span style="color:#fdb082;">1279</span><span>, N </span><span style="color:#ff5e5e;">= </span><span style="color:#fdb082;">1920</span><span>, LDA </span><span style="color:#ff5e5e;">=</span><span> M, LDU </span><span style="color:#ff5e5e;">=</span><span> M, LDVT </span><span style="color:#ff5e5e;">=</span><span> N;
+</span><span style="font-style:italic;color:#fbdfb5;">int</span><span> mn </span><span style="color:#ff5e5e;">= </span><span style="color:#e9fdac;">min</span><span>(M, N), MN </span><span style="color:#ff5e5e;">= </span><span style="color:#e9fdac;">max</span><span>(M, N);
+</span><span style="font-style:italic;color:#fbdfb5;">int</span><span> LWORK </span><span style="color:#ff5e5e;">= </span><span style="color:#fdb082;">2 </span><span style="color:#ff5e5e;">* </span><span style="color:#e9fdac;">max</span><span>(</span><span style="color:#fdb082;">3</span><span style="color:#ff5e5e;">*</span><span>mn </span><span style="color:#ff5e5e;">+</span><span> MN, </span><span style="color:#fdb082;">5</span><span style="color:#ff5e5e;">*</span><span>mn);
+</span><span style="font-style:italic;color:#fbdfb5;">int</span><span> INFO;
+</span><span>
+</span><span style="font-style:italic;color:#fbdfb5;">double</span><span style="color:#ff5e5e;">*</span><span> S    </span><span style="color:#ff5e5e;">= new </span><span style="font-style:italic;color:#fbdfb5;">double</span><span>[mn];
+</span><span style="font-style:italic;color:#fbdfb5;">double</span><span style="color:#ff5e5e;">*</span><span> U    </span><span style="color:#ff5e5e;">= new </span><span style="font-style:italic;color:#fbdfb5;">double</span><span>[LDU</span><span style="color:#ff5e5e;">*</span><span>M];
+</span><span style="font-style:italic;color:#fbdfb5;">double</span><span style="color:#ff5e5e;">*</span><span> VT   </span><span style="color:#ff5e5e;">= new </span><span style="font-style:italic;color:#fbdfb5;">double</span><span>[LDVT</span><span style="color:#ff5e5e;">*</span><span>N];
+</span><span style="font-style:italic;color:#fbdfb5;">double</span><span style="color:#ff5e5e;">*</span><span> WORK </span><span style="color:#ff5e5e;">= new </span><span style="font-style:italic;color:#fbdfb5;">double</span><span>[LWORK];
+</span><span>
+</span><span style="color:#e9fdac;">dgesvd_</span><span>(</span><span style="color:#ff5e5e;">&amp;</span><span>JOBU, </span><span style="color:#ff5e5e;">&amp;</span><span>JOBVT, </span><span style="color:#ff5e5e;">&amp;</span><span>M, </span><span style="color:#ff5e5e;">&amp;</span><span>N,
+</span><span>        doggy_arr, </span><span style="color:#ff5e5e;">&amp;</span><span>LDA,
+</span><span>        S, U, </span><span style="color:#ff5e5e;">&amp;</span><span>LDU, VT, </span><span style="color:#ff5e5e;">&amp;</span><span>LDVT,
+</span><span>        WORK, </span><span style="color:#ff5e5e;">&amp;</span><span>LWORK, </span><span style="color:#ff5e5e;">&amp;</span><span>INFO);
+</span></code></pre>
+<p>The compression loop sweeps $K \in {1279, 640, 320, 160, 80, 40, 20, 10}$:</p>
+<pre data-lang="cpp" style="background-color:#191919;color:#f8f8f2;" class="language-cpp "><code class="language-cpp" data-lang="cpp"><span style="font-style:italic;color:#fbdfb5;">int</span><span> k[</span><span style="color:#fdb082;">8</span><span>] </span><span style="color:#ff5e5e;">= </span><span>{</span><span style="color:#fdb082;">1279</span><span>, </span><span style="color:#fdb082;">640</span><span>, </span><span style="color:#fdb082;">320</span><span>, </span><span style="color:#fdb082;">160</span><span>, </span><span style="color:#fdb082;">80</span><span>, </span><span style="color:#fdb082;">40</span><span>, </span><span style="color:#fdb082;">20</span><span>, </span><span style="color:#fdb082;">10</span><span>};
+</span><span style="color:#ff5e5e;">for </span><span>(</span><span style="font-style:italic;color:#fbdfb5;">int</span><span> i </span><span style="color:#ff5e5e;">= </span><span style="color:#fdb082;">0</span><span>; i </span><span style="color:#ff5e5e;">&lt; </span><span style="color:#fdb082;">8</span><span>; i</span><span style="color:#ff5e5e;">++</span><span>) {
+</span><span>    </span><span style="color:#ff5e5e;">for </span><span>(</span><span style="font-style:italic;color:#fbdfb5;">int</span><span> j </span><span style="color:#ff5e5e;">= </span><span style="color:#fdb082;">0</span><span>; j </span><span style="color:#ff5e5e;">&lt;</span><span> M; j</span><span style="color:#ff5e5e;">++</span><span>)
+</span><span>        </span><span style="color:#ff5e5e;">if </span><span>(j </span><span style="color:#ff5e5e;">&gt;</span><span> k[i]) Sdag[j][j] </span><span style="color:#ff5e5e;">= </span><span style="color:#fdb082;">0</span><span>;      </span><span style="color:#6d6d6d;">// truncate Sigma
+</span><span>
+</span><span>    US </span><span style="color:#ff5e5e;">= </span><span style="color:#e9fdac;">matrixmult</span><span>(Uvec, Sdag);
+</span><span>    </span><span style="font-style:italic;color:#fbdfb5;">auto</span><span> USVT2 </span><span style="color:#ff5e5e;">= </span><span style="color:#e9fdac;">matrixmult</span><span>(US, VTvec);    </span><span style="color:#6d6d6d;">// reconstruct A_K
+</span><span>
+</span><span>    </span><span style="font-style:italic;color:#fbdfb5;">auto</span><span> diff </span><span style="color:#ff5e5e;">= </span><span style="color:#e9fdac;">difference</span><span>(USVT, USVT2);   </span><span style="color:#6d6d6d;">// error vs full-rank
+</span><span>    </span><span style="font-style:italic;color:#fbdfb5;">double</span><span> err </span><span style="color:#ff5e5e;">= </span><span style="color:#e9fdac;">frobnorm</span><span>(diff) </span><span style="color:#ff5e5e;">/ </span><span>(M</span><span style="color:#ff5e5e;">*</span><span>N);
+</span><span>}
+</span></code></pre>
+<p>Reconstruction error is measured with the <strong>Frobenius norm</strong>, computed via
+$\lVert A \rVert_F = \sqrt{\operatorname{tr}(A^{T} A)}$, then normalized by the
+pixel count:</p>
+<pre data-lang="cpp" style="background-color:#191919;color:#f8f8f2;" class="language-cpp "><code class="language-cpp" data-lang="cpp"><span style="font-style:italic;color:#fbdfb5;">double </span><span style="color:#8cdaff;">frobnorm</span><span>(vector&lt;vector&lt;</span><span style="font-style:italic;color:#fbdfb5;">double</span><span>&gt;&gt; </span><span style="font-style:italic;color:#fc9354;">A</span><span>) {
+</span><span>    </span><span style="font-style:italic;color:#fbdfb5;">auto</span><span> AT  </span><span style="color:#ff5e5e;">= </span><span style="color:#e9fdac;">transpose</span><span>(A);
+</span><span>    </span><span style="font-style:italic;color:#fbdfb5;">auto</span><span> ATA </span><span style="color:#ff5e5e;">= </span><span style="color:#e9fdac;">matrixmult</span><span>(AT, A);
+</span><span>    </span><span style="color:#ff5e5e;">return </span><span style="color:#6699cc;">sqrt</span><span>(</span><span style="color:#e9fdac;">trace</span><span>(ATA, A.</span><span style="color:#e9fdac;">size</span><span>()));
+</span><span>}
+</span></code></pre>
+<h2 id="results">Results</h2>
+<p>The reconstructions show how quickly the image becomes recognizable. At rank 10
+only the broadest light/dark structure survives; by rank 40 the subject is
+clearly emerging; rank 160 is visually close to the original; and rank 1279
+(full) is the exact image.</p>
+<p><img src="https://yamahasetter.github.io/blog/svd-image-compression/K_10.png" alt="Rank 10 reconstruction" />
+<img src="https://yamahasetter.github.io/blog/svd-image-compression/K_40.png" alt="Rank 40 reconstruction" />
+<img src="https://yamahasetter.github.io/blog/svd-image-compression/K_160.png" alt="Rank 160 reconstruction" />
+<img src="https://yamahasetter.github.io/blog/svd-image-compression/K_1279.png" alt="Full-rank (K = 1279) reconstruction" /></p>
+<h2 id="key-takeaways">Key Takeaways</h2>
+<p>The project distilled down to a few lessons:</p>
+<ul>
+<li><strong>A few singular values carry most of the picture.</strong> Because $\sigma_i$ decays
+fast, low ranks reconstruct a faithful image — the SVD concentrates information
+into its leading modes, which is exactly why it compresses.</li>
+<li><strong>Eckart–Young makes truncation optimal.</strong> Zeroing the smallest singular values
+isn't a heuristic; it provably gives the best possible rank-$K$ approximation,
+so there's no better way to spend a fixed storage budget.</li>
+<li><strong>Memory layout is the real work of calling LAPACK.</strong> <code>dgesvd</code> is one function
+call; getting the image into the column-major <code>double*</code> it expects, sizing the
+<code>LWORK</code> workspace, and shuttling $U$, $\Sigma$, $V^{T}$ back into matrices was
+the bulk of the C++.</li>
+<li><strong>Compression vs. fidelity is a tunable knob.</strong> Sweeping $K$ and tracking the
+normalized Frobenius error turns "how compressed?" into a quantitative curve
+rather than a guess — error falls monotonically as $K$ grows, with diminishing
+returns past the point where the image already looks right.</li>
+</ul>
+
+      </div>
+    </article>
+  </div>
+
+
+  <script type="application/ld+json">
+{
+   "@context": "https://schema.org"
+  ,"@type": "BlogPosting"
+  ,"mainEntityOfPage": {
+     "@type": "WebPage"
+    ,"@id": "https://yamahasetter.github.io/blog/svd-image-compression/"
+  }
+  ,"headline": "Image Compression with the SVD in C++"
+  ,"datePublished": "2024-03-20"
+  ,"dateModified": "2024-03-20"
+  
+  ,"author": [
+    
+      {
+         "@type": "Person"
+        ,"name": "Alyn Musselman"
+      }
+      
+    
+  ]
+  ,"publisher": [
+    
+      {
+         "@type": "Person"
+        ,"name": "Alyn Musselman"
+      }
+      
+    
+  ]
+  
+  ,"description": "Using LAPACK to take the singular value decomposition of a high-resolution image and compress it by low-rank truncation."
+  ,"articleBody": "MotivationThe singular value decomposition is one of the most useful factorizations innumerical linear algebra, and image compression is its most visual demo. Agrayscale image is just a matrix of pixel intensities; the SVD lets you keep onlythe handful of directions that carry the most information and throw the restaway. This was the SVD half of my AM213A final project: load a high-resolutionimage as a matrix in C++, compute its SVD with LAPACK, and reconstruct it ata sequence of ranks to watch quality trade against compression.The test image is a $1279 \times 1920$ grayscale photo of a dog, read in as amatrix of doubles.The MathAny real $m \times n$ matrix $A$ factors as$$A = U \Sigma V^{T},$$where $U \in \mathbb{R}^{m\times m}$ and $V \in \mathbb{R}^{n\times n}$ areorthogonal and $\Sigma$ is diagonal with the singular values$\sigma_1 \ge \sigma_2 \ge \dots \ge 0$ on its diagonal. Because the singularvalues are sorted, the sum$$A = \sum_{i=1}^{r} \sigma_i, u_i v_i^{T}$$is dominated by its first few terms. The rank-$K$ truncation keeps only the$K$ largest singular values,$$A_K = \sum_{i=1}^{K} \sigma_i, u_i v_i^{T},$$which the Eckart–Young theorem guarantees is the best rank-$K$ approximation of$A$ in both the spectral and Frobenius norms. In practice I built $A_K$ by zeroingout every diagonal entry of $\Sigma$ past index $K$ and re-multiplying$U \Sigma_K V^{T}$.The savings: instead of storing $m \times n$ numbers, a rank-$K$ image needs only$K(m + n + 1)$ — the kept columns of $U$, rows of $V^{T}$, and singular values.For this image, $K = 160$ stores roughly 12% of the original data.The C++ ImplementationThe heavy lifting is done by dgesvd, the LAPACK double-precision SVD routine,called here through Apple&#x27;s Accelerate framework. (LAPACK is the modern successorto the original LINPACK library.) The workflow in driver.cpp:Read the .dat pixel file into a vector&amp;lt;vector&amp;lt;double&amp;gt;&amp;gt;, then flatten itinto a column-major double* array — the layout LAPACK expects.Call dgesvd_ with JOBU = JOBVT = &#x27;A&#x27; to get the full $U$, $\Sigma$, and$V^{T}$.Rebuild $\Sigma$ as a diagonal matrix, then loop over a list of target ranks,zeroing the tail of $\Sigma$ and reconstructing.char JOBU = &amp;#39;A&amp;#39;, JOBVT = &amp;#39;A&amp;#39;;int M = 1279, N = 1920, LDA = M, LDU = M, LDVT = N;int mn = min(M, N), MN = max(M, N);int LWORK = 2 * max(3*mn + MN, 5*mn);int INFO;double* S    = new double[mn];double* U    = new double[LDU*M];double* VT   = new double[LDVT*N];double* WORK = new double[LWORK];dgesvd_(&amp;amp;JOBU, &amp;amp;JOBVT, &amp;amp;M, &amp;amp;N,        doggy_arr, &amp;amp;LDA,        S, U, &amp;amp;LDU, VT, &amp;amp;LDVT,        WORK, &amp;amp;LWORK, &amp;amp;INFO);The compression loop sweeps $K \in {1279, 640, 320, 160, 80, 40, 20, 10}$:int k[8] = {1279, 640, 320, 160, 80, 40, 20, 10};for (int i = 0; i &amp;lt; 8; i++) {    for (int j = 0; j &amp;lt; M; j++)        if (j &amp;gt; k[i]) Sdag[j][j] = 0;      &#x2F;&#x2F; truncate Sigma    US = matrixmult(Uvec, Sdag);    auto USVT2 = matrixmult(US, VTvec);    &#x2F;&#x2F; reconstruct A_K    auto diff = difference(USVT, USVT2);   &#x2F;&#x2F; error vs full-rank    double err = frobnorm(diff) &#x2F; (M*N);}Reconstruction error is measured with the Frobenius norm, computed via$\lVert A \rVert_F = \sqrt{\operatorname{tr}(A^{T} A)}$, then normalized by thepixel count:double frobnorm(vector&amp;lt;vector&amp;lt;double&amp;gt;&amp;gt; A) {    auto AT  = transpose(A);    auto ATA = matrixmult(AT, A);    return sqrt(trace(ATA, A.size()));}ResultsThe reconstructions show how quickly the image becomes recognizable. At rank 10only the broadest light&#x2F;dark structure survives; by rank 40 the subject isclearly emerging; rank 160 is visually close to the original; and rank 1279(full) is the exact image.Key TakeawaysThe project distilled down to a few lessons:A few singular values carry most of the picture. Because $\sigma_i$ decaysfast, low ranks reconstruct a faithful image — the SVD concentrates informationinto its leading modes, which is exactly why it compresses.Eckart–Young makes truncation optimal. Zeroing the smallest singular valuesisn&#x27;t a heuristic; it provably gives the best possible rank-$K$ approximation,so there&#x27;s no better way to spend a fixed storage budget.Memory layout is the real work of calling LAPACK. dgesvd is one functioncall; getting the image into the column-major double* it expects, sizing theLWORK workspace, and shuttling $U$, $\Sigma$, $V^{T}$ back into matrices wasthe bulk of the C++.Compression vs. fidelity is a tunable knob. Sweeping $K$ and tracking thenormalized Frobenius error turns &#x27;how compressed?&#x27; into a quantitative curverather than a guess — error falls monotonically as $K$ grows, with diminishingreturns past the point where the image already looks right."
+  
+    ,"image": "https://yamahasetter.github.io/blog/svd-image-compression/K_160.png"
+  
+}
+</script>
+
+
+
+  </div>
+  <footer>
+  <!-- Social Media Icons -->
+  
+    <div class="mt-4 flex justify-center">
+      
+        
+          <a
+            
+            href="https:&#x2F;&#x2F;github.com&#x2F;yamahasetter" title="Github"
+            
+              class="text-gray-400 hover:text-gray-500">
+            
+            <span class="sr-only">github</span>
+            <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 1024 1024"><path d="M8 0C3.58 0 0 3.58 0 8C0 11.54 2.29 14.53 5.47 15.59C5.87 15.66 6.02 15.42 6.02 15.21C6.02 15.02 6.01 14.39 6.01 13.72C4 14.09 3.48 13.23 3.32 12.78C3.23 12.55 2.84 11.84 2.5 11.65C2.22 11.5 1.82 11.13 2.49 11.12C3.12 11.11 3.57 11.7 3.72 11.94C4.44 13.15 5.59 12.81 6.05 12.6C6.12 12.08 6.33 11.73 6.56 11.53C4.78 11.33 2.92 10.64 2.92 7.58C2.92 6.71 3.23 5.99 3.74 5.43C3.66 5.23 3.38 4.41 3.82 3.31C3.82 3.31 4.49 3.1 6.02 4.13C6.66 3.95 7.34 3.86 8.02 3.86C8.7 3.86 9.38 3.95 10.02 4.13C11.55 3.09 12.22 3.31 12.22 3.31C12.66 4.41 12.38 5.23 12.3 5.43C12.81 5.99 13.12 6.7 13.12 7.58C13.12 10.65 11.25 11.33 9.47 11.53C9.76 11.78 10.01 12.26 10.01 13.01C10.01 14.08 10 14.94 10 15.21C10 15.42 10.15 15.67 10.55 15.59C13.71 14.53 16 11.53 16 8C16 3.58 12.42 0 8 0Z" transform="scale(64)"/></svg>
+          </a>
+        
+      
+        
+          <a
+            
+            href="https:&#x2F;&#x2F;www.linkedin.com&#x2F;in&#x2F;alyn-m-b14b17152&#x2F;" title="Linkedin"
+            
+              class="ml-8 text-gray-400 hover:text-gray-500">
+            
+            <span class="sr-only">linkedin</span>
+            <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 1024 1024"><path d="M0 1.146C0 .513.526 0 1.175 0h13.65C15.474 0 16 .513 16 1.146v13.708c0 .633-.526 1.146-1.175 1.146H1.175C.526 16 0 15.487 0 14.854zm4.943 12.248V6.169H2.542v7.225zm-1.2-8.212c.837 0 1.358-.554 1.358-1.248-.015-.709-.52-1.248-1.342-1.248S2.4 3.226 2.4 3.934c0 .694.521 1.248 1.327 1.248zm4.908 8.212V9.359c0-.216.016-.432.08-.586.173-.431.568-.878 1.232-.878.869 0 1.216.662 1.216 1.634v3.865h2.401V9.25c0-2.22-1.184-3.252-2.764-3.252-1.274 0-1.845.7-2.165 1.193v.025h-.016l.016-.025V6.169h-2.4c.03.678 0 7.225 0 7.225z" transform="scale(64)"/></svg>
+          </a>
+        
+      
+        
+          <a
+            
+            href="https:&#x2F;&#x2F;stackoverflow.com&#x2F;users&#x2F;16188373&#x2F;try-hard" title="Stackoverflow"
+            
+              class="ml-8 text-gray-400 hover:text-gray-500">
+            
+            <span class="sr-only">stackoverflow</span>
+            <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 73.099998 86.599998"><g transform="translate(-22.6,-14.9)"><path d="m 84.4,93.8 0,-23.2 7.7,0 0,30.9 -69.5,0 0,-30.9 7.7,0 0,23.2 z"/><path d="m 38.8,68.4 37.8,7.9 1.6,-7.6 -37.8,-7.9 -1.6,7.6 z m 5,-18 35,16.3 3.2,-7 -35,-16.4 -3.2,7.1 z M 53.5,33.2 83.2,57.9 88.1,52 58.4,27.3 53.5,33.2 Z m 19.2,-18.3 -6.2,4.6 23,31 6.2,-4.6 -23,-31 z M 38,86 l 38.6,0 0,-7.7 -38.6,0 0,7.7 z"/></g></svg>
+          </a>
+        
+      
+        
+      
+        
+      
+    </div>
+  
+  <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8 text-center">
+    
+      <p class="text-center text-base leading-6">
+        
+          
+          <a href="&#x2F;pages&#x2F;privacy&#x2F;">Privacy Policy</a>
+        
+           &middot; 
+          <a href="&#x2F;pages&#x2F;terms&#x2F;">Terms</a>
+        
+      </p>
+    
+    
+    <div class="mt-4">
+      <p class="text-center text-base leading-6 text-gray-400">
+        Copyright 2026 by Thomas Weitzel
+      </p>
+    </div>
+    
+  </div>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,1101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en">
+    <title> - math</title>
+    <link rel="self" type="application/atom+xml" href="https://yamahasetter.github.io/tags/math/atom.xml"/>
+    <link rel="alternate" type="text/html" href="https://yamahasetter.github.io"/>
+    <generator uri="https://www.getzola.org/">Zola</generator>
+    <updated>2026-06-20T00:00:00+00:00</updated>
+    <id>https://yamahasetter.github.io/tags/math/atom.xml</id>
+    <entry xml:lang="en">
+        <title>Fourier Neural Operators Are a Reduced-Order Spectral Method</title>
+        <published>2026-06-20T00:00:00+00:00</published>
+        <updated>2026-06-20T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            Alyn Musselman
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://yamahasetter.github.io/blog/fno-as-spectral-method/"/>
+        <id>https://yamahasetter.github.io/blog/fno-as-spectral-method/</id>
+        
+        <content type="html" xml:base="https://yamahasetter.github.io/blog/fno-as-spectral-method/">&lt;h2 id=&quot;abstract&quot;&gt;Abstract&lt;&#x2F;h2&gt;
+&lt;p&gt;A Fourier Neural Operator (FNO) learns a mapping $G_\theta : A \to U$ between
+function spaces. Here I show that, with a few modifications, a single FNO layer
+reduces to the canonical &lt;strong&gt;Fourier spectral method&lt;&#x2F;strong&gt;. A single FNO
+integral-kernel layer is trained on heat-equation snapshots $u^n \to u^{n+1}$,
+with no physics supplied, and the result is striking:&lt;&#x2F;p&gt;
+&lt;ol&gt;
+&lt;li&gt;The learned weights $R_\theta$ match the analytic &lt;strong&gt;amplification factor&lt;&#x2F;strong&gt;
+$M_m = 1&#x2F;(1 + \Delta t, k_m^2)$ to ~$10^{-7}$, showing the FNO recovers the
+Fourier spectral method.&lt;&#x2F;li&gt;
+&lt;li&gt;Only the active POD modes ($k = 1, 2, 3$) are learned; the rest stay ~0.&lt;&#x2F;li&gt;
+&lt;li&gt;Truncating $R_\theta$ to those three modes reproduces the full solution
+through time.&lt;&#x2F;li&gt;
+&lt;li&gt;Taken together: the FNO, at its core, is a reduced-order Fourier spectral
+method.&lt;&#x2F;li&gt;
+&lt;&#x2F;ol&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;yamahasetter.github.io&#x2F;blog&#x2F;fno-as-spectral-method&#x2F;poster.png&quot; alt=&quot;Project poster&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;the-fourier-spectral-method&quot;&gt;The Fourier Spectral Method&lt;&#x2F;h2&gt;
+&lt;p&gt;On a periodic grid of $N$ points, the discrete Fourier transform (DFT) pair is&lt;&#x2F;p&gt;
+&lt;p&gt;$$
+\hat{u}&lt;em&gt;m = \sum&lt;&#x2F;em&gt;{j=1}^{N} u_j, e^{-i k_m x_j},
+\qquad
+u_j = \frac{1}{N}\sum_{m} \hat{u}_m, e^{i k_m x_j},
+$$&lt;&#x2F;p&gt;
+&lt;p&gt;where $u_j = u(x_j)$ is the field sampled at grid point $x_j$; $\hat{u}_m$ is the
+$m$-th Fourier coefficient ($-N&#x2F;2 &amp;lt; m \le N&#x2F;2$); and $k_m = 2\pi m &#x2F; L$ is the
+wavenumber of mode $m$ on a domain of length $L$. Differentiation is &lt;strong&gt;diagonal&lt;&#x2F;strong&gt;
+in this basis:&lt;&#x2F;p&gt;
+&lt;p&gt;$$
+\frac{\partial}{\partial x} \to i k_m,
+\qquad
+\frac{\partial^2}{\partial x^2} \to -k_m^2,
+$$&lt;&#x2F;p&gt;
+&lt;p&gt;so each spatial derivative becomes a multiplication of $\hat{u}_m$ by a known
+function of $k_m$ — the source of the method&#x27;s spectral accuracy.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;the-fno-layer-and-integral-kernel-operator&quot;&gt;The FNO Layer and Integral Kernel Operator&lt;&#x2F;h2&gt;
+&lt;p&gt;A single FNO layer maps $v_\ell(x) \mapsto v_{\ell+1}(x)$ via&lt;&#x2F;p&gt;
+&lt;p&gt;$$
+v_{\ell+1}(x) = \sigma!\Big( W v_\ell(x) + (\mathcal{K} v_\ell)(x) \Big),
+$$&lt;&#x2F;p&gt;
+&lt;p&gt;with activation $\sigma$, local linear transform $W$, and &lt;strong&gt;integral kernel
+operator&lt;&#x2F;strong&gt; $\mathcal{K}$ applied in Fourier space:&lt;&#x2F;p&gt;
+&lt;p&gt;$$
+(\mathcal{K} v_\ell)(x) = \mathcal{F}^{-1}!\big(, R_\theta \cdot \mathcal{F}(v_\ell), \big).
+$$&lt;&#x2F;p&gt;
+&lt;p&gt;Here $R_\theta$ is a &lt;strong&gt;learned&lt;&#x2F;strong&gt; complex weight per retained mode. The operator&#x27;s
+structure is: FFT $\to$ multiply each mode by a weight $\to$ inverse FFT.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;connecting-m-m-and-r-theta&quot;&gt;Connecting $M_m$ and $R_\theta$&lt;&#x2F;h2&gt;
+&lt;p&gt;The kernel operator begins with an FFT and ends with an inverse FFT, with a
+per-mode multiplication between — exactly the structure of a spectral update,
+$u^{n+1} = \mathcal{F}^{-1}(M_m \cdot \mathcal{F}(u^n))$. They are the same
+operation; only the multiplier&#x27;s origin differs: $R_\theta$ is &lt;strong&gt;learned&lt;&#x2F;strong&gt;,
+$M_m$ is the &lt;strong&gt;analytic amplification factor&lt;&#x2F;strong&gt; of the PDE update. We recover the
+spectral method by dropping $\sigma$ and $W$, keeping all modes, and setting
+$R_\theta = M_m$.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;the-heat-equation&quot;&gt;The Heat Equation&lt;&#x2F;h2&gt;
+&lt;p&gt;On a periodic domain,&lt;&#x2F;p&gt;
+&lt;p&gt;$$
+\frac{\partial u}{\partial t} = \frac{\partial^2 u}{\partial x^2}.
+$$&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;strong&gt;Analytic solution.&lt;&#x2F;strong&gt; With $u(x,t) = \hat{u}_m(t),e^{i k_m x}$, each mode obeys
+$\dot{\hat{u}}_m = -k_m^2 \hat{u}_m$, so $\hat{u}_m(t) = \hat{u}_m(0),e^{-k_m^2 t}$.
+For the initial condition $u(x,0) = \sin(x) + 0.5\sin(2x) + 0.3\sin(3x)$ this
+gives the closed form (our ground truth)&lt;&#x2F;p&gt;
+&lt;p&gt;$$
+u(x,t) = e^{-t}\sin(x) + 0.5,e^{-4t}\sin(2x) + 0.3,e^{-9t}\sin(3x),
+$$&lt;&#x2F;p&gt;
+&lt;p&gt;which excites exactly three wavenumbers, $k = 1, 2, 3$.&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;yamahasetter.github.io&#x2F;blog&#x2F;fno-as-spectral-method&#x2F;analytic.png&quot; alt=&quot;Analytic solution&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;strong&gt;Spectral solution.&lt;&#x2F;strong&gt; The DFT sends $\partial_{xx} \to -k_m^2$, giving
+$\dot{\hat{u}}_m = -k_m^2 \hat{u}_m$. A backward (implicit) Euler step,
+$(\hat{u}_m^{,n+1} - \hat{u}_m^{,n})&#x2F;\Delta t = -k_m^2 \hat{u}_m^{,n+1}$,
+yields&lt;&#x2F;p&gt;
+&lt;p&gt;$$
+\hat{u}_m^{,n+1} = M_m, \hat{u}_m^{,n},
+\qquad
+M_m = \frac{1}{1 + \Delta t, k_m^2},
+$$&lt;&#x2F;p&gt;
+&lt;p&gt;the amplification factor that $R_\theta$ must reproduce.&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;python&quot; style=&quot;background-color:#191919;color:#f8f8f2;&quot; class=&quot;language-python &quot;&gt;&lt;code class=&quot;language-python&quot; data-lang=&quot;python&quot;&gt;&lt;span&gt;uhat &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span&gt;np.fft.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;fft&lt;&#x2F;span&gt;&lt;span&gt;(u0)                 &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6d6d6d;&quot;&gt;# FFT of initial condition (once)
+&lt;&#x2F;span&gt;&lt;span&gt;M    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;1.0 &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;&#x2F; &lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;1.0 &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;+ &lt;&#x2F;span&gt;&lt;span&gt;dt &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;* &lt;&#x2F;span&gt;&lt;span&gt;k&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;**&lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;2&lt;&#x2F;span&gt;&lt;span&gt;)        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6d6d6d;&quot;&gt;# amplification factor per mode
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;for &lt;&#x2F;span&gt;&lt;span&gt;n &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;in &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;range&lt;&#x2F;span&gt;&lt;span&gt;(nsteps):
+&lt;&#x2F;span&gt;&lt;span&gt;    uhat &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span&gt;uhat &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;* &lt;&#x2F;span&gt;&lt;span&gt;M                   &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6d6d6d;&quot;&gt;# backsolve in Fourier space
+&lt;&#x2F;span&gt;&lt;span&gt;u &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span&gt;np.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;real&lt;&#x2F;span&gt;&lt;span&gt;(np.fft.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;ifft&lt;&#x2F;span&gt;&lt;span&gt;(uhat))        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6d6d6d;&quot;&gt;# inverse FFT to physical space
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;yamahasetter.github.io&#x2F;blog&#x2F;fno-as-spectral-method&#x2F;fourier.png&quot; alt=&quot;Fourier spectral solution&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;results&quot;&gt;Results&lt;&#x2F;h2&gt;
+&lt;p&gt;I train a single integral-kernel layer (no $W$, no activation) on the snapshot
+pairs $u^n \to u^{n+1}$ generated above, learning one complex weight $R_\theta$
+per Fourier mode.&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;strong&gt;The FNO recovers the spectral method.&lt;&#x2F;strong&gt; On the modes the data actually excites
+($k = 1, 2, 3$), the learned weights match the analytic amplification factor,
+$R_\theta = M_m$, to ~$10^{-7}$. The network rediscovers
+$1&#x2F;(1 + \Delta t, k_m^2)$ from data alone.&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;yamahasetter.github.io&#x2F;blog&#x2F;fno-as-spectral-method&#x2F;full_fno.png&quot; alt=&quot;Full FNO result&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;strong&gt;The FNO self-selects the active modes.&lt;&#x2F;strong&gt; A proper orthogonal decomposition
+(POD) of the solution trajectory shows it is rank 3: only three singular values
+are nonzero, and the leading POD modes are exactly $\sin x, \sin 2x, \sin 3x$.
+The heat equation is linear and diagonal in Fourier space, so unexcited modes
+start at zero and stay there — during training those weights receive no gradient
+and remain ~0. The layer therefore learns only the modes it needs, which is
+precisely the subspace POD identifies.&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;strong&gt;Truncation is lossless.&lt;&#x2F;strong&gt; Zeroing every weight outside $k = 1, 2, 3$ and
+rolling the kernel forward reproduces the full solution through time to the same
+~$10^{-7}$ accuracy. A three-parameter spectral kernel captures the entire
+dynamics — the FNO, at its core, is a reduced-order Fourier spectral method.&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;yamahasetter.github.io&#x2F;blog&#x2F;fno-as-spectral-method&#x2F;trunc_fno.png&quot; alt=&quot;Truncated FNO result&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+</content>
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>Gradient-Based Airfoil Optimization with Graph Convolutional Networks</title>
+        <published>2026-06-08T00:00:00+00:00</published>
+        <updated>2026-06-08T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            Alyn Musselman
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://yamahasetter.github.io/blog/gcnn-airfoil-optimization/"/>
+        <id>https://yamahasetter.github.io/blog/gcnn-airfoil-optimization/</id>
+        
+        <content type="html" xml:base="https://yamahasetter.github.io/blog/gcnn-airfoil-optimization/">&lt;h2 id=&quot;motivation&quot;&gt;Motivation&lt;&#x2F;h2&gt;
+&lt;p&gt;Aerodynamic shape optimization is expensive. The usual loop wraps a CFD solver
+inside a black-box optimizer: propose a shape, mesh it, solve the Navier–Stokes
+equations, read off the lift-to-drag ratio, and repeat. Each evaluation costs
+minutes of solver time, and because the optimizer treats the solver as a black
+box it has no access to gradients — it must approximate them with finite
+differences or fall back on derivative-free search.&lt;&#x2F;p&gt;
+&lt;p&gt;This project recreates the results of Shukla, Oommen, Peyvan et al., but
+replaces their DeepONet surrogate with a &lt;strong&gt;Graph Convolutional Neural Network
+(GCNN)&lt;&#x2F;strong&gt;. The goal is a &lt;em&gt;differentiable&lt;&#x2F;em&gt; approximation to the CFD solver: once
+the surrogate is trained, the gradient of the lift-to-drag ratio with respect to
+the shape parameters is available directly through autograd, so the optimal
+airfoil can be found by plain gradient descent rather than a black-box search.&lt;&#x2F;p&gt;
+&lt;p&gt;Concretely, the problem is to find the NACA 4-digit parameters $(p, m)$ — the
+position and magnitude of maximum camber — that maximize the lift-to-drag ratio
+$L&#x2F;D$ of a 2D airfoil in steady, subsonic, viscous flow.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;governing-equations&quot;&gt;Governing Equations&lt;&#x2F;h2&gt;
+&lt;p&gt;The flow is governed by the 2D compressible Navier–Stokes equations:&lt;&#x2F;p&gt;
+&lt;p&gt;$$
+\frac{\partial \rho}{\partial t} + \nabla \cdot (\rho \mathbf{u}) = 0,
+$$&lt;&#x2F;p&gt;
+&lt;p&gt;$$
+\frac{\partial (\rho \mathbf{u})}{\partial t} + \nabla \cdot (\rho, \mathbf{u} \otimes \mathbf{u} + p\mathbf{I}) = \frac{1}{\mathrm{Re}}, \nabla \cdot \boldsymbol{\tau},
+$$&lt;&#x2F;p&gt;
+&lt;p&gt;$$
+\frac{\partial E}{\partial t} + \nabla \cdot \big((E + p)\mathbf{u}\big) = \frac{1}{\mathrm{Re}}, \nabla \cdot (\boldsymbol{\tau}\mathbf{u} + \kappa \nabla T),
+$$&lt;&#x2F;p&gt;
+&lt;p&gt;where $\rho$ is density, $\mathbf{u}$ the velocity vector, $p$ pressure, $E$
+total energy, $\boldsymbol{\tau}$ the viscous stress tensor, and $\kappa$ the
+thermal conductivity. Lift and drag follow from integrating pressure and wall
+shear stress over the airfoil surface.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;generating-training-data-with-su2&quot;&gt;Generating Training Data with SU2&lt;&#x2F;h2&gt;
+&lt;p&gt;Ground-truth flow fields come from &lt;a href=&quot;https:&#x2F;&#x2F;su2code.github.io&#x2F;&quot;&gt;SU2&lt;&#x2F;a&gt;, an
+open-source CFD solver that solves the compressible Navier–Stokes equations on
+unstructured meshes. SU2 produces the full volumetric field ($u, v, p, \rho, T$)
+as well as the surface quantities ($C_p$, $C_f$) needed for the surrogate&#x27;s
+labels. The pipeline for each airfoil is:&lt;&#x2F;p&gt;
+&lt;ol&gt;
+&lt;li&gt;Generate surface coordinates from the NACA equations.&lt;&#x2F;li&gt;
+&lt;li&gt;Mesh the flow domain with Gmsh (a body-fitted unstructured triangular mesh).&lt;&#x2F;li&gt;
+&lt;li&gt;Run SU2 with a config specifying $\mathrm{Re}$, $\mathrm{Ma}$, angle of attack, and boundary conditions.&lt;&#x2F;li&gt;
+&lt;li&gt;Extract surface $C_p$, $C_f$ and integrated $C_L$, $C_D$ from the output.&lt;&#x2F;li&gt;
+&lt;&#x2F;ol&gt;
+&lt;p&gt;The whole thing is scripted in Python via subprocess, so the full dataset is
+generated automatically — each run takes roughly one to five minutes depending on
+mesh resolution.&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;yamahasetter.github.io&#x2F;blog&#x2F;gcnn-airfoil-optimization&#x2F;flow_field.png&quot; alt=&quot;Flow field around a sample airfoil&quot; &#x2F;&gt;
+&lt;img src=&quot;https:&#x2F;&#x2F;yamahasetter.github.io&#x2F;blog&#x2F;gcnn-airfoil-optimization&#x2F;streamlines.png&quot; alt=&quot;Streamlines colored by pressure&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;solver-configuration&quot;&gt;Solver configuration&lt;&#x2F;h3&gt;
+&lt;table&gt;&lt;thead&gt;&lt;tr&gt;&lt;th&gt;Parameter&lt;&#x2F;th&gt;&lt;th&gt;Value&lt;&#x2F;th&gt;&lt;th&gt;Notes&lt;&#x2F;th&gt;&lt;&#x2F;tr&gt;&lt;&#x2F;thead&gt;&lt;tbody&gt;
+&lt;tr&gt;&lt;td&gt;Solver&lt;&#x2F;td&gt;&lt;td&gt;Laminar Navier–Stokes&lt;&#x2F;td&gt;&lt;td&gt;No turbulence model&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;
+&lt;tr&gt;&lt;td&gt;Spatial scheme&lt;&#x2F;td&gt;&lt;td&gt;Roe upwind&lt;&#x2F;td&gt;&lt;td&gt;2nd order, MUSCL reconstruction&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;
+&lt;tr&gt;&lt;td&gt;Slope limiter&lt;&#x2F;td&gt;&lt;td&gt;Venkatakrishnan&lt;&#x2F;td&gt;&lt;td&gt;Stabilizes near gradients&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;
+&lt;tr&gt;&lt;td&gt;Time integration&lt;&#x2F;td&gt;&lt;td&gt;Implicit (FGMRES + ILU)&lt;&#x2F;td&gt;&lt;td&gt;Marched to steady state&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;
+&lt;tr&gt;&lt;td&gt;CFL number&lt;&#x2F;td&gt;&lt;td&gt;0.5&lt;&#x2F;td&gt;&lt;td&gt;Conservative; suitable for low Re&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;
+&lt;tr&gt;&lt;td&gt;Convergence&lt;&#x2F;td&gt;&lt;td&gt;RMS($\rho$) ≤ 1e-8&lt;&#x2F;td&gt;&lt;td&gt;Max 10,000 iterations&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;
+&lt;tr&gt;&lt;td&gt;Domain&lt;&#x2F;td&gt;&lt;td&gt;$[-3, 11] \times [-3, 3]$&lt;&#x2F;td&gt;&lt;td&gt;Matching Shukla et al.&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;
+&lt;tr&gt;&lt;td&gt;Flow conditions&lt;&#x2F;td&gt;&lt;td&gt;Re = 500, Ma = 0.5, AoA = 0°&lt;&#x2F;td&gt;&lt;td&gt;&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;
+&lt;&#x2F;tbody&gt;&lt;&#x2F;table&gt;
+&lt;p&gt;The training set is 100 NACA 4-digit airfoils drawn uniformly over
+$p \in [0.2, 0.5]$, $m \in [0.0, 0.09]$ with thickness fixed at $t = 0.15$,
+split 60 train &#x2F; 40 test. Each airfoil is sampled at 100 cosine-spaced surface
+points and stored as a graph: nodes are surface points, edges connect adjacent
+points along the boundary curve.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;the-differentiable-surrogate&quot;&gt;The Differentiable Surrogate&lt;&#x2F;h2&gt;
+&lt;p&gt;The surrogate is a graph convolutional network operating on the 1D boundary
+curve of the airfoil. Each node is a surface point with features
+$(x, y, \kappa, \varphi)$ — position, local curvature, and normal angle — and
+graph convolution amounts to message-passing along arc length.&lt;&#x2F;p&gt;
+&lt;table&gt;&lt;thead&gt;&lt;tr&gt;&lt;th&gt;Component&lt;&#x2F;th&gt;&lt;th&gt;Detail&lt;&#x2F;th&gt;&lt;&#x2F;tr&gt;&lt;&#x2F;thead&gt;&lt;tbody&gt;
+&lt;tr&gt;&lt;td&gt;Node features&lt;&#x2F;td&gt;&lt;td&gt;$x, y, \kappa, \varphi$ (4 features)&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;
+&lt;tr&gt;&lt;td&gt;GCN layers&lt;&#x2F;td&gt;&lt;td&gt;4 × GCNConv, residual connections, BatchNorm&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;
+&lt;tr&gt;&lt;td&gt;Hidden dim&lt;&#x2F;td&gt;&lt;td&gt;128&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;
+&lt;tr&gt;&lt;td&gt;Activation&lt;&#x2F;td&gt;&lt;td&gt;ReLU&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;
+&lt;tr&gt;&lt;td&gt;Output&lt;&#x2F;td&gt;&lt;td&gt;per-node $(C_p, C_{fx}, C_{fy})$&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;
+&lt;&#x2F;tbody&gt;&lt;&#x2F;table&gt;
+&lt;h3 id=&quot;recovering-l-d-from-the-network-output&quot;&gt;Recovering L&#x2F;D from the network output&lt;&#x2F;h3&gt;
+&lt;p&gt;Let $\Phi_\theta$ denote the trained GCNN and $\mathbf{x} = (m, p)$ the shape
+parameters. The network predicts per-node fields
+${\tilde{C}&lt;em&gt;p, \tilde{C}&lt;&#x2F;em&gt;{fx}, \tilde{C}_{fy}}$, which are integrated over the
+surface to recover $L&#x2F;D$. For each panel between adjacent nodes $i$ and $i+1$:&lt;&#x2F;p&gt;
+&lt;p&gt;$$
+\Delta s_i = \sqrt{(x_{i+1}-x_i)^2 + (y_{i+1}-y_i)^2}, \qquad
+\hat{\mathbf{n}}_i = \frac{(-\Delta y_i,\ \Delta x_i)}{\Delta s_i},
+$$&lt;&#x2F;p&gt;
+&lt;p&gt;$$
+\tilde{C}_{Li} = \big(-\tilde{C}&lt;em&gt;p^{,\text{mid}}, \hat{n}&lt;em&gt;y + \tilde{C}&lt;&#x2F;em&gt;{fy}^{,\text{mid}}\big), \Delta s_i,
+\qquad
+\tilde{C}&lt;&#x2F;em&gt;{Di} = \big(-\tilde{C}_p^{,\text{mid}}, \hat{n}&lt;em&gt;x + \tilde{C}&lt;&#x2F;em&gt;{fx}^{,\text{mid}}\big), \Delta s_i,
+$$&lt;&#x2F;p&gt;
+&lt;p&gt;where &quot;mid&quot; denotes the midpoint average of adjacent node values. Summing over
+panels gives $\tilde{C}&lt;em&gt;L = \sum_i \tilde{C}&lt;&#x2F;em&gt;{Li}$, $\tilde{C}&lt;em&gt;D = \sum_i \tilde{C}&lt;&#x2F;em&gt;{Di}$,
+and $\tilde{L}&#x2F;\tilde{D} = \tilde{C}_L &#x2F; \tilde{C}_D$.&lt;&#x2F;p&gt;
+&lt;p&gt;Because $\Phi_\theta$ is implemented in PyTorch and the integration is itself
+differentiable, $\partial(\tilde{L}&#x2F;\tilde{D}) &#x2F; \partial(m, p)$ is available via
+autograd — which is the whole point. Optimization becomes gradient ascent on the
+shape parameters rather than a black-box search.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;loss-and-normalization&quot;&gt;Loss and normalization&lt;&#x2F;h3&gt;
+&lt;p&gt;Each field $f \in {C_p, C_{fx}, C_{fy}}$ is standardized independently before
+training, $\hat{y}&lt;em&gt;f = (y_f - \mu_f)&#x2F;\sigma_f$. This matters because $C_p$ is
+$O(1\text{–}3)$ while $C&lt;&#x2F;em&gt;{fx}, C_{fy}$ are $O(10^{-3})$ — without it the loss is
+dominated by $C_p$ and the network never learns the shear fields. Training
+minimizes MSE on the standardized values,&lt;&#x2F;p&gt;
+&lt;p&gt;$$
+\mathcal{L} = \frac{1}{3N} \sum_f \sum_i \big(\hat{\Phi}_f(i) - \hat{y}_f(i)\big)^2,
+$$&lt;&#x2F;p&gt;
+&lt;p&gt;and a relative $L_2$ error,
+$\text{rel} = \tfrac{1}{3}\sum_f \lVert \Phi_f - y_f\rVert &#x2F; \lVert y_f\rVert$,
+is reported in physical units as an interpretable metric (e.g. $0.05$ means
+predictions are 5% off the SU2 ground truth on average).&lt;&#x2F;p&gt;
+&lt;p&gt;Training uses Adam at a learning rate of $10^{-3}$ with cosine decay, batch
+size 16, for up to 500 epochs with early stopping (patience 50).&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;results&quot;&gt;Results&lt;&#x2F;h2&gt;
+&lt;p&gt;After training on 100 airfoil simulations, the surrogate is queried at 300
+sampled $(p, m)$ points to build an $L&#x2F;D$ landscape. The argmax of that sample
+set seeds a gradient-descent run that backpropagates through the surrogate to
+locate the true $(p, m)$ maximizing the lift-to-drag ratio — no external
+optimizer, just autograd.&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;yamahasetter.github.io&#x2F;blog&#x2F;gcnn-airfoil-optimization&#x2F;run_summary.png&quot; alt=&quot;Optimization run summary: L&#x2F;D landscape and gradient-descent trajectory&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;The differentiable-surrogate approach replaces minutes-per-evaluation black-box
+optimization with millisecond surrogate calls and exact gradients, recovering the
+optimal airfoil shape directly.&lt;&#x2F;p&gt;
+</content>
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>A Real-Time Image Analyzer in PyQt</title>
+        <published>2025-10-28T00:00:00+00:00</published>
+        <updated>2025-10-28T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            Alyn Musselman
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://yamahasetter.github.io/blog/pyqt-image-analyzer/"/>
+        <id>https://yamahasetter.github.io/blog/pyqt-image-analyzer/</id>
+        
+        <content type="html" xml:base="https://yamahasetter.github.io/blog/pyqt-image-analyzer/">&lt;h2 id=&quot;motivation&quot;&gt;Motivation&lt;&#x2F;h2&gt;
+&lt;p&gt;I wanted a small, self-contained desktop tool to interactively explore what
+happens to an image when you tweak its color channels or blur it — and to see
+those changes reflected immediately in the image&#x27;s statistics. Rather than
+re-running a script every time, the goal was a live GUI: drag in an image, move a
+slider, and watch both the picture and its analytics update in real time.&lt;&#x2F;p&gt;
+&lt;p&gt;The result is a PyQt6 + PyQtGraph application that pairs a drag-and-drop image
+canvas with two live plots — an RGB histogram and a 2D Fourier spectrum — driven
+by a handful of NumPy image operations.&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;yamahasetter.github.io&#x2F;blog&#x2F;pyqt-image-analyzer&#x2F;app_example.png&quot; alt=&quot;The image analyzer in action&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;methodology&quot;&gt;Methodology&lt;&#x2F;h2&gt;
+&lt;p&gt;The app is split cleanly into two pieces: a set of pure NumPy image functions
+(&lt;code&gt;image_fncs.py&lt;&#x2F;code&gt;) and the PyQt GUI that wires them to widgets (&lt;code&gt;pyqt_gui.py&lt;&#x2F;code&gt;).
+Images are loaded as &lt;code&gt;float32&lt;&#x2F;code&gt; RGBA arrays so that repeated transformations don&#x27;t
+accumulate integer-rounding error, and only clipped back to &lt;code&gt;uint8&lt;&#x2F;code&gt; at display
+time.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;the-image-operations&quot;&gt;The image operations&lt;&#x2F;h3&gt;
+&lt;p&gt;&lt;strong&gt;Channel intensity.&lt;&#x2F;strong&gt; Each RGB slider scales one color channel by a factor
+$\alpha = v&#x2F;100$, where $v$ is the slider value. For channel $c$,&lt;&#x2F;p&gt;
+&lt;p&gt;$$
+I&#x27;&lt;em&gt;{c}(x,y) = \alpha , I&lt;&#x2F;em&gt;{c}(x,y),
+$$&lt;&#x2F;p&gt;
+&lt;p&gt;leaving the other channels untouched. This is the cheapest of the operations —
+a single broadcast multiply.&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;python&quot; style=&quot;background-color:#191919;color:#f8f8f2;&quot; class=&quot;language-python &quot;&gt;&lt;code class=&quot;language-python&quot; data-lang=&quot;python&quot;&gt;&lt;span style=&quot;font-style:italic;color:#ff5e5e;&quot;&gt;def &lt;&#x2F;span&gt;&lt;span style=&quot;color:#8cdaff;&quot;&gt;color_intensity&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fc9354;&quot;&gt;image&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fc9354;&quot;&gt;channel&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fc9354;&quot;&gt;intensity&lt;&#x2F;span&gt;&lt;span&gt;):
+&lt;&#x2F;span&gt;&lt;span&gt;    adjusted_image &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span&gt;image[:, :, :&lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;3&lt;&#x2F;span&gt;&lt;span&gt;].&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;copy&lt;&#x2F;span&gt;&lt;span&gt;()
+&lt;&#x2F;span&gt;&lt;span&gt;    adjusted_image[:, :, channel] &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span&gt;adjusted_image[:, :, channel] &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;* &lt;&#x2F;span&gt;&lt;span&gt;intensity
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;return &lt;&#x2F;span&gt;&lt;span&gt;adjusted_image
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;&lt;strong&gt;Box blur.&lt;&#x2F;strong&gt; The blur is an unnormalized-kernel box filter of radius $r$. Each
+output pixel is the mean of its neighbors within a $(r{+}1)\times(r{+}1)$ window,&lt;&#x2F;p&gt;
+&lt;p&gt;$$
+I&#x27;(x,y) = \frac{1}{|\mathcal{N}|} \sum_{(i,j)\in \mathcal{N}(x,y)} I(i,j),
+$$&lt;&#x2F;p&gt;
+&lt;p&gt;where $\mathcal{N}(x,y)$ is the set of in-bounds neighbors. It&#x27;s implemented with
+explicit loops, which is transparent but $O(W H r^2)$ — the most expensive
+control in the app, and a natural candidate for a separable-kernel or FFT-based
+speedup.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;the-live-analytics&quot;&gt;The live analytics&lt;&#x2F;h3&gt;
+&lt;p&gt;&lt;strong&gt;RGB histogram.&lt;&#x2F;strong&gt; For each channel the app computes a normalized 256-bin
+histogram (a density estimate of the pixel-intensity distribution) and draws all
+three as filled curves:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;python&quot; style=&quot;background-color:#191919;color:#f8f8f2;&quot; class=&quot;language-python &quot;&gt;&lt;code class=&quot;language-python&quot; data-lang=&quot;python&quot;&gt;&lt;span style=&quot;font-style:italic;color:#ff5e5e;&quot;&gt;def &lt;&#x2F;span&gt;&lt;span style=&quot;color:#8cdaff;&quot;&gt;image_histogram&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fc9354;&quot;&gt;image&lt;&#x2F;span&gt;&lt;span&gt;):
+&lt;&#x2F;span&gt;&lt;span&gt;    hist, bins &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span&gt;np.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;empty&lt;&#x2F;span&gt;&lt;span&gt;((&lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;3&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;256&lt;&#x2F;span&gt;&lt;span&gt;)), &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff8942;&quot;&gt;None
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;for &lt;&#x2F;span&gt;&lt;span&gt;color &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;in &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;range&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;3&lt;&#x2F;span&gt;&lt;span&gt;):
+&lt;&#x2F;span&gt;&lt;span&gt;        hist[color], bins &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span&gt;np.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;histogram&lt;&#x2F;span&gt;&lt;span&gt;(
+&lt;&#x2F;span&gt;&lt;span&gt;            image[:, :, color].&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;flatten&lt;&#x2F;span&gt;&lt;span&gt;(), &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fc9354;&quot;&gt;bins&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;=&lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;256&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fc9354;&quot;&gt;range&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;=&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;0&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;256&lt;&#x2F;span&gt;&lt;span&gt;), &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fc9354;&quot;&gt;density&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;=&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff8942;&quot;&gt;True&lt;&#x2F;span&gt;&lt;span&gt;)
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;return &lt;&#x2F;span&gt;&lt;span&gt;hist, bins
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;&lt;strong&gt;Fourier spectrum.&lt;&#x2F;strong&gt; The image is converted to grayscale by averaging the
+channels, then run through a 2D FFT. The zero-frequency component is shifted to
+the center and the magnitude is log-scaled for display:&lt;&#x2F;p&gt;
+&lt;p&gt;$$
+F(u,v) = \mathcal{F}{,g(x,y),}, \qquad
+S(u,v) = \log!\big(1 + |,\text{fftshift}(F),|\big),
+$$&lt;&#x2F;p&gt;
+&lt;p&gt;with $g = (R + G + B)&#x2F;3$. The $\log(1+\lvert\cdot\rvert)$ compression is what
+makes the spectrum legible — raw FFT magnitudes span many orders of magnitude and
+would otherwise show only the DC spike.&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;python&quot; style=&quot;background-color:#191919;color:#f8f8f2;&quot; class=&quot;language-python &quot;&gt;&lt;code class=&quot;language-python&quot; data-lang=&quot;python&quot;&gt;&lt;span style=&quot;font-style:italic;color:#ff5e5e;&quot;&gt;def &lt;&#x2F;span&gt;&lt;span style=&quot;color:#8cdaff;&quot;&gt;grayscale_fft&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fc9354;&quot;&gt;image&lt;&#x2F;span&gt;&lt;span&gt;):
+&lt;&#x2F;span&gt;&lt;span&gt;    gray &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span&gt;(image[:, :, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;0&lt;&#x2F;span&gt;&lt;span&gt;] &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;+ &lt;&#x2F;span&gt;&lt;span&gt;image[:, :, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;1&lt;&#x2F;span&gt;&lt;span&gt;] &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;+ &lt;&#x2F;span&gt;&lt;span&gt;image[:, :, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;2&lt;&#x2F;span&gt;&lt;span&gt;]) &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;&#x2F; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;3.0
+&lt;&#x2F;span&gt;&lt;span&gt;    fft &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span&gt;np.fft.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;fft2&lt;&#x2F;span&gt;&lt;span&gt;(gray)
+&lt;&#x2F;span&gt;&lt;span&gt;    fft_shifted &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span&gt;np.fft.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;fftshift&lt;&#x2F;span&gt;&lt;span&gt;(fft)
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;return &lt;&#x2F;span&gt;&lt;span&gt;np.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;log1p&lt;&#x2F;span&gt;&lt;span&gt;(np.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;abs&lt;&#x2F;span&gt;&lt;span&gt;(fft_shifted)).&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;astype&lt;&#x2F;span&gt;&lt;span&gt;(np.float32)
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;h3 id=&quot;the-gui&quot;&gt;The GUI&lt;&#x2F;h3&gt;
+&lt;p&gt;The interface is a &lt;code&gt;QMainWindow&lt;&#x2F;code&gt; with the image canvas on the left and a vertical
+stack on the right holding the two PyQtGraph plots, four sliders (R, G, B, and
+Blur), and a reset button. Images arrive via drag-and-drop: &lt;code&gt;dropEvent&lt;&#x2F;code&gt; reads the
+file into a QImage, exposes the raw buffer as a NumPy array, and keeps both an
+untouched original and a working copy. Every slider movement re-derives the
+working copy from the original, re-renders the canvas, and refreshes both plots,
+so the histogram and spectrum always track exactly what&#x27;s on screen.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;results&quot;&gt;Results&lt;&#x2F;h2&gt;
+&lt;p&gt;The finished app loads any dropped image and responds to channel and blur
+adjustments in real time, with the histogram and Fourier spectrum updating live
+alongside the picture. It&#x27;s a compact demonstration of coupling NumPy
+image processing to a responsive PyQt&#x2F;PyQtGraph front end — and a clean base to
+extend with more filters (the box blur, in particular, is the obvious first
+target for an FFT-based reimplementation).&lt;&#x2F;p&gt;
+&lt;p&gt;Dependencies are minimal: PyQt6, PyQtGraph, and NumPy, with Jupyter and
+Matplotlib used only for the unit tests.&lt;&#x2F;p&gt;
+</content>
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>Learning the Cahn-Hilliard Equation with Fourier Neural Operators</title>
+        <published>2025-06-11T00:00:00+00:00</published>
+        <updated>2025-06-11T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            Alyn Musselman
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://yamahasetter.github.io/blog/learning-cahn-hilliard/"/>
+        <id>https://yamahasetter.github.io/blog/learning-cahn-hilliard/</id>
+        
+        <content type="html" xml:base="https://yamahasetter.github.io/blog/learning-cahn-hilliard/">&lt;h2 id=&quot;motivation&quot;&gt;Motivation&lt;&#x2F;h2&gt;
+&lt;p&gt;The Cahn-Hilliard equation models &lt;strong&gt;phase separation&lt;&#x2F;strong&gt; — the way a mixed binary
+system (two substances, or two phases of one) spontaneously un-mixes into distinct
+domains that slowly coarsen over time. It is a fourth-order, nonlinear, stiff PDE,
+and resolving its dynamics with a classical solver is expensive: the stiffness
+forces tiny timesteps, so marching a single simulation out to long times can mean
+hundreds of thousands of steps.&lt;&#x2F;p&gt;
+&lt;p&gt;This project asks whether a &lt;strong&gt;Fourier Neural Operator (FNO)&lt;&#x2F;strong&gt; can learn the
+equation&#x27;s dynamics and act as a fast surrogate. Unlike an ordinary network that
+maps vectors to vectors, an FNO learns a mapping between &lt;em&gt;functions&lt;&#x2F;em&gt; — here, from
+the recent history of the concentration field to its future. If it works, you get
+a solver that advances the field in a single forward pass instead of thousands of
+fine timesteps, and that generalizes across resolutions because its core operation
+lives in Fourier space.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;generating-the-data&quot;&gt;Generating the Data&lt;&#x2F;h2&gt;
+&lt;p&gt;Training data comes from a high-fidelity &lt;strong&gt;Dedalus&lt;&#x2F;strong&gt; spectral solver run on the
+non-dimensional Cahn-Hilliard equation,&lt;&#x2F;p&gt;
+&lt;p&gt;$$
+\frac{\partial u}{\partial t} = \nabla^2!\left(\alpha^2 u^3 - u - \nabla^2 u\right),
+$$&lt;&#x2F;p&gt;
+&lt;p&gt;on a $64 \times 64$ periodic grid with $\Delta t = 10^{-5}$, $\Delta x = 0.01$,
+and $\alpha = 0.1$. Each run starts from random noise and is integrated forward;
+the figure below shows a single sample evolving from initial static to fully
+coarsened phase domains.&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;yamahasetter.github.io&#x2F;blog&#x2F;learning-cahn-hilliard&#x2F;single_sample.png&quot; alt=&quot;A Cahn-Hilliard sample evolving from noise to coarsened phase domains&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;At $t = 0$ the field is pure noise; by a few steps in, fine structure begins to
+organize; and over thousands of steps the characteristic blob-like domains emerge
+and grow. This whole trajectory is what the FNO has to learn to reproduce.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;the-fourier-neural-operator&quot;&gt;The Fourier Neural Operator&lt;&#x2F;h2&gt;
+&lt;p&gt;The model is a standard 2D FNO. Its key building block is the &lt;strong&gt;spectral
+convolution layer&lt;&#x2F;strong&gt;, which transforms the field into Fourier space, keeps only the
+lowest modes, multiplies them by learned complex weights, and transforms back:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;python&quot; style=&quot;background-color:#191919;color:#f8f8f2;&quot; class=&quot;language-python &quot;&gt;&lt;code class=&quot;language-python&quot; data-lang=&quot;python&quot;&gt;&lt;span style=&quot;font-style:italic;color:#ff5e5e;&quot;&gt;class &lt;&#x2F;span&gt;&lt;span style=&quot;text-decoration:underline;color:#8cdaff;&quot;&gt;SpectralConv2d&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;text-decoration:underline;font-style:italic;color:#8cdaff;&quot;&gt;nn.Module&lt;&#x2F;span&gt;&lt;span&gt;):
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#ff5e5e;&quot;&gt;def &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;__init__&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fc9354;&quot;&gt;self&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fc9354;&quot;&gt;in_channels&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fc9354;&quot;&gt;out_channels&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fc9354;&quot;&gt;modes1&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fc9354;&quot;&gt;modes2&lt;&#x2F;span&gt;&lt;span&gt;):
+&lt;&#x2F;span&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;super&lt;&#x2F;span&gt;&lt;span&gt;().&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;__init__&lt;&#x2F;span&gt;&lt;span&gt;()
+&lt;&#x2F;span&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;self&lt;&#x2F;span&gt;&lt;span&gt;.modes1, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;self&lt;&#x2F;span&gt;&lt;span&gt;.modes2 &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span&gt;modes1, modes2   &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6d6d6d;&quot;&gt;# # of Fourier modes kept
+&lt;&#x2F;span&gt;&lt;span&gt;        scale &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;1 &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;&#x2F; &lt;&#x2F;span&gt;&lt;span&gt;(in_channels &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;* &lt;&#x2F;span&gt;&lt;span&gt;out_channels)
+&lt;&#x2F;span&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;self&lt;&#x2F;span&gt;&lt;span&gt;.weights1 &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span&gt;nn.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;Parameter&lt;&#x2F;span&gt;&lt;span&gt;(scale &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;* &lt;&#x2F;span&gt;&lt;span&gt;torch.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;rand&lt;&#x2F;span&gt;&lt;span&gt;(
+&lt;&#x2F;span&gt;&lt;span&gt;            in_channels, out_channels, modes1, modes2, &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fc9354;&quot;&gt;dtype&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;=&lt;&#x2F;span&gt;&lt;span&gt;torch.cfloat))
+&lt;&#x2F;span&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;self&lt;&#x2F;span&gt;&lt;span&gt;.weights2 &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span&gt;nn.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;Parameter&lt;&#x2F;span&gt;&lt;span&gt;(scale &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;* &lt;&#x2F;span&gt;&lt;span&gt;torch.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;rand&lt;&#x2F;span&gt;&lt;span&gt;(
+&lt;&#x2F;span&gt;&lt;span&gt;            in_channels, out_channels, modes1, modes2, &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fc9354;&quot;&gt;dtype&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;=&lt;&#x2F;span&gt;&lt;span&gt;torch.cfloat))
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#ff5e5e;&quot;&gt;def &lt;&#x2F;span&gt;&lt;span style=&quot;color:#8cdaff;&quot;&gt;compl_mul2d&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fc9354;&quot;&gt;self&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fc9354;&quot;&gt;input&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fc9354;&quot;&gt;weights&lt;&#x2F;span&gt;&lt;span&gt;):
+&lt;&#x2F;span&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6d6d6d;&quot;&gt;# FFT -&amp;gt; keep low modes -&amp;gt; multiply -&amp;gt; iFFT
+&lt;&#x2F;span&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;return &lt;&#x2F;span&gt;&lt;span&gt;torch.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;einsum&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ffffff;&quot;&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#fbe3bf;&quot;&gt;bixy,ioxy-&amp;gt;boxy&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ffffff;&quot;&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;input&lt;&#x2F;span&gt;&lt;span&gt;, weights)
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;Truncating to a fixed number of modes is what makes the operator &lt;em&gt;resolution
+independent&lt;&#x2F;em&gt;: the learned weights act on frequencies, not pixels, so the same
+model can be applied to grids of different sizes. I used &lt;strong&gt;16 modes&lt;&#x2F;strong&gt; and a
+channel &lt;strong&gt;width of 20&lt;&#x2F;strong&gt;.&lt;&#x2F;p&gt;
+&lt;p&gt;The learning task is set up as a sliding window in time: the input is a stack of
+&lt;strong&gt;10 consecutive timesteps&lt;&#x2F;strong&gt; of the field, and the target is the &lt;strong&gt;next 10
+timesteps&lt;&#x2F;strong&gt;.&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;python&quot; style=&quot;background-color:#191919;color:#f8f8f2;&quot; class=&quot;language-python &quot;&gt;&lt;code class=&quot;language-python&quot; data-lang=&quot;python&quot;&gt;&lt;span&gt;train_a &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span&gt;data[:n_train, :, :, :&lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;10&lt;&#x2F;span&gt;&lt;span&gt;]   &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6d6d6d;&quot;&gt;# input: 10 past frames
+&lt;&#x2F;span&gt;&lt;span&gt;train_u &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span&gt;data[:n_train, :, :, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;10&lt;&#x2F;span&gt;&lt;span&gt;:]   &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6d6d6d;&quot;&gt;# target: next 10 frames
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;Training uses an 80&#x2F;20 train&#x2F;test split, the Adam optimizer at a learning rate of
+$10^{-3}$, MSE loss, and a learning-rate scheduler, for up to 10 epochs. Both the
+training and test loss fall by more than an order of magnitude and track each
+other closely, so the model isn&#x27;t simply overfitting.&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;yamahasetter.github.io&#x2F;blog&#x2F;learning-cahn-hilliard&#x2F;loss.png&quot; alt=&quot;Training and test MSE over 10 epochs&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;results&quot;&gt;Results&lt;&#x2F;h2&gt;
+&lt;p&gt;On held-out data the FNO reproduces the true field strikingly well. The panels
+below compare the ground-truth field, the FNO prediction, and their pointwise
+difference (note the logarithmic color scale on the difference) for a single
+prediction window — the MSE is $\approx 1.5 \times 10^{-4}$, and the error is
+diffuse and tiny rather than concentrated on any structure.&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;yamahasetter.github.io&#x2F;blog&#x2F;learning-cahn-hilliard&#x2F;single_difference.png&quot; alt=&quot;True field, FNO prediction, and their difference (log scale)&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;The harder test is &lt;strong&gt;autoregressive rollout&lt;&#x2F;strong&gt;: feed the model&#x27;s own predictions
+back in as input and let it march far beyond the window it was trained on. Here the
+picture is more nuanced. Errors accumulate step by step, as they must for any
+learned time-stepper, but the amount of training matters enormously. Rolling out
+to 500 timesteps, the under-trained models saturate near $10^{-1}$ error almost
+immediately, while the fully trained 10-epoch model keeps its error around
+$10^{-2}$ across the entire horizon.&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;yamahasetter.github.io&#x2F;blog&#x2F;learning-cahn-hilliard&#x2F;auto_reg_err.png&quot; alt=&quot;Autoregressive rollout error vs. timestep for models trained for different numbers of epochs&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;The takeaways:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;As a one-shot surrogate, the FNO works well.&lt;&#x2F;strong&gt; It predicts the next block of
+Cahn-Hilliard evolution to ~$10^{-4}$ MSE in a single forward pass, far faster
+than re-running the fine-timestep Dedalus solver.&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;strong&gt;Long rollouts are the real challenge.&lt;&#x2F;strong&gt; Autoregressive error compounds, so
+pushing predictions hundreds of steps out degrades accuracy — though more
+training visibly flattens that growth, suggesting the rollout stability is
+partly a matter of how well the operator has been fit.&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;strong&gt;The spectral structure pays off.&lt;&#x2F;strong&gt; Because the model operates on a fixed set
+of Fourier modes, it is naturally tied to the same spectral picture that makes
+Cahn-Hilliard tractable in the first place, and it inherits resolution
+flexibility for free.&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;This is an encouraging proof of concept that operator learning can stand in for an
+expensive stiff PDE solver, with the next obvious direction being techniques to
+tame the autoregressive error growth for genuinely long-horizon prediction.&lt;&#x2F;p&gt;
+</content>
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>Statistical Analysis of LRC</title>
+        <published>2024-12-20T00:00:00+00:00</published>
+        <updated>2024-12-20T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            Alyn Musselman
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://yamahasetter.github.io/blog/statistical-analysis-of-lrc/"/>
+        <id>https://yamahasetter.github.io/blog/statistical-analysis-of-lrc/</id>
+        
+        <content type="html" xml:base="https://yamahasetter.github.io/blog/statistical-analysis-of-lrc/">&lt;h2 id=&quot;motivation&quot;&gt;Motivation&lt;&#x2F;h2&gt;
+&lt;p&gt;&lt;em&gt;Left-Center-Right&lt;&#x2F;em&gt; (LCR) is a dice game of pure luck. Each player starts with a
+small pile of chips, and on your turn you roll one die for each chip you hold (up
+to three). The faces tell you what to do: &lt;strong&gt;L&lt;&#x2F;strong&gt; passes a chip left, &lt;strong&gt;R&lt;&#x2F;strong&gt; passes
+a chip right, &lt;strong&gt;C&lt;&#x2F;strong&gt; puts a chip in the center pot, and a &lt;strong&gt;dot&lt;&#x2F;strong&gt; means keep it.
+The last player with chips wins. Crucially, the standard game offers no
+decisions — the dice decide everything, so there is no strategy to speak of.&lt;&#x2F;p&gt;
+&lt;p&gt;The &lt;em&gt;Wild&lt;&#x2F;em&gt; variant changes this. It adds a &lt;strong&gt;WILD&lt;&#x2F;strong&gt; face that lets the roller
+take a chip from &lt;em&gt;any&lt;&#x2F;em&gt; player of their choosing (and rolling three WILDs sweeps
+the entire center pot). Suddenly there is a sliver of autonomy. The question that
+motivated this project: given that limited freedom, &lt;strong&gt;what is the best use of
+it?&lt;&#x2F;strong&gt; Is there a meaningful strategy, or does the game&#x27;s inherent randomness wash
+out any advantage?&lt;&#x2F;p&gt;
+&lt;p&gt;To answer that, I built a Monte Carlo simulation of the game and pitted a chosen
+strategy against players acting under a default rule.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;methodology&quot;&gt;Methodology&lt;&#x2F;h2&gt;
+&lt;p&gt;The game is modeled directly in NumPy. There are $N = 10$ players seated in a
+ring, each starting with 5 chips. &quot;You&quot; are player 0; everyone else plays a
+naive baseline. A roll draws three faces from the die&lt;&#x2F;p&gt;
+&lt;p&gt;$$
+\text{die} = {,L,\ C,\ R,\ \text{dot},\ \text{dot},\ \text{WILD},},
+$$&lt;&#x2F;p&gt;
+&lt;p&gt;so each face has probability $1&#x2F;6$ except the dot, which has probability $2&#x2F;6$.&lt;&#x2F;p&gt;
+&lt;p&gt;A turn resolves the ordinary faces first — L and R move chips to neighbors, C
+moves a chip to the center — and then handles any WILDs:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;python&quot; style=&quot;background-color:#191919;color:#f8f8f2;&quot; class=&quot;language-python &quot;&gt;&lt;code class=&quot;language-python&quot; data-lang=&quot;python&quot;&gt;&lt;span&gt;die &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span&gt;np.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;array&lt;&#x2F;span&gt;&lt;span&gt;([&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ffffff;&quot;&gt;&amp;#39;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#fbe3bf;&quot;&gt;L&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ffffff;&quot;&gt;&amp;#39;&lt;&#x2F;span&gt;&lt;span&gt;,&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ffffff;&quot;&gt;&amp;#39;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#fbe3bf;&quot;&gt;C&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ffffff;&quot;&gt;&amp;#39;&lt;&#x2F;span&gt;&lt;span&gt;,&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ffffff;&quot;&gt;&amp;#39;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#fbe3bf;&quot;&gt;R&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ffffff;&quot;&gt;&amp;#39;&lt;&#x2F;span&gt;&lt;span&gt;,&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ffffff;&quot;&gt;&amp;#39;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#fbe3bf;&quot;&gt;DOT&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ffffff;&quot;&gt;&amp;#39;&lt;&#x2F;span&gt;&lt;span&gt;,&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ffffff;&quot;&gt;&amp;#39;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#fbe3bf;&quot;&gt;DOT&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ffffff;&quot;&gt;&amp;#39;&lt;&#x2F;span&gt;&lt;span&gt;,&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ffffff;&quot;&gt;&amp;#39;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#fbe3bf;&quot;&gt;WILD&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ffffff;&quot;&gt;&amp;#39;&lt;&#x2F;span&gt;&lt;span&gt;])
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#ff5e5e;&quot;&gt;def &lt;&#x2F;span&gt;&lt;span style=&quot;color:#8cdaff;&quot;&gt;doroll&lt;&#x2F;span&gt;&lt;span&gt;():
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;return &lt;&#x2F;span&gt;&lt;span&gt;np.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;array&lt;&#x2F;span&gt;&lt;span&gt;([np.random.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;choice&lt;&#x2F;span&gt;&lt;span&gt;(die) &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;for &lt;&#x2F;span&gt;&lt;span&gt;i &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;in &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;range&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;3&lt;&#x2F;span&gt;&lt;span&gt;)])
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;&lt;strong&gt;The baseline rule.&lt;&#x2F;strong&gt; When a generic player rolls a WILD, they greedily take
+from whoever currently has the largest stack:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;python&quot; style=&quot;background-color:#191919;color:#f8f8f2;&quot; class=&quot;language-python &quot;&gt;&lt;code class=&quot;language-python&quot; data-lang=&quot;python&quot;&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;elif &lt;&#x2F;span&gt;&lt;span&gt;playerID:                      &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6d6d6d;&quot;&gt;# any player that isn&amp;#39;t &amp;quot;you&amp;quot;
+&lt;&#x2F;span&gt;&lt;span&gt;    banks[playerID] &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;+= &lt;&#x2F;span&gt;&lt;span&gt;WILDcount
+&lt;&#x2F;span&gt;&lt;span&gt;    banks[np.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;argmax&lt;&#x2F;span&gt;&lt;span&gt;(banks)] &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;-= &lt;&#x2F;span&gt;&lt;span&gt;WILDcount
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;&lt;strong&gt;My strategy (player 0).&lt;&#x2F;strong&gt; Rather than always hitting the global leader, I look
+&lt;em&gt;across the table&lt;&#x2F;em&gt; — at the player seated opposite me and their immediate
+neighbors — and take from the wealthiest of that group. If none of them have
+chips, I fall back to taking from the richest player who is furthest from me:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;python&quot; style=&quot;background-color:#191919;color:#f8f8f2;&quot; class=&quot;language-python &quot;&gt;&lt;code class=&quot;language-python&quot; data-lang=&quot;python&quot;&gt;&lt;span style=&quot;font-style:italic;color:#ff5e5e;&quot;&gt;def &lt;&#x2F;span&gt;&lt;span style=&quot;color:#8cdaff;&quot;&gt;strategy&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fc9354;&quot;&gt;playerID&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fc9354;&quot;&gt;WILDcount&lt;&#x2F;span&gt;&lt;span&gt;):
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6d6d6d;&quot;&gt;# if the players across the table have money, take from the richest of them
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;if &lt;&#x2F;span&gt;&lt;span&gt;np.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;count_nonzero&lt;&#x2F;span&gt;&lt;span&gt;(banks[playerID &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;+ &lt;&#x2F;span&gt;&lt;span&gt;N&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;&#x2F;&#x2F;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;2 &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;- &lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;1 &lt;&#x2F;span&gt;&lt;span&gt;: playerID &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;+ &lt;&#x2F;span&gt;&lt;span&gt;N&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;&#x2F;&#x2F;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;2 &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;+ &lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;1&lt;&#x2F;span&gt;&lt;span&gt;]):
+&lt;&#x2F;span&gt;&lt;span&gt;        banks[np.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;argmax&lt;&#x2F;span&gt;&lt;span&gt;(banks[playerID &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;+ &lt;&#x2F;span&gt;&lt;span&gt;N&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;&#x2F;&#x2F;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;2 &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;- &lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;1 &lt;&#x2F;span&gt;&lt;span&gt;: playerID &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;+ &lt;&#x2F;span&gt;&lt;span&gt;N&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;&#x2F;&#x2F;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;2 &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;+ &lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;1&lt;&#x2F;span&gt;&lt;span&gt;])] &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;-= &lt;&#x2F;span&gt;&lt;span&gt;WILDcount
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6d6d6d;&quot;&gt;# otherwise take from the player with money furthest from you
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;else&lt;&#x2F;span&gt;&lt;span&gt;:
+&lt;&#x2F;span&gt;&lt;span&gt;        who_has_money &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span&gt;np.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;nonzero&lt;&#x2F;span&gt;&lt;span&gt;(banks)[&lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;0&lt;&#x2F;span&gt;&lt;span&gt;]
+&lt;&#x2F;span&gt;&lt;span&gt;        take_from &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;min&lt;&#x2F;span&gt;&lt;span&gt;(who_has_money, &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fc9354;&quot;&gt;key&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;=&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#ff5e5e;&quot;&gt;lambda &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fc9354;&quot;&gt;x&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;abs&lt;&#x2F;span&gt;&lt;span&gt;(x &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;- &lt;&#x2F;span&gt;&lt;span&gt;N&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;&#x2F;&#x2F;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;2&lt;&#x2F;span&gt;&lt;span&gt;))
+&lt;&#x2F;span&gt;&lt;span&gt;        banks[take_from] &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;-= &lt;&#x2F;span&gt;&lt;span&gt;WILDcount
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;The intuition is that depleting players &lt;em&gt;across&lt;&#x2F;em&gt; the table — rather than feeding
+the global-leader dynamic that everyone else plays into — keeps chips circulating
+away from your immediate neighbors, who can pass chips straight back to you.&lt;&#x2F;p&gt;
+&lt;p&gt;A round lets every solvent player take a turn; a game runs until only one player
+has chips left:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;python&quot; style=&quot;background-color:#191919;color:#f8f8f2;&quot; class=&quot;language-python &quot;&gt;&lt;code class=&quot;language-python&quot; data-lang=&quot;python&quot;&gt;&lt;span style=&quot;font-style:italic;color:#ff5e5e;&quot;&gt;def &lt;&#x2F;span&gt;&lt;span style=&quot;color:#8cdaff;&quot;&gt;play_a_game&lt;&#x2F;span&gt;&lt;span&gt;():
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;while &lt;&#x2F;span&gt;&lt;span&gt;np.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;count_nonzero&lt;&#x2F;span&gt;&lt;span&gt;(banks) &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;&amp;gt; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;1&lt;&#x2F;span&gt;&lt;span&gt;:
+&lt;&#x2F;span&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;play_a_round&lt;&#x2F;span&gt;&lt;span&gt;()
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;To estimate the win probability of the strategy, the whole game is replayed
+$n_\text{games} = 10{,}000$ times and player 0&#x27;s win rate is tallied. With a fair
+game and no strategy, each of the 10 players would win about $1&#x2F;N = 10%$ of the
+time; the question is whether the strategy pushes player 0 meaningfully above
+that baseline.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;results&quot;&gt;Results&lt;&#x2F;h2&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;yamahasetter.github.io&#x2F;blog&#x2F;statistical-analysis-of-lrc&#x2F;strat1.png&quot; alt=&quot;Win-rate distribution across simulated games&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;Across the Monte Carlo runs, the central comparison is between player 0&#x27;s
+observed win rate and the $10%$ chance expected under pure luck. Because the
+game is dominated by randomness, the autonomy granted by the WILD face produces
+only a modest shift — the limited freedom the &lt;em&gt;Wild&lt;&#x2F;em&gt; variant allows is exactly
+that: limited. The simulation framework, however, makes it straightforward to
+swap in alternative &lt;code&gt;strategy()&lt;&#x2F;code&gt; rules and re-run the 10,000-game sweep to
+compare their win rates head-to-head.&lt;&#x2F;p&gt;
+</content>
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>Uncertainty Quantificaton of Stochastic Nonlinear PDEs</title>
+        <published>2024-09-20T00:00:00+00:00</published>
+        <updated>2024-09-20T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            Alyn Musselman
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://yamahasetter.github.io/blog/uncertainty-quantification-of-nonlinear-pde/"/>
+        <id>https://yamahasetter.github.io/blog/uncertainty-quantification-of-nonlinear-pde/</id>
+        
+        <content type="html" xml:base="https://yamahasetter.github.io/blog/uncertainty-quantification-of-nonlinear-pde/">&lt;h2 id=&quot;motivation&quot;&gt;Motivation&lt;&#x2F;h2&gt;
+&lt;p&gt;The Cahn-Hilliard equation is a fourth-order, nonlinear, time-dependent PDE that
+models &lt;strong&gt;phase separation&lt;&#x2F;strong&gt; in a binary mixture — think of two substances (or two
+phases of one substance) un-mixing into distinct regions. It shows up all over
+materials science, and like most equations of its kind it cannot be solved
+analytically.&lt;&#x2F;p&gt;
+&lt;p&gt;For this project (my AM 238 research project with Daniele Venturi) I made the
+problem &lt;em&gt;stochastic&lt;&#x2F;em&gt;: I injected noise into the potential-energy function that
+governs how the mixture separates. The result is a stochastic, nonlinear,
+fourth-order PDE, and the question becomes one of &lt;strong&gt;uncertainty quantification&lt;&#x2F;strong&gt; —
+not &quot;what is the solution?&quot; but &quot;what is the &lt;em&gt;mean&lt;&#x2F;em&gt; and &lt;em&gt;variance&lt;&#x2F;em&gt; of the solution
+field given a random input?&quot; The traditional answer is Monte Carlo, but Monte
+Carlo needs an enormous number of samples to converge and quickly becomes too
+expensive. The goal here was to see whether smarter sampling methods could match
+Monte Carlo&#x27;s accuracy at a fraction of the cost.&lt;&#x2F;p&gt;
+&lt;p&gt;I evaluate four strategies for the mean-field solution: &lt;strong&gt;Monte Carlo&lt;&#x2F;strong&gt;,
+&lt;strong&gt;Dynamically Orthogonal (DO) field equations&lt;&#x2F;strong&gt;, &lt;strong&gt;generalized Polynomial Chaos
+(gPC)&lt;&#x2F;strong&gt;, and the &lt;strong&gt;Probabilistic Collocation Method (PCM)&lt;&#x2F;strong&gt;.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;the-cahn-hilliard-model&quot;&gt;The Cahn-Hilliard Model&lt;&#x2F;h2&gt;
+&lt;p&gt;Let $u(\mathbf{x}, t)$ be the local concentration, scaled so that $u &amp;lt; 0$ marks
+phase $A$ and $u &amp;gt; 0$ marks phase $B$. With a chemical potential $\mu$, Fick&#x27;s
+first law $\mathbf{J} = -D\nabla\mu$ and conservation of mass
+($\partial_t u + \nabla\cdot\mathbf{J} = 0$) give the general Cahn-Hilliard form&lt;&#x2F;p&gt;
+&lt;p&gt;$$
+\frac{\partial u}{\partial t} = \nabla\cdot(D,\nabla\mu).
+$$&lt;&#x2F;p&gt;
+&lt;p&gt;The physics of separation lives in $\mu$. Starting from a Landau free energy and
+keeping the symmetric double-well shape, the potential is built as
+$F(T^*, u) = \tfrac{1}{4}\big(a - (bu)^2\big)^2$, where $a, b$ depend on
+temperature $T$. For $a &amp;lt; 0$ the well has a single minimum; as $a$ crosses zero a
+&lt;strong&gt;bifurcation&lt;&#x2F;strong&gt; creates two minima separated by an energy barrier at $u = 0$ — and
+that double well is exactly what drives the mixture apart.&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;yamahasetter.github.io&#x2F;blog&#x2F;uncertainty-quantification-of-nonlinear-pde&#x2F;phase-diagram-01.png&quot; alt=&quot;Phase diagram of the double-well potential&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;Adding a gradient-energy term $\tfrac{\gamma}{2}|\nabla u|^2$ (which penalizes
+fine-scale mixing and forces the material into distinct domains) and
+non-dimensionalizing reduces the model to&lt;&#x2F;p&gt;
+&lt;p&gt;$$
+\frac{\partial u}{\partial \hat{t}} = \nabla^2!\left(\alpha^2 u^3 - u - \nabla^2 u\right),
+\qquad \alpha = \frac{b}{\sqrt{a}}.
+$$&lt;&#x2F;p&gt;
+&lt;p&gt;The single parameter $\alpha$ sets the shape of the potential about $u = 0$: small
+$\alpha$ pulls particles to their phase minima quickly, larger $\alpha$ more
+slowly. This is the knob I perturb to model real-world noise.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;making-it-stochastic&quot;&gt;Making it stochastic&lt;&#x2F;h3&gt;
+&lt;p&gt;In a real system the temperature is never perfectly fixed, and those fluctuations
+change $a$ and $b$ — and therefore $\alpha$. Promoting $\alpha \to \alpha(\xi)$
+for a random variable $\xi$ turns the model into a stochastic PDE,&lt;&#x2F;p&gt;
+&lt;p&gt;$$
+\frac{\partial u(\mathbf{x}, t, \xi)}{\partial \hat{t}}
+= \nabla^2!\left(\alpha(\xi)^2 u^3 - u - \nabla^2 u\right).
+$$&lt;&#x2F;p&gt;
+&lt;p&gt;Phase separation requires $0 &amp;lt; \alpha \ll 1$, so I take $\alpha$ &lt;strong&gt;uniform&lt;&#x2F;strong&gt; on
+$\Omega = [0.001, 0.1]$ (exponential and Gaussian PDFs are hard to sample
+reliably at this scale). The plots below show how the potential&#x27;s shape varies
+with $\alpha$.&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;yamahasetter.github.io&#x2F;blog&#x2F;uncertainty-quantification-of-nonlinear-pde&#x2F;potential_energy.png&quot; alt=&quot;Variations of the potential energy as a function of α&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;numerical-solver&quot;&gt;Numerical solver&lt;&#x2F;h3&gt;
+&lt;p&gt;Every method below rests on the same deterministic solver: &lt;strong&gt;second&#x2F;fourth-order
+finite differences&lt;&#x2F;strong&gt; in space (a 5-point stencil for $\partial_{xx}$ and a 5-point
+stencil for $\partial_{xxxx}$, etc.) and an explicit &lt;strong&gt;3-step Runge-Kutta&lt;&#x2F;strong&gt; scheme
+in time,&lt;&#x2F;p&gt;
+&lt;p&gt;$$
+u^{t+1} = u^{t} + \frac{\Delta t}{6}\left(k_1 + 4k_2 + k_3\right),
+$$&lt;&#x2F;p&gt;
+&lt;p&gt;with $\Delta x = \Delta y = 0.017$, $\Delta t = 10^{-5}$, and $\mathbf{x} \in
+[-1,1]^2$. Starting from a random initial field, this resolves the characteristic
+coarsening of the two phases over time.&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;yamahasetter.github.io&#x2F;blog&#x2F;uncertainty-quantification-of-nonlinear-pde&#x2F;single_solve_colorbar.png&quot; alt=&quot;Numerical solution of the stochastic Cahn-Hilliard equation over time&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;the-four-uq-methods&quot;&gt;The Four UQ Methods&lt;&#x2F;h2&gt;
+&lt;p&gt;&lt;strong&gt;Monte Carlo.&lt;&#x2F;strong&gt; Draw many samples of $\alpha$, solve the deterministic PDE for
+each, and average. It is simple and unbiased — the mean and variance are just the
+empirical mean and variance over the ensemble — and I use a &lt;strong&gt;5000-sample&lt;&#x2F;strong&gt; run as
+the reference &quot;truth.&quot; Its weakness is cost: the error shrinks only like
+$1&#x2F;\sqrt{N}$, so high accuracy demands enormous $N$.&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;strong&gt;Dynamically Orthogonal (DO) field equations.&lt;&#x2F;strong&gt; Expand the solution as a mean
+plus a sum of orthogonal spatial modes carrying zero-mean stochastic
+coefficients, $u = \bar{u} + \sum_i \hat{u}_i(\mathbf{x},t),Y_i(t,\xi)$, evolved
+under the dynamically-orthogonal constraint. In principle this propagates only the
+handful of modes that matter. In practice, applying it to Cahn-Hilliard produces
+products of high-order derivatives ($\partial^n\hat u_i,\partial^n\hat u_j$) that
+&lt;strong&gt;diverge&lt;&#x2F;strong&gt; for non-smooth initial data, and the propagator contains
+fourth-order tensors whose per-timestep flop count is intractable. &lt;strong&gt;Conclusion:
+too expensive and too algorithmically complex to solve here.&lt;&#x2F;strong&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;strong&gt;Generalized Polynomial Chaos (gPC).&lt;&#x2F;strong&gt; Expand the solution in a basis of
+polynomials $P_k(\xi)$ that are orthogonal with respect to the input PDF,
+$u(\mathbf{x},t,\xi) = \sum_k \hat{u}_k(\mathbf{x},t),P_k(\xi)$, build the basis
+with the Stieltjes recurrence, and project the PDE onto each basis function to get
+a coupled system of deterministic PDEs. The mean is then $\hat u_0$ and the
+variance is $\sum_k \hat u_k^2,\mathbb{E}{P_k^2}$. Unfortunately the projection
+generates the &lt;em&gt;same&lt;&#x2F;em&gt; divergent derivative-product terms as DO, and a flop count
+makes it concrete: even a coarse $N=100$ grid, $M=10$ modes, and 1000 steps costs
+~3 teraflops for just the &lt;strong&gt;first part of the first term&lt;&#x2F;strong&gt;. &lt;strong&gt;Conclusion: also too
+expensive.&lt;&#x2F;strong&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;strong&gt;Probabilistic Collocation Method (PCM).&lt;&#x2F;strong&gt; This is the method that works. Instead
+of coupling the modes, PCM evaluates the solution at carefully chosen
+&lt;strong&gt;collocation nodes&lt;&#x2F;strong&gt; $\xi^j$ in the support of the input PDF,
+$u(\mathbf{x},t,\xi) \approx \sum_j u_j(\mathbf{x},t,\xi^j),P_j(\xi)$, which
+yields an &lt;strong&gt;uncoupled&lt;&#x2F;strong&gt; family of deterministic PDEs — one per node — each solved
+with the same RK solver as before. I generate the nodes and weights as
+Gauss-quadrature points via the Stieltjes algorithm (the eigenvalues&#x2F;eigenvectors
+of the recurrence matrix $S$). With $M = 5$ nodes the mean and variance are simple
+weighted sums,&lt;&#x2F;p&gt;
+&lt;p&gt;$$
+\mathbb{E}{u} \approx \sum_{j} w_j, u_j,
+\qquad
+\mathrm{Var}{u} \approx \sum_{j} w_j, u_j^2 - \Big(\sum_j w_j, u_j\Big)^2 .
+$$&lt;&#x2F;p&gt;
+&lt;p&gt;Because the system is uncoupled, there are no divergent cross-terms and the cost
+is just five deterministic solves.&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;yamahasetter.github.io&#x2F;blog&#x2F;uncertainty-quantification-of-nonlinear-pde&#x2F;PCM_modes.png&quot; alt=&quot;The five superimposed deterministic PCM components (binary colormap)&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;yamahasetter.github.io&#x2F;blog&#x2F;uncertainty-quantification-of-nonlinear-pde&#x2F;PCM_solution_colorbar.png&quot; alt=&quot;Mean and variance of the stochastic Cahn-Hilliard equation via PCM&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;results&quot;&gt;Results&lt;&#x2F;h2&gt;
+&lt;p&gt;The headline comparison is PCM against the 5000-sample Monte Carlo reference (and
+the analytic mean). The mean fields are visually indistinguishable — PCM
+reproduces the Monte Carlo answer using only &lt;strong&gt;five&lt;&#x2F;strong&gt; deterministic solves rather
+than five thousand.&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;yamahasetter.github.io&#x2F;blog&#x2F;uncertainty-quantification-of-nonlinear-pde&#x2F;mean_solutions_compared_colorbar.png&quot; alt=&quot;Mean solutions compared: Monte Carlo vs. analytic vs. PCM&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;The takeaways:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Monte Carlo works but is wasteful&lt;&#x2F;strong&gt; — accurate, unbiased, and the natural
+baseline, but its $1&#x2F;\sqrt{N}$ convergence makes high accuracy very costly.&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;strong&gt;DO and gPC are elegant but impractical here.&lt;&#x2F;strong&gt; Both reduce the SPDE to
+deterministic systems in theory, but Cahn-Hilliard&#x27;s nonlinearity produces
+diverging high-order derivative products and tensor terms with intractable flop
+counts. They are dead ends &lt;em&gt;for this particular equation&lt;&#x2F;em&gt;.&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;strong&gt;PCM is the winner.&lt;&#x2F;strong&gt; By decoupling the stochastic problem into a few
+independent deterministic solves at Gauss-quadrature nodes, it sidesteps the
+divergence entirely and matches the Monte Carlo mean field at a tiny fraction of
+the cost — roughly three orders of magnitude fewer solves in this experiment.&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;The broader lesson is that the &quot;obvious&quot; spectral UQ methods (DO, gPC) are not
+universally applicable: a strongly nonlinear, high-order operator can break them,
+and a well-chosen collocation scheme can be both simpler and dramatically cheaper.&lt;&#x2F;p&gt;
+</content>
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>Homeomorphic AutoEncoder</title>
+        <published>2024-09-10T00:00:00+00:00</published>
+        <updated>2024-09-10T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            Alyn Musselman
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://yamahasetter.github.io/blog/autoencoder-coordinate-mappings/"/>
+        <id>https://yamahasetter.github.io/blog/autoencoder-coordinate-mappings/</id>
+        
+        <content type="html" xml:base="https://yamahasetter.github.io/blog/autoencoder-coordinate-mappings/">&lt;h2 id=&quot;motivation&quot;&gt;Motivation&lt;&#x2F;h2&gt;
+&lt;p&gt;A &lt;em&gt;homeomorphism&lt;&#x2F;em&gt; is a continuous, invertible map between two spaces whose inverse
+is also continuous — intuitively, a way to smoothly deform one shape into another
+without tearing or gluing. What makes homeomorphisms between &lt;strong&gt;coordinate systems&lt;&#x2F;strong&gt;
+so appealing is that they let you do hard work in an easy space and carry the
+answer back.&lt;&#x2F;p&gt;
+&lt;p&gt;The concrete payoff is in solving differential equations. Numerical methods are
+far simpler on a regular Cartesian grid — a plain square mesh — than on an awkward
+domain like a disk or an annulus. If you had a homeomorphic map between a square
+grid and, say, a polar grid, you could solve your equation on the friendly square,
+then map the solution onto the polar domain where you actually need it. Mesh
+generation, finite-difference stencils, boundary conditions: all of it gets easier
+if you can move freely between coordinate systems. That is the dream that started
+this project — could a neural network &lt;em&gt;learn&lt;&#x2F;em&gt; such a map directly from data?&lt;&#x2F;p&gt;
+&lt;p&gt;The honest answer this post arrives at is: &lt;strong&gt;not the way I tried it here.&lt;&#x2F;strong&gt; This
+was a failed experiment. But the failure is instructive, and the motivation is
+strong enough that I&#x27;m planning a better attempt.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;methodology&quot;&gt;Methodology&lt;&#x2F;h2&gt;
+&lt;p&gt;I framed the problem as learning the map from a &lt;strong&gt;square grid&lt;&#x2F;strong&gt; to a &lt;strong&gt;polar
+grid&lt;&#x2F;strong&gt;. The two point sets are generated directly:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;python&quot; style=&quot;background-color:#191919;color:#f8f8f2;&quot; class=&quot;language-python &quot;&gt;&lt;code class=&quot;language-python&quot; data-lang=&quot;python&quot;&gt;&lt;span style=&quot;color:#6d6d6d;&quot;&gt;# square grid
+&lt;&#x2F;span&gt;&lt;span&gt;x &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span&gt;np.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;linspace&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;-&lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;.5&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;.5&lt;&#x2F;span&gt;&lt;span&gt;, n_points_per_edge)
+&lt;&#x2F;span&gt;&lt;span&gt;X, Y &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span&gt;np.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;meshgrid&lt;&#x2F;span&gt;&lt;span&gt;(x, x)
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6d6d6d;&quot;&gt;# polar (target) grid
+&lt;&#x2F;span&gt;&lt;span&gt;theta &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span&gt;np.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;linspace&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;0&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;2&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;*&lt;&#x2F;span&gt;&lt;span&gt;np.pi, n_points_per_edge, &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fc9354;&quot;&gt;endpoint&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;=&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff8942;&quot;&gt;False&lt;&#x2F;span&gt;&lt;span&gt;)
+&lt;&#x2F;span&gt;&lt;span&gt;r     &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span&gt;np.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;linspace&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;0&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;1&lt;&#x2F;span&gt;&lt;span&gt;, n_points_per_edge)
+&lt;&#x2F;span&gt;&lt;span&gt;radius_matrix, theta_matrix &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span&gt;np.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;meshgrid&lt;&#x2F;span&gt;&lt;span&gt;(r, theta)
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;The model is a small PyTorch &quot;autoencoder&quot;: an encoder that takes a 2D point down
+through hidden layers to a 2D latent code, and a decoder that expands it back to
+2D.&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;python&quot; style=&quot;background-color:#191919;color:#f8f8f2;&quot; class=&quot;language-python &quot;&gt;&lt;code class=&quot;language-python&quot; data-lang=&quot;python&quot;&gt;&lt;span style=&quot;font-style:italic;color:#ff5e5e;&quot;&gt;class &lt;&#x2F;span&gt;&lt;span style=&quot;text-decoration:underline;color:#8cdaff;&quot;&gt;Autoencoder&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;text-decoration:underline;font-style:italic;color:#8cdaff;&quot;&gt;nn.Module&lt;&#x2F;span&gt;&lt;span&gt;):
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#ff5e5e;&quot;&gt;def &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;__init__&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fc9354;&quot;&gt;self&lt;&#x2F;span&gt;&lt;span&gt;):
+&lt;&#x2F;span&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;super&lt;&#x2F;span&gt;&lt;span&gt;().&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;__init__&lt;&#x2F;span&gt;&lt;span&gt;()
+&lt;&#x2F;span&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;self&lt;&#x2F;span&gt;&lt;span&gt;.encoder &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span&gt;nn.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;Sequential&lt;&#x2F;span&gt;&lt;span&gt;(
+&lt;&#x2F;span&gt;&lt;span&gt;            nn.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;Linear&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;2&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;64&lt;&#x2F;span&gt;&lt;span&gt;), nn.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;ReLU&lt;&#x2F;span&gt;&lt;span&gt;(),
+&lt;&#x2F;span&gt;&lt;span&gt;            nn.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;Linear&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;64&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;32&lt;&#x2F;span&gt;&lt;span&gt;), nn.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;ReLU&lt;&#x2F;span&gt;&lt;span&gt;(),
+&lt;&#x2F;span&gt;&lt;span&gt;            nn.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;Linear&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;32&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;2&lt;&#x2F;span&gt;&lt;span&gt;))           &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6d6d6d;&quot;&gt;# latent space
+&lt;&#x2F;span&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;self&lt;&#x2F;span&gt;&lt;span&gt;.decoder &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span&gt;nn.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;Sequential&lt;&#x2F;span&gt;&lt;span&gt;(
+&lt;&#x2F;span&gt;&lt;span&gt;            nn.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;Linear&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;2&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;32&lt;&#x2F;span&gt;&lt;span&gt;), nn.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;ReLU&lt;&#x2F;span&gt;&lt;span&gt;(),
+&lt;&#x2F;span&gt;&lt;span&gt;            nn.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;Linear&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;32&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;64&lt;&#x2F;span&gt;&lt;span&gt;), nn.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;ReLU&lt;&#x2F;span&gt;&lt;span&gt;(),
+&lt;&#x2F;span&gt;&lt;span&gt;            nn.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;Linear&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;64&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;2&lt;&#x2F;span&gt;&lt;span&gt;))           &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6d6d6d;&quot;&gt;# back to (x, y)
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#ff5e5e;&quot;&gt;def &lt;&#x2F;span&gt;&lt;span style=&quot;color:#8cdaff;&quot;&gt;forward&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fc9354;&quot;&gt;self&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fc9354;&quot;&gt;x&lt;&#x2F;span&gt;&lt;span&gt;):
+&lt;&#x2F;span&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;return &lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;self&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;decoder&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;self&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;encoder&lt;&#x2F;span&gt;&lt;span&gt;(x))
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;Training is a plain regression: feed in the square-grid points, ask for the
+polar-grid points, and minimize mean-squared error with Adam over a few hundred
+epochs.&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;python&quot; style=&quot;background-color:#191919;color:#f8f8f2;&quot; class=&quot;language-python &quot;&gt;&lt;code class=&quot;language-python&quot; data-lang=&quot;python&quot;&gt;&lt;span&gt;output &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;autoencoder&lt;&#x2F;span&gt;&lt;span&gt;(square_grid_points)
+&lt;&#x2F;span&gt;&lt;span&gt;loss   &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;criterion&lt;&#x2F;span&gt;&lt;span&gt;(output, polar_grid_points)   &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6d6d6d;&quot;&gt;# MSE against the target grid
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;I also rendered the morph as an animation, watching the square grid deform toward
+the target polar grid frame by frame as training progressed.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;results&quot;&gt;Results&lt;&#x2F;h2&gt;
+&lt;p&gt;On the surface it looks like it works. The MSE loss falls steadily and the
+reconstructed polar grid lands roughly on top of the target.&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;yamahasetter.github.io&#x2F;blog&#x2F;autoencoder-coordinate-mappings&#x2F;grid_output.png&quot; alt=&quot;Input square grid, target polar grid, the network&amp;#39;s reconstruction, and the MSE training curve&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;But this is exactly where the experiment fails its own goal. What the network
+actually learned is &lt;strong&gt;not a homeomorphism&lt;&#x2F;strong&gt; — it&#x27;s a lookup table. A few things
+went wrong, and they&#x27;re baked into the setup:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Nothing enforces the map&#x27;s defining properties.&lt;&#x2F;strong&gt; A homeomorphism must be
+continuous &lt;em&gt;and&lt;&#x2F;em&gt; invertible &lt;em&gt;with a continuous inverse&lt;&#x2F;em&gt;. MSE regression imposes
+none of that. The model is free to learn a mapping that is discontinuous between
+the sampled points, or non-invertible, and the loss won&#x27;t care.&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;strong&gt;It memorizes a finite point correspondence.&lt;&#x2F;strong&gt; The network only ever sees the
+fixed set of grid points and their fixed targets, so it fits those pairs rather
+than a &lt;em&gt;function&lt;&#x2F;em&gt; defined everywhere on the square. Hand it a point that isn&#x27;t
+one of the training samples and there&#x27;s no reason its image is meaningful.&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;strong&gt;The &quot;autoencoder&quot; framing is cosmetic.&lt;&#x2F;strong&gt; A real autoencoder compresses to a
+latent space and reconstructs its &lt;em&gt;input&lt;&#x2F;em&gt;; here both halves are just an MLP
+regressing input → different target, so the encoder&#x2F;decoder split buys nothing
+and there&#x27;s no learned inverse map to carry solutions back the other way.&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;So while the picture is encouraging, the result is not a usable coordinate
+transform: I can&#x27;t take an arbitrary field on the square, push it through, and
+trust the polar version. As a tool for solving PDEs across coordinate systems —
+the entire point — it doesn&#x27;t deliver.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;what-s-next&quot;&gt;What&#x27;s Next&lt;&#x2F;h2&gt;
+&lt;p&gt;The motivation hasn&#x27;t gone anywhere; only the architecture was wrong. A grid is
+naturally a &lt;strong&gt;graph&lt;&#x2F;strong&gt; — nodes connected to their neighbors — and the property I
+actually care about (local continuity, neighbors staying neighbors) is exactly the
+kind of structure a graph neural network is built to respect. Now that I&#x27;ve
+started learning about GNNs, my next attempt will be to learn this square-to-polar
+mapping with a graph neural network, where the connectivity of the grid is part of
+the model rather than something MSE has to accidentally rediscover. That feels like
+the right tool for turning this failed experiment into a working one.&lt;&#x2F;p&gt;
+</content>
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>Image Compression with the SVD in C++</title>
+        <published>2024-03-20T00:00:00+00:00</published>
+        <updated>2024-03-20T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            Alyn Musselman
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://yamahasetter.github.io/blog/svd-image-compression/"/>
+        <id>https://yamahasetter.github.io/blog/svd-image-compression/</id>
+        
+        <content type="html" xml:base="https://yamahasetter.github.io/blog/svd-image-compression/">&lt;h2 id=&quot;motivation&quot;&gt;Motivation&lt;&#x2F;h2&gt;
+&lt;p&gt;The singular value decomposition is one of the most useful factorizations in
+numerical linear algebra, and image compression is its most visual demo. A
+grayscale image is just a matrix of pixel intensities; the SVD lets you keep only
+the handful of directions that carry the most information and throw the rest
+away. This was the SVD half of my AM213A final project: load a high-resolution
+image as a matrix in C++, compute its SVD with &lt;strong&gt;LAPACK&lt;&#x2F;strong&gt;, and reconstruct it at
+a sequence of ranks to watch quality trade against compression.&lt;&#x2F;p&gt;
+&lt;p&gt;The test image is a $1279 \times 1920$ grayscale photo of a dog, read in as a
+matrix of doubles.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;the-math&quot;&gt;The Math&lt;&#x2F;h2&gt;
+&lt;p&gt;Any real $m \times n$ matrix $A$ factors as&lt;&#x2F;p&gt;
+&lt;p&gt;$$
+A = U \Sigma V^{T},
+$$&lt;&#x2F;p&gt;
+&lt;p&gt;where $U \in \mathbb{R}^{m\times m}$ and $V \in \mathbb{R}^{n\times n}$ are
+orthogonal and $\Sigma$ is diagonal with the singular values
+$\sigma_1 \ge \sigma_2 \ge \dots \ge 0$ on its diagonal. Because the singular
+values are sorted, the sum&lt;&#x2F;p&gt;
+&lt;p&gt;$$
+A = \sum_{i=1}^{r} \sigma_i, u_i v_i^{T}
+$$&lt;&#x2F;p&gt;
+&lt;p&gt;is dominated by its first few terms. The &lt;strong&gt;rank-$K$ truncation&lt;&#x2F;strong&gt; keeps only the
+$K$ largest singular values,&lt;&#x2F;p&gt;
+&lt;p&gt;$$
+A_K = \sum_{i=1}^{K} \sigma_i, u_i v_i^{T},
+$$&lt;&#x2F;p&gt;
+&lt;p&gt;which the Eckart–Young theorem guarantees is the &lt;em&gt;best&lt;&#x2F;em&gt; rank-$K$ approximation of
+$A$ in both the spectral and Frobenius norms. In practice I built $A_K$ by zeroing
+out every diagonal entry of $\Sigma$ past index $K$ and re-multiplying
+$U \Sigma_K V^{T}$.&lt;&#x2F;p&gt;
+&lt;p&gt;The savings: instead of storing $m \times n$ numbers, a rank-$K$ image needs only
+$K(m + n + 1)$ — the kept columns of $U$, rows of $V^{T}$, and singular values.
+For this image, $K = 160$ stores roughly 12% of the original data.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;the-c-implementation&quot;&gt;The C++ Implementation&lt;&#x2F;h2&gt;
+&lt;p&gt;The heavy lifting is done by &lt;code&gt;dgesvd&lt;&#x2F;code&gt;, the LAPACK double-precision SVD routine,
+called here through Apple&#x27;s Accelerate framework. (LAPACK is the modern successor
+to the original LINPACK library.) The workflow in &lt;code&gt;driver.cpp&lt;&#x2F;code&gt;:&lt;&#x2F;p&gt;
+&lt;ol&gt;
+&lt;li&gt;Read the &lt;code&gt;.dat&lt;&#x2F;code&gt; pixel file into a &lt;code&gt;vector&amp;lt;vector&amp;lt;double&amp;gt;&amp;gt;&lt;&#x2F;code&gt;, then flatten it
+into a &lt;strong&gt;column-major&lt;&#x2F;strong&gt; &lt;code&gt;double*&lt;&#x2F;code&gt; array — the layout LAPACK expects.&lt;&#x2F;li&gt;
+&lt;li&gt;Call &lt;code&gt;dgesvd_&lt;&#x2F;code&gt; with &lt;code&gt;JOBU = JOBVT = &#x27;A&#x27;&lt;&#x2F;code&gt; to get the full $U$, $\Sigma$, and
+$V^{T}$.&lt;&#x2F;li&gt;
+&lt;li&gt;Rebuild $\Sigma$ as a diagonal matrix, then loop over a list of target ranks,
+zeroing the tail of $\Sigma$ and reconstructing.&lt;&#x2F;li&gt;
+&lt;&#x2F;ol&gt;
+&lt;pre data-lang=&quot;cpp&quot; style=&quot;background-color:#191919;color:#f8f8f2;&quot; class=&quot;language-cpp &quot;&gt;&lt;code class=&quot;language-cpp&quot; data-lang=&quot;cpp&quot;&gt;&lt;span style=&quot;font-style:italic;color:#fbdfb5;&quot;&gt;char&lt;&#x2F;span&gt;&lt;span&gt; JOBU &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ffffff;&quot;&gt;&amp;#39;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#fbe3bf;&quot;&gt;A&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ffffff;&quot;&gt;&amp;#39;&lt;&#x2F;span&gt;&lt;span&gt;, JOBVT &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ffffff;&quot;&gt;&amp;#39;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#fbe3bf;&quot;&gt;A&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ffffff;&quot;&gt;&amp;#39;&lt;&#x2F;span&gt;&lt;span&gt;;
+&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fbdfb5;&quot;&gt;int&lt;&#x2F;span&gt;&lt;span&gt; M &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;1279&lt;&#x2F;span&gt;&lt;span&gt;, N &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;1920&lt;&#x2F;span&gt;&lt;span&gt;, LDA &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;=&lt;&#x2F;span&gt;&lt;span&gt; M, LDU &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;=&lt;&#x2F;span&gt;&lt;span&gt; M, LDVT &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;=&lt;&#x2F;span&gt;&lt;span&gt; N;
+&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fbdfb5;&quot;&gt;int&lt;&#x2F;span&gt;&lt;span&gt; mn &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;min&lt;&#x2F;span&gt;&lt;span&gt;(M, N), MN &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;max&lt;&#x2F;span&gt;&lt;span&gt;(M, N);
+&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fbdfb5;&quot;&gt;int&lt;&#x2F;span&gt;&lt;span&gt; LWORK &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;2 &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;* &lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;max&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;3&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;*&lt;&#x2F;span&gt;&lt;span&gt;mn &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;+&lt;&#x2F;span&gt;&lt;span&gt; MN, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;5&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;*&lt;&#x2F;span&gt;&lt;span&gt;mn);
+&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fbdfb5;&quot;&gt;int&lt;&#x2F;span&gt;&lt;span&gt; INFO;
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fbdfb5;&quot;&gt;double&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;*&lt;&#x2F;span&gt;&lt;span&gt; S    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;= new &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fbdfb5;&quot;&gt;double&lt;&#x2F;span&gt;&lt;span&gt;[mn];
+&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fbdfb5;&quot;&gt;double&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;*&lt;&#x2F;span&gt;&lt;span&gt; U    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;= new &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fbdfb5;&quot;&gt;double&lt;&#x2F;span&gt;&lt;span&gt;[LDU&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;*&lt;&#x2F;span&gt;&lt;span&gt;M];
+&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fbdfb5;&quot;&gt;double&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;*&lt;&#x2F;span&gt;&lt;span&gt; VT   &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;= new &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fbdfb5;&quot;&gt;double&lt;&#x2F;span&gt;&lt;span&gt;[LDVT&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;*&lt;&#x2F;span&gt;&lt;span&gt;N];
+&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fbdfb5;&quot;&gt;double&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;*&lt;&#x2F;span&gt;&lt;span&gt; WORK &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;= new &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fbdfb5;&quot;&gt;double&lt;&#x2F;span&gt;&lt;span&gt;[LWORK];
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;dgesvd_&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;&amp;amp;&lt;&#x2F;span&gt;&lt;span&gt;JOBU, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;&amp;amp;&lt;&#x2F;span&gt;&lt;span&gt;JOBVT, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;&amp;amp;&lt;&#x2F;span&gt;&lt;span&gt;M, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;&amp;amp;&lt;&#x2F;span&gt;&lt;span&gt;N,
+&lt;&#x2F;span&gt;&lt;span&gt;        doggy_arr, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;&amp;amp;&lt;&#x2F;span&gt;&lt;span&gt;LDA,
+&lt;&#x2F;span&gt;&lt;span&gt;        S, U, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;&amp;amp;&lt;&#x2F;span&gt;&lt;span&gt;LDU, VT, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;&amp;amp;&lt;&#x2F;span&gt;&lt;span&gt;LDVT,
+&lt;&#x2F;span&gt;&lt;span&gt;        WORK, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;&amp;amp;&lt;&#x2F;span&gt;&lt;span&gt;LWORK, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;&amp;amp;&lt;&#x2F;span&gt;&lt;span&gt;INFO);
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;The compression loop sweeps $K \in {1279, 640, 320, 160, 80, 40, 20, 10}$:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;cpp&quot; style=&quot;background-color:#191919;color:#f8f8f2;&quot; class=&quot;language-cpp &quot;&gt;&lt;code class=&quot;language-cpp&quot; data-lang=&quot;cpp&quot;&gt;&lt;span style=&quot;font-style:italic;color:#fbdfb5;&quot;&gt;int&lt;&#x2F;span&gt;&lt;span&gt; k[&lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;8&lt;&#x2F;span&gt;&lt;span&gt;] &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span&gt;{&lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;1279&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;640&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;320&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;160&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;80&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;40&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;20&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;10&lt;&#x2F;span&gt;&lt;span&gt;};
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;for &lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fbdfb5;&quot;&gt;int&lt;&#x2F;span&gt;&lt;span&gt; i &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;0&lt;&#x2F;span&gt;&lt;span&gt;; i &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;&amp;lt; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;8&lt;&#x2F;span&gt;&lt;span&gt;; i&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;++&lt;&#x2F;span&gt;&lt;span&gt;) {
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;for &lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fbdfb5;&quot;&gt;int&lt;&#x2F;span&gt;&lt;span&gt; j &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;0&lt;&#x2F;span&gt;&lt;span&gt;; j &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;&amp;lt;&lt;&#x2F;span&gt;&lt;span&gt; M; j&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;++&lt;&#x2F;span&gt;&lt;span&gt;)
+&lt;&#x2F;span&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;if &lt;&#x2F;span&gt;&lt;span&gt;(j &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;&amp;gt;&lt;&#x2F;span&gt;&lt;span&gt; k[i]) Sdag[j][j] &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;0&lt;&#x2F;span&gt;&lt;span&gt;;      &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6d6d6d;&quot;&gt;&#x2F;&#x2F; truncate Sigma
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;    US &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;matrixmult&lt;&#x2F;span&gt;&lt;span&gt;(Uvec, Sdag);
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fbdfb5;&quot;&gt;auto&lt;&#x2F;span&gt;&lt;span&gt; USVT2 &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;matrixmult&lt;&#x2F;span&gt;&lt;span&gt;(US, VTvec);    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6d6d6d;&quot;&gt;&#x2F;&#x2F; reconstruct A_K
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fbdfb5;&quot;&gt;auto&lt;&#x2F;span&gt;&lt;span&gt; diff &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;difference&lt;&#x2F;span&gt;&lt;span&gt;(USVT, USVT2);   &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6d6d6d;&quot;&gt;&#x2F;&#x2F; error vs full-rank
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fbdfb5;&quot;&gt;double&lt;&#x2F;span&gt;&lt;span&gt; err &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;frobnorm&lt;&#x2F;span&gt;&lt;span&gt;(diff) &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;&#x2F; &lt;&#x2F;span&gt;&lt;span&gt;(M&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;*&lt;&#x2F;span&gt;&lt;span&gt;N);
+&lt;&#x2F;span&gt;&lt;span&gt;}
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;Reconstruction error is measured with the &lt;strong&gt;Frobenius norm&lt;&#x2F;strong&gt;, computed via
+$\lVert A \rVert_F = \sqrt{\operatorname{tr}(A^{T} A)}$, then normalized by the
+pixel count:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;cpp&quot; style=&quot;background-color:#191919;color:#f8f8f2;&quot; class=&quot;language-cpp &quot;&gt;&lt;code class=&quot;language-cpp&quot; data-lang=&quot;cpp&quot;&gt;&lt;span style=&quot;font-style:italic;color:#fbdfb5;&quot;&gt;double &lt;&#x2F;span&gt;&lt;span style=&quot;color:#8cdaff;&quot;&gt;frobnorm&lt;&#x2F;span&gt;&lt;span&gt;(vector&amp;lt;vector&amp;lt;&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fbdfb5;&quot;&gt;double&lt;&#x2F;span&gt;&lt;span&gt;&amp;gt;&amp;gt; &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fc9354;&quot;&gt;A&lt;&#x2F;span&gt;&lt;span&gt;) {
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fbdfb5;&quot;&gt;auto&lt;&#x2F;span&gt;&lt;span&gt; AT  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;transpose&lt;&#x2F;span&gt;&lt;span&gt;(A);
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fbdfb5;&quot;&gt;auto&lt;&#x2F;span&gt;&lt;span&gt; ATA &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;matrixmult&lt;&#x2F;span&gt;&lt;span&gt;(AT, A);
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;return &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;sqrt&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;trace&lt;&#x2F;span&gt;&lt;span&gt;(ATA, A.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;size&lt;&#x2F;span&gt;&lt;span&gt;()));
+&lt;&#x2F;span&gt;&lt;span&gt;}
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;h2 id=&quot;results&quot;&gt;Results&lt;&#x2F;h2&gt;
+&lt;p&gt;The reconstructions show how quickly the image becomes recognizable. At rank 10
+only the broadest light&#x2F;dark structure survives; by rank 40 the subject is
+clearly emerging; rank 160 is visually close to the original; and rank 1279
+(full) is the exact image.&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;yamahasetter.github.io&#x2F;blog&#x2F;svd-image-compression&#x2F;K_10.png&quot; alt=&quot;Rank 10 reconstruction&quot; &#x2F;&gt;
+&lt;img src=&quot;https:&#x2F;&#x2F;yamahasetter.github.io&#x2F;blog&#x2F;svd-image-compression&#x2F;K_40.png&quot; alt=&quot;Rank 40 reconstruction&quot; &#x2F;&gt;
+&lt;img src=&quot;https:&#x2F;&#x2F;yamahasetter.github.io&#x2F;blog&#x2F;svd-image-compression&#x2F;K_160.png&quot; alt=&quot;Rank 160 reconstruction&quot; &#x2F;&gt;
+&lt;img src=&quot;https:&#x2F;&#x2F;yamahasetter.github.io&#x2F;blog&#x2F;svd-image-compression&#x2F;K_1279.png&quot; alt=&quot;Full-rank (K = 1279) reconstruction&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;key-takeaways&quot;&gt;Key Takeaways&lt;&#x2F;h2&gt;
+&lt;p&gt;The project distilled down to a few lessons:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;A few singular values carry most of the picture.&lt;&#x2F;strong&gt; Because $\sigma_i$ decays
+fast, low ranks reconstruct a faithful image — the SVD concentrates information
+into its leading modes, which is exactly why it compresses.&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;strong&gt;Eckart–Young makes truncation optimal.&lt;&#x2F;strong&gt; Zeroing the smallest singular values
+isn&#x27;t a heuristic; it provably gives the best possible rank-$K$ approximation,
+so there&#x27;s no better way to spend a fixed storage budget.&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;strong&gt;Memory layout is the real work of calling LAPACK.&lt;&#x2F;strong&gt; &lt;code&gt;dgesvd&lt;&#x2F;code&gt; is one function
+call; getting the image into the column-major &lt;code&gt;double*&lt;&#x2F;code&gt; it expects, sizing the
+&lt;code&gt;LWORK&lt;&#x2F;code&gt; workspace, and shuttling $U$, $\Sigma$, $V^{T}$ back into matrices was
+the bulk of the C++.&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;strong&gt;Compression vs. fidelity is a tunable knob.&lt;&#x2F;strong&gt; Sweeping $K$ and tracking the
+normalized Frobenius error turns &quot;how compressed?&quot; into a quantitative curve
+rather than a guess — error falls monotonically as $K$ grows, with diminishing
+returns past the point where the image already looks right.&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+</content>
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>Gershgorin Circle Plotter</title>
+        <published>2024-02-02T00:00:00+00:00</published>
+        <updated>2024-02-02T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            Alyn Musselman
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://yamahasetter.github.io/blog/gershgorin-cirlce-plotter/"/>
+        <id>https://yamahasetter.github.io/blog/gershgorin-cirlce-plotter/</id>
+        
+        <content type="html" xml:base="https://yamahasetter.github.io/blog/gershgorin-cirlce-plotter/">&lt;h2 id=&quot;motivation&quot;&gt;Motivation&lt;&#x2F;h2&gt;
+&lt;h2 id=&quot;methodology&quot;&gt;Methodology&lt;&#x2F;h2&gt;
+&lt;h2 id=&quot;results&quot;&gt;Results&lt;&#x2F;h2&gt;
+</content>
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>Hydrogen Orbitals Simulation</title>
+        <published>2023-05-09T00:00:00+00:00</published>
+        <updated>2023-05-09T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            Alyn Musselman
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://yamahasetter.github.io/blog/hydrogen-atom-orbitals/"/>
+        <id>https://yamahasetter.github.io/blog/hydrogen-atom-orbitals/</id>
+        
+        <content type="html" xml:base="https://yamahasetter.github.io/blog/hydrogen-atom-orbitals/">&lt;h2 id=&quot;motivation&quot;&gt;Motivation&lt;&#x2F;h2&gt;
+&lt;p&gt;One of the first profound ideas you meet in quantum mechanics is the standing
+wave, and it appears in its grandest form in Schrödinger&#x27;s time-dependent
+equation:&lt;&#x2F;p&gt;
+&lt;p&gt;$$
+i \hbar \frac{\partial \Psi}{\partial t} = - \frac{\hbar^2}{2m} \nabla^2 \Psi + V \Psi .
+$$&lt;&#x2F;p&gt;
+&lt;p&gt;To a physicist this equation is profound; to a mathematician it is a close
+relative of the diffusion equation, only with an imaginary coefficient on the
+time derivative — which is exactly what turns spreading, decaying solutions into
+&lt;em&gt;oscillating&lt;&#x2F;em&gt; standing waves.&lt;&#x2F;p&gt;
+&lt;p&gt;In Griffiths&#x27; &lt;em&gt;Introduction to Quantum Mechanics&lt;&#x2F;em&gt; there is a beautiful figure of
+density plots showing the probability distribution of the electron around the
+hydrogen nucleus (a single proton). What strikes you immediately about that
+figure is its symmetry. For this project — my final for M303 — I set out to
+re-derive the hydrogen wave function myself and build a Mathematica notebook that
+evaluates and plots it in 2D and 3D, so I could explore that symmetry directly.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;methodology&quot;&gt;Methodology&lt;&#x2F;h2&gt;
+&lt;p&gt;For a single electron bound to a proton, the potential is the Coulomb attraction
+$V(r) = -e^2 &#x2F; (4\pi\varepsilon_0 r)$, which depends only on the radial distance
+$r$. Because the potential is spherically symmetric, the time-independent
+equation separates in spherical coordinates into a radial part and an angular
+part. The stationary states are labeled by three integers — the &lt;strong&gt;principal
+quantum number&lt;&#x2F;strong&gt; $n$, the &lt;strong&gt;angular momentum&lt;&#x2F;strong&gt; number $\ell$, and the
+&lt;strong&gt;magnetic&lt;&#x2F;strong&gt; number $m$ — and the full wave function factorizes as&lt;&#x2F;p&gt;
+&lt;p&gt;$$
+\Psi_{n\ell m}(r, \theta, \phi) = R_{n\ell}(r), Y_{\ell}^{m}(\theta, \phi).
+$$&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;strong&gt;The radial part.&lt;&#x2F;strong&gt; $R_{n\ell}(r)$ carries the dependence on distance from the
+nucleus and is built from an &lt;strong&gt;associated Laguerre polynomial&lt;&#x2F;strong&gt; $L$:&lt;&#x2F;p&gt;
+&lt;p&gt;$$
+R_{n\ell}(r) = \sqrt{\left(\frac{2}{n a_0}\right)^{!3} \frac{(n-\ell-1)!}{2n,(n+\ell)!}};
+e^{-r&#x2F;n a_0} \left(\frac{2r}{n a_0}\right)^{!\ell}
+L_{n-\ell-1}^{,2\ell+1}!\left(\frac{2r}{n a_0}\right),
+$$&lt;&#x2F;p&gt;
+&lt;p&gt;where $a_0$ is the Bohr radius. The decaying exponential is what confines the
+electron near the nucleus.&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;strong&gt;The angular part.&lt;&#x2F;strong&gt; $Y_\ell^m(\theta, \phi)$ is a &lt;strong&gt;normalized spherical
+harmonic&lt;&#x2F;strong&gt;, which in turn contains an &lt;strong&gt;associated Legendre polynomial&lt;&#x2F;strong&gt;
+$P_\ell^m$:&lt;&#x2F;p&gt;
+&lt;p&gt;$$
+Y_\ell^m(\theta, \phi) = \sqrt{\frac{(2\ell+1)}{4\pi}\frac{(\ell-m)!}{(\ell+m)!}};
+P_\ell^m(\cos\theta), e^{i m \phi}.
+$$&lt;&#x2F;p&gt;
+&lt;p&gt;Conveniently, Mathematica ships both &lt;code&gt;LaguerreL&lt;&#x2F;code&gt; and &lt;code&gt;SphericalHarmonicY&lt;&#x2F;code&gt; as
+built-in functions, so the notebook defines $\Psi$ directly. Picking values of
+$(n, \ell, m)$ fixes all of the pieces, and substituting them back into
+$\Psi_{n\ell m}$ gives a concrete wave function. The electron&#x27;s &lt;strong&gt;probability
+density&lt;&#x2F;strong&gt; is then $|\Psi_{n\ell m}|^2$, which is what actually gets plotted.&lt;&#x2F;p&gt;
+&lt;p&gt;To make the orbitals explorable I wrapped the plots in &lt;code&gt;Manipulate&lt;&#x2F;code&gt;, with sliders
+over $n$, $\ell$, and $m$ (and a sampling-resolution control). The 2D views are
+&lt;code&gt;DensityPlot&lt;&#x2F;code&gt;s of $|\Psi|$ taken on a slice through the atom — in spherical terms
+with $r = \sqrt{x^2 + z^2}$ and $\theta = \arctan(z, x)$ — and the 3D views are
+volumetric density plots of the same quantity.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;results&quot;&gt;Results&lt;&#x2F;h2&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;yamahasetter.github.io&#x2F;blog&#x2F;hydrogen-atom-orbitals&#x2F;orbitals.png&quot; alt=&quot;3D and 2D probability-density plots of several hydrogen orbitals, labeled by {n, l, m}&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;The figure shows several orbitals, each labeled by its quantum numbers
+${n, \ell, m}$: the top row gives the 3D probability density and the bottom row
+the corresponding 2D slice. The familiar shapes all appear — the spherical
+$1s$ state ${1,0,0}$, the dumbbell ${2,1,1}$, and the lobed orbitals at
+${3,2,0}$, ${3,2,1}$, and ${4,2,0}$.&lt;&#x2F;p&gt;
+&lt;p&gt;What stands out is the &lt;strong&gt;symmetry&lt;&#x2F;strong&gt;. In the 2D slices, any line through the
+center reflects one half of the image onto the other; in 3D, the same holds for
+any plane through the origin. There are two reasons for this. The first is
+physical: in deriving the wave function we required the electron to remain bound
+near the nucleus, and that constraint restricts where it can be found into
+symmetric patterns. The second — and the one I find more illuminating — is that
+we are working in &lt;strong&gt;spherical coordinates&lt;&#x2F;strong&gt;. The angular variables $\theta$ and
+$\phi$ don&#x27;t run off to infinity along a straight line like Cartesian
+coordinates; they wrap around and around, and that circling is what imprints the
+circular and spherical symmetry onto the graphs.&lt;&#x2F;p&gt;
+&lt;p&gt;A small one-dimensional analogy makes the point. Compare the Cartesian parabola
+$y = x^2$ with the &lt;em&gt;same&lt;&#x2F;em&gt; squaring map written in polar form, $r = \theta^2$:&lt;&#x2F;p&gt;
+&lt;p&gt;$$
+y = x^2 \qquad \text{vs.} \qquad r = \theta^2 .
+$$&lt;&#x2F;p&gt;
+&lt;p&gt;They are the identical operation — take an argument, return its square — yet the
+Cartesian version produces an up-down (vertical) symmetry while the polar version
+wraps that parabola into a spiral with circular symmetry. The coordinate system,
+not just the physics, is doing some of the symmetry work, and the hydrogen
+orbitals are the three-dimensional version of exactly that effect.&lt;&#x2F;p&gt;
+</content>
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>Pi from Monte Carlo</title>
+        <published>2022-10-10T00:00:00+00:00</published>
+        <updated>2022-10-10T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            Alyn Musselman
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://yamahasetter.github.io/blog/pi-from-monte-carlo/"/>
+        <id>https://yamahasetter.github.io/blog/pi-from-monte-carlo/</id>
+        
+        <content type="html" xml:base="https://yamahasetter.github.io/blog/pi-from-monte-carlo/">&lt;h2 id=&quot;motivation&quot;&gt;Motivation&lt;&#x2F;h2&gt;
+&lt;p&gt;Typically when someone thinks of a random process they don&#x27;t think that anything orderly could come from it. However, depending on the restraints imposed upon a random process it is very possible to recreate orderly structures. In fact, this is one of the fundamental philosophies of the theory of thermodynamics, condensed matter theory and other stochastic models in physics. A toy problem that shows how order can be derived from a random process is shown in this project, where I approximated pi with a bunch of (psuedo)random numbers.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;methodology&quot;&gt;Methodology&lt;&#x2F;h2&gt;
+&lt;p&gt;For simple projects like this, I really like to use Mathematica. It has really great plotting support and tons of built in functions that you don&#x27;t have to import.&lt;&#x2F;p&gt;
+&lt;p&gt;To start the project, we need to generate random numbers that lie within a unit square. Since the unit square is 2D, we actually need to generate 2-tuples of random numbers where each element is between -1 and 1.&lt;&#x2F;p&gt;
+&lt;p&gt;Once we can generate these pairs, we want to count how many of them lie within the unit circle. Recall that by definition the unit disk is generated by all points such that the 2-norm of the points is less than or equal to one:&lt;&#x2F;p&gt;
+&lt;p&gt;$$ \{ \sqrt{x^2 + y^2} \leq 1 ~ | ~ x,y \in R \} $$&lt;&#x2F;p&gt;
+&lt;p&gt;We also need to count the number of random points that landed outside of the unit circle. To do this we simply count the complement of the set of points in the unit disk:&lt;&#x2F;p&gt;
+&lt;p&gt;$$ \{ \sqrt{x^2 + y^2} \geq 1 ~ | ~ x,y \in R \} $$&lt;&#x2F;p&gt;
+&lt;p&gt;Now from here, recall the area of a disk is $ \pi r^2 $ and in our case since $ r =1 $ the area of our disk is just $\pi$. Now also notice that the area of the square is 1. Thus if we take the ratio of points inside the circle, and divide them by the points outside the circle but inside the square, we should get something approximating $\pi$.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;results&quot;&gt;Results&lt;&#x2F;h2&gt;
+</content>
+        
+    </entry>
+</feed>

@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en">
+<head>
+  
+  
+  
+  
+  
+
+  <meta charset="UTF-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge" />
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name=generator content="Zola v0.19.1">
+
+  
+    <meta name="description" content="A failed first attempt at learning a homeomorphic map between coordinate systems — and why the idea is still worth chasing.">
+  
+
+  <title>Alyn Musselman</title>
+  <link rel="stylesheet" href="/css/generated.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+  <link rel="stylesheet" href="/css/custom.css">
+  
+    <link rel="icon" href="&#x2F;img&#x2F;yin-yang.svg" />
+  
+
+  
+    <link rel="alternate" type="application/atom+xml" title="Atom Feed for https://yamahasetter.github.io" href="/atom.xml" />
+  
+
+  <script defer src="/js/zolarwind/logic.js" integrity="sha384-GYtsrgYVRYoxdEL+C+79KROm+MCl1ArSzQnqVnPTV78UNz5a1vFxAEiKbobXhQlw"></script>
+  
+    <!-- Calculate sha384: openssl dgst -sha384 -binary FILENAME.EXT | openssl base64 -A -->
+    <link rel="stylesheet" href="/js/katex/katex.min.css" integrity="sha384-GvrOXuhMATgEsSwCs4smul74iXGOixntILdUW9XmUC6+HX0sLNAK3q71HotJqlAn">
+    <script defer src="/js/katex/katex.min.js" integrity="sha384-cpW21h6RZv/phavutF+AuVYrr+dA8xD9zs6FwLpaCct6O9ctzYFfFr4dgmgccOTx"></script>
+    <script defer src="/js/katex/contrib/auto-render.min.js" integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05"></script>
+    <script defer src="/js/katex-config.js" integrity="sha384-YTwoxG+UASh+luh6A7HRGGG9fiJpEYcH1r0/xbJP0wfpH/E4eU3lG9mg4U5OUz9S"></script>
+  
+  
+</head>
+<body>
+  
+
+  
+
+
+<header class="sticky top-0 w-full z-10">
+  <nav class="pf-nav bg-gray-600">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        <div class="flex items-center">
+          <div class="flex-shrink-0">
+            <a href="/" aria-label="Go to homepage">
+              <div class="h-8 w-8 text-gray-200 hover:text-white fill-current">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor">
+                  <path d="M3 12L5 10M5 10L12 3L19 10M5 10V20C5 20.5523 5.44772 21 6 21H9M19 10L21 12M19 10V20C19 20.5523 18.5523 21 18 21H15M9 21C9.55228 21 10 20.5523 10 20V16C10 15.4477 10.4477 15 11 15H13C13.5523 15 14 15.4477 14 16V20C14 20.5523 14.4477 21 15 21M9 21H15" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </div>
+            </a>
+          </div>
+          <div class="hidden md:block">
+            <div class="ml-8 flex items-baseline">
+              
+                
+                  
+                    <a class="px-3 py-2 ml-2 rounded-md font-medium text-gray-200 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-600" href="/pages/imprint/" title="Imprint">Imprint</a>
+                  
+                
+                  
+                    <a class="px-3 py-2 ml-2 rounded-md font-medium text-gray-200 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-600" href="/pages/about/" title="About">About</a>
+                  
+                
+              
+            </div>
+          </div>
+        </div>
+        <div class="-mr-2 flex md:hidden">
+          <button id="toggleMobileMenu" class="icon inline-flex items-center justify-center p-2 rounded-md text-gray-200 hover:text-white hover:bg-gray-700 focus:outline-none focus:bg-gray-700 focus:text-white" aria-label="Menu">
+            <span id="mobile-icon-menu-unselected">
+              <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            </span>
+            <span id="mobile-icon-menu-selected" class="hidden">
+              <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+    
+      <div id="mobile-menu" class="hidden md:hidden px-2 pt-2 pb-3 sm:px-3">
+        
+          
+            <a class="mt-1 block px-3 py-2 rounded-md font-medium text-gray-200 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-600" href="/pages/imprint/" title="Imprint">Imprint</a>
+          
+        
+          
+            <a class="mt-1 block px-3 py-2 rounded-md font-medium text-gray-200 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-600" href="/pages/about/" title="About">About</a>
+          
+        
+      </div>
+    
+  </nav>
+</header>
+
+  <div id="content">
+    
+
+  
+
+  <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
+    <article class="prose">
+      <div class="flex justify-center items-center bg-gray-100 rounded-md">
+        <img class="w-auto h-full object-contain" src="grid_output.png" alt="Homeomorphic AutoEncoder">
+      </div>
+      <h1>Homeomorphic AutoEncoder</h1>
+      <div>
+        <p>
+          <span class="mr-2 text-sm">
+            <time datetime="2024-09-10">September 10, 2024</time> &middot;
+            687 words &middot;
+            4 minutes reading time
+          </span>
+          <span class="text-sm leading-5 font-medium text-indigo-600">
+
+  
+    
+      <span class="mr-2 badge badge-green"><a href="https://yamahasetter.github.io/tags/pytorch/">Pytorch</a></span>
+    
+      <span class="mr-2 badge badge-green"><a href="https://yamahasetter.github.io/tags/math/">math</a></span>
+    
+  
+
+</span>
+
+        </p>
+      </div>
+
+      <div>
+        <h2 id="motivation">Motivation</h2>
+<p>A <em>homeomorphism</em> is a continuous, invertible map between two spaces whose inverse
+is also continuous — intuitively, a way to smoothly deform one shape into another
+without tearing or gluing. What makes homeomorphisms between <strong>coordinate systems</strong>
+so appealing is that they let you do hard work in an easy space and carry the
+answer back.</p>
+<p>The concrete payoff is in solving differential equations. Numerical methods are
+far simpler on a regular Cartesian grid — a plain square mesh — than on an awkward
+domain like a disk or an annulus. If you had a homeomorphic map between a square
+grid and, say, a polar grid, you could solve your equation on the friendly square,
+then map the solution onto the polar domain where you actually need it. Mesh
+generation, finite-difference stencils, boundary conditions: all of it gets easier
+if you can move freely between coordinate systems. That is the dream that started
+this project — could a neural network <em>learn</em> such a map directly from data?</p>
+<p>The honest answer this post arrives at is: <strong>not the way I tried it here.</strong> This
+was a failed experiment. But the failure is instructive, and the motivation is
+strong enough that I'm planning a better attempt.</p>
+<h2 id="methodology">Methodology</h2>
+<p>I framed the problem as learning the map from a <strong>square grid</strong> to a <strong>polar
+grid</strong>. The two point sets are generated directly:</p>
+<pre data-lang="python" style="background-color:#191919;color:#f8f8f2;" class="language-python "><code class="language-python" data-lang="python"><span style="color:#6d6d6d;"># square grid
+</span><span>x </span><span style="color:#ff5e5e;">= </span><span>np.</span><span style="color:#e9fdac;">linspace</span><span>(</span><span style="color:#ff5e5e;">-</span><span style="color:#fdb082;">.5</span><span>, </span><span style="color:#fdb082;">.5</span><span>, n_points_per_edge)
+</span><span>X, Y </span><span style="color:#ff5e5e;">= </span><span>np.</span><span style="color:#e9fdac;">meshgrid</span><span>(x, x)
+</span><span>
+</span><span style="color:#6d6d6d;"># polar (target) grid
+</span><span>theta </span><span style="color:#ff5e5e;">= </span><span>np.</span><span style="color:#e9fdac;">linspace</span><span>(</span><span style="color:#fdb082;">0</span><span>, </span><span style="color:#fdb082;">2</span><span style="color:#ff5e5e;">*</span><span>np.pi, n_points_per_edge, </span><span style="font-style:italic;color:#fc9354;">endpoint</span><span style="color:#ff5e5e;">=</span><span style="color:#ff8942;">False</span><span>)
+</span><span>r     </span><span style="color:#ff5e5e;">= </span><span>np.</span><span style="color:#e9fdac;">linspace</span><span>(</span><span style="color:#fdb082;">0</span><span>, </span><span style="color:#fdb082;">1</span><span>, n_points_per_edge)
+</span><span>radius_matrix, theta_matrix </span><span style="color:#ff5e5e;">= </span><span>np.</span><span style="color:#e9fdac;">meshgrid</span><span>(r, theta)
+</span></code></pre>
+<p>The model is a small PyTorch "autoencoder": an encoder that takes a 2D point down
+through hidden layers to a 2D latent code, and a decoder that expands it back to
+2D.</p>
+<pre data-lang="python" style="background-color:#191919;color:#f8f8f2;" class="language-python "><code class="language-python" data-lang="python"><span style="font-style:italic;color:#ff5e5e;">class </span><span style="text-decoration:underline;color:#8cdaff;">Autoencoder</span><span>(</span><span style="text-decoration:underline;font-style:italic;color:#8cdaff;">nn.Module</span><span>):
+</span><span>    </span><span style="font-style:italic;color:#ff5e5e;">def </span><span style="color:#6699cc;">__init__</span><span>(</span><span style="font-style:italic;color:#fc9354;">self</span><span>):
+</span><span>        </span><span style="color:#6699cc;">super</span><span>().</span><span style="color:#6699cc;">__init__</span><span>()
+</span><span>        </span><span style="color:#e9fdac;">self</span><span>.encoder </span><span style="color:#ff5e5e;">= </span><span>nn.</span><span style="color:#e9fdac;">Sequential</span><span>(
+</span><span>            nn.</span><span style="color:#e9fdac;">Linear</span><span>(</span><span style="color:#fdb082;">2</span><span>, </span><span style="color:#fdb082;">64</span><span>), nn.</span><span style="color:#e9fdac;">ReLU</span><span>(),
+</span><span>            nn.</span><span style="color:#e9fdac;">Linear</span><span>(</span><span style="color:#fdb082;">64</span><span>, </span><span style="color:#fdb082;">32</span><span>), nn.</span><span style="color:#e9fdac;">ReLU</span><span>(),
+</span><span>            nn.</span><span style="color:#e9fdac;">Linear</span><span>(</span><span style="color:#fdb082;">32</span><span>, </span><span style="color:#fdb082;">2</span><span>))           </span><span style="color:#6d6d6d;"># latent space
+</span><span>        </span><span style="color:#e9fdac;">self</span><span>.decoder </span><span style="color:#ff5e5e;">= </span><span>nn.</span><span style="color:#e9fdac;">Sequential</span><span>(
+</span><span>            nn.</span><span style="color:#e9fdac;">Linear</span><span>(</span><span style="color:#fdb082;">2</span><span>, </span><span style="color:#fdb082;">32</span><span>), nn.</span><span style="color:#e9fdac;">ReLU</span><span>(),
+</span><span>            nn.</span><span style="color:#e9fdac;">Linear</span><span>(</span><span style="color:#fdb082;">32</span><span>, </span><span style="color:#fdb082;">64</span><span>), nn.</span><span style="color:#e9fdac;">ReLU</span><span>(),
+</span><span>            nn.</span><span style="color:#e9fdac;">Linear</span><span>(</span><span style="color:#fdb082;">64</span><span>, </span><span style="color:#fdb082;">2</span><span>))           </span><span style="color:#6d6d6d;"># back to (x, y)
+</span><span>
+</span><span>    </span><span style="font-style:italic;color:#ff5e5e;">def </span><span style="color:#8cdaff;">forward</span><span>(</span><span style="font-style:italic;color:#fc9354;">self</span><span>, </span><span style="font-style:italic;color:#fc9354;">x</span><span>):
+</span><span>        </span><span style="color:#ff5e5e;">return </span><span style="color:#e9fdac;">self</span><span>.</span><span style="color:#e9fdac;">decoder</span><span>(</span><span style="color:#e9fdac;">self</span><span>.</span><span style="color:#e9fdac;">encoder</span><span>(x))
+</span></code></pre>
+<p>Training is a plain regression: feed in the square-grid points, ask for the
+polar-grid points, and minimize mean-squared error with Adam over a few hundred
+epochs.</p>
+<pre data-lang="python" style="background-color:#191919;color:#f8f8f2;" class="language-python "><code class="language-python" data-lang="python"><span>output </span><span style="color:#ff5e5e;">= </span><span style="color:#e9fdac;">autoencoder</span><span>(square_grid_points)
+</span><span>loss   </span><span style="color:#ff5e5e;">= </span><span style="color:#e9fdac;">criterion</span><span>(output, polar_grid_points)   </span><span style="color:#6d6d6d;"># MSE against the target grid
+</span></code></pre>
+<p>I also rendered the morph as an animation, watching the square grid deform toward
+the target polar grid frame by frame as training progressed.</p>
+<h2 id="results">Results</h2>
+<p>On the surface it looks like it works. The MSE loss falls steadily and the
+reconstructed polar grid lands roughly on top of the target.</p>
+<p><img src="https://yamahasetter.github.io/blog/autoencoder-coordinate-mappings/grid_output.png" alt="Input square grid, target polar grid, the network&#39;s reconstruction, and the MSE training curve" /></p>
+<p>But this is exactly where the experiment fails its own goal. What the network
+actually learned is <strong>not a homeomorphism</strong> — it's a lookup table. A few things
+went wrong, and they're baked into the setup:</p>
+<ul>
+<li><strong>Nothing enforces the map's defining properties.</strong> A homeomorphism must be
+continuous <em>and</em> invertible <em>with a continuous inverse</em>. MSE regression imposes
+none of that. The model is free to learn a mapping that is discontinuous between
+the sampled points, or non-invertible, and the loss won't care.</li>
+<li><strong>It memorizes a finite point correspondence.</strong> The network only ever sees the
+fixed set of grid points and their fixed targets, so it fits those pairs rather
+than a <em>function</em> defined everywhere on the square. Hand it a point that isn't
+one of the training samples and there's no reason its image is meaningful.</li>
+<li><strong>The "autoencoder" framing is cosmetic.</strong> A real autoencoder compresses to a
+latent space and reconstructs its <em>input</em>; here both halves are just an MLP
+regressing input → different target, so the encoder/decoder split buys nothing
+and there's no learned inverse map to carry solutions back the other way.</li>
+</ul>
+<p>So while the picture is encouraging, the result is not a usable coordinate
+transform: I can't take an arbitrary field on the square, push it through, and
+trust the polar version. As a tool for solving PDEs across coordinate systems —
+the entire point — it doesn't deliver.</p>
+<h2 id="what-s-next">What's Next</h2>
+<p>The motivation hasn't gone anywhere; only the architecture was wrong. A grid is
+naturally a <strong>graph</strong> — nodes connected to their neighbors — and the property I
+actually care about (local continuity, neighbors staying neighbors) is exactly the
+kind of structure a graph neural network is built to respect. Now that I've
+started learning about GNNs, my next attempt will be to learn this square-to-polar
+mapping with a graph neural network, where the connectivity of the grid is part of
+the model rather than something MSE has to accidentally rediscover. That feels like
+the right tool for turning this failed experiment into a working one.</p>
+
+      </div>
+    </article>
+  </div>
+
+
+  <script type="application/ld+json">
+{
+   "@context": "https://schema.org"
+  ,"@type": "BlogPosting"
+  ,"mainEntityOfPage": {
+     "@type": "WebPage"
+    ,"@id": "https://yamahasetter.github.io/blog/autoencoder-coordinate-mappings/"
+  }
+  ,"headline": "Homeomorphic AutoEncoder"
+  ,"datePublished": "2024-09-10"
+  ,"dateModified": "2024-09-10"
+  
+  ,"author": [
+    
+      {
+         "@type": "Person"
+        ,"name": "Alyn Musselman"
+      }
+      
+    
+  ]
+  ,"publisher": [
+    
+      {
+         "@type": "Person"
+        ,"name": "Alyn Musselman"
+      }
+      
+    
+  ]
+  
+  ,"description": "A failed first attempt at learning a homeomorphic map between coordinate systems — and why the idea is still worth chasing."
+  ,"articleBody": "MotivationA homeomorphism is a continuous, invertible map between two spaces whose inverseis also continuous — intuitively, a way to smoothly deform one shape into anotherwithout tearing or gluing. What makes homeomorphisms between coordinate systemsso appealing is that they let you do hard work in an easy space and carry theanswer back.The concrete payoff is in solving differential equations. Numerical methods arefar simpler on a regular Cartesian grid — a plain square mesh — than on an awkwarddomain like a disk or an annulus. If you had a homeomorphic map between a squaregrid and, say, a polar grid, you could solve your equation on the friendly square,then map the solution onto the polar domain where you actually need it. Meshgeneration, finite-difference stencils, boundary conditions: all of it gets easierif you can move freely between coordinate systems. That is the dream that startedthis project — could a neural network learn such a map directly from data?The honest answer this post arrives at is: not the way I tried it here. Thiswas a failed experiment. But the failure is instructive, and the motivation isstrong enough that I&#x27;m planning a better attempt.MethodologyI framed the problem as learning the map from a square grid to a polargrid. The two point sets are generated directly:# square gridx = np.linspace(-.5, .5, n_points_per_edge)X, Y = np.meshgrid(x, x)# polar (target) gridtheta = np.linspace(0, 2*np.pi, n_points_per_edge, endpoint=False)r     = np.linspace(0, 1, n_points_per_edge)radius_matrix, theta_matrix = np.meshgrid(r, theta)The model is a small PyTorch &#x27;autoencoder&#x27;: an encoder that takes a 2D point downthrough hidden layers to a 2D latent code, and a decoder that expands it back to2D.class Autoencoder(nn.Module):    def __init__(self):        super().__init__()        self.encoder = nn.Sequential(            nn.Linear(2, 64), nn.ReLU(),            nn.Linear(64, 32), nn.ReLU(),            nn.Linear(32, 2))           # latent space        self.decoder = nn.Sequential(            nn.Linear(2, 32), nn.ReLU(),            nn.Linear(32, 64), nn.ReLU(),            nn.Linear(64, 2))           # back to (x, y)    def forward(self, x):        return self.decoder(self.encoder(x))Training is a plain regression: feed in the square-grid points, ask for thepolar-grid points, and minimize mean-squared error with Adam over a few hundredepochs.output = autoencoder(square_grid_points)loss   = criterion(output, polar_grid_points)   # MSE against the target gridI also rendered the morph as an animation, watching the square grid deform towardthe target polar grid frame by frame as training progressed.ResultsOn the surface it looks like it works. The MSE loss falls steadily and thereconstructed polar grid lands roughly on top of the target.But this is exactly where the experiment fails its own goal. What the networkactually learned is not a homeomorphism — it&#x27;s a lookup table. A few thingswent wrong, and they&#x27;re baked into the setup:Nothing enforces the map&#x27;s defining properties. A homeomorphism must becontinuous and invertible with a continuous inverse. MSE regression imposesnone of that. The model is free to learn a mapping that is discontinuous betweenthe sampled points, or non-invertible, and the loss won&#x27;t care.It memorizes a finite point correspondence. The network only ever sees thefixed set of grid points and their fixed targets, so it fits those pairs ratherthan a function defined everywhere on the square. Hand it a point that isn&#x27;tone of the training samples and there&#x27;s no reason its image is meaningful.The &#x27;autoencoder&#x27; framing is cosmetic. A real autoencoder compresses to alatent space and reconstructs its input; here both halves are just an MLPregressing input → different target, so the encoder&#x2F;decoder split buys nothingand there&#x27;s no learned inverse map to carry solutions back the other way.So while the picture is encouraging, the result is not a usable coordinatetransform: I can&#x27;t take an arbitrary field on the square, push it through, andtrust the polar version. As a tool for solving PDEs across coordinate systems —the entire point — it doesn&#x27;t deliver.What&#x27;s NextThe motivation hasn&#x27;t gone anywhere; only the architecture was wrong. A grid isnaturally a graph — nodes connected to their neighbors — and the property Iactually care about (local continuity, neighbors staying neighbors) is exactly thekind of structure a graph neural network is built to respect. Now that I&#x27;vestarted learning about GNNs, my next attempt will be to learn this square-to-polarmapping with a graph neural network, where the connectivity of the grid is part ofthe model rather than something MSE has to accidentally rediscover. That feels likethe right tool for turning this failed experiment into a working one."
+  
+    ,"image": "https://yamahasetter.github.io/blog/autoencoder-coordinate-mappings/grid_output.png"
+  
+}
+</script>
+
+
+
+  </div>
+  <footer>
+  <!-- Social Media Icons -->
+  
+    <div class="mt-4 flex justify-center">
+      
+        
+          <a
+            
+            href="https:&#x2F;&#x2F;github.com&#x2F;yamahasetter" title="Github"
+            
+              class="text-gray-400 hover:text-gray-500">
+            
+            <span class="sr-only">github</span>
+            <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 1024 1024"><path d="M8 0C3.58 0 0 3.58 0 8C0 11.54 2.29 14.53 5.47 15.59C5.87 15.66 6.02 15.42 6.02 15.21C6.02 15.02 6.01 14.39 6.01 13.72C4 14.09 3.48 13.23 3.32 12.78C3.23 12.55 2.84 11.84 2.5 11.65C2.22 11.5 1.82 11.13 2.49 11.12C3.12 11.11 3.57 11.7 3.72 11.94C4.44 13.15 5.59 12.81 6.05 12.6C6.12 12.08 6.33 11.73 6.56 11.53C4.78 11.33 2.92 10.64 2.92 7.58C2.92 6.71 3.23 5.99 3.74 5.43C3.66 5.23 3.38 4.41 3.82 3.31C3.82 3.31 4.49 3.1 6.02 4.13C6.66 3.95 7.34 3.86 8.02 3.86C8.7 3.86 9.38 3.95 10.02 4.13C11.55 3.09 12.22 3.31 12.22 3.31C12.66 4.41 12.38 5.23 12.3 5.43C12.81 5.99 13.12 6.7 13.12 7.58C13.12 10.65 11.25 11.33 9.47 11.53C9.76 11.78 10.01 12.26 10.01 13.01C10.01 14.08 10 14.94 10 15.21C10 15.42 10.15 15.67 10.55 15.59C13.71 14.53 16 11.53 16 8C16 3.58 12.42 0 8 0Z" transform="scale(64)"/></svg>
+          </a>
+        
+      
+        
+          <a
+            
+            href="https:&#x2F;&#x2F;www.linkedin.com&#x2F;in&#x2F;alyn-m-b14b17152&#x2F;" title="Linkedin"
+            
+              class="ml-8 text-gray-400 hover:text-gray-500">
+            
+            <span class="sr-only">linkedin</span>
+            <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 1024 1024"><path d="M0 1.146C0 .513.526 0 1.175 0h13.65C15.474 0 16 .513 16 1.146v13.708c0 .633-.526 1.146-1.175 1.146H1.175C.526 16 0 15.487 0 14.854zm4.943 12.248V6.169H2.542v7.225zm-1.2-8.212c.837 0 1.358-.554 1.358-1.248-.015-.709-.52-1.248-1.342-1.248S2.4 3.226 2.4 3.934c0 .694.521 1.248 1.327 1.248zm4.908 8.212V9.359c0-.216.016-.432.08-.586.173-.431.568-.878 1.232-.878.869 0 1.216.662 1.216 1.634v3.865h2.401V9.25c0-2.22-1.184-3.252-2.764-3.252-1.274 0-1.845.7-2.165 1.193v.025h-.016l.016-.025V6.169h-2.4c.03.678 0 7.225 0 7.225z" transform="scale(64)"/></svg>
+          </a>
+        
+      
+        
+          <a
+            
+            href="https:&#x2F;&#x2F;stackoverflow.com&#x2F;users&#x2F;16188373&#x2F;try-hard" title="Stackoverflow"
+            
+              class="ml-8 text-gray-400 hover:text-gray-500">
+            
+            <span class="sr-only">stackoverflow</span>
+            <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 73.099998 86.599998"><g transform="translate(-22.6,-14.9)"><path d="m 84.4,93.8 0,-23.2 7.7,0 0,30.9 -69.5,0 0,-30.9 7.7,0 0,23.2 z"/><path d="m 38.8,68.4 37.8,7.9 1.6,-7.6 -37.8,-7.9 -1.6,7.6 z m 5,-18 35,16.3 3.2,-7 -35,-16.4 -3.2,7.1 z M 53.5,33.2 83.2,57.9 88.1,52 58.4,27.3 53.5,33.2 Z m 19.2,-18.3 -6.2,4.6 23,31 6.2,-4.6 -23,-31 z M 38,86 l 38.6,0 0,-7.7 -38.6,0 0,7.7 z"/></g></svg>
+          </a>
+        
+      
+        
+      
+        
+      
+    </div>
+  
+  <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8 text-center">
+    
+      <p class="text-center text-base leading-6">
+        
+          
+          <a href="&#x2F;pages&#x2F;privacy&#x2F;">Privacy Policy</a>
+        
+           &middot; 
+          <a href="&#x2F;pages&#x2F;terms&#x2F;">Terms</a>
+        
+      </p>
+    
+    
+    <div class="mt-4">
+      <p class="text-center text-base leading-6 text-gray-400">
+        Copyright 2026 by Thomas Weitzel
+      </p>
+    </div>
+    
+  </div>
+</footer>
+
+</body>
+</html>

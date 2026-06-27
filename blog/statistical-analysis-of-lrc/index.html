@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en">
+<head>
+  
+  
+  
+  
+  
+
+  <meta charset="UTF-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge" />
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name=generator content="Zola v0.19.1">
+
+  
+    <meta name="description" content="Using Monte Carlo to test strategies in the game &#x27;Left, Center, Right&#x27;">
+  
+
+  <title>Alyn Musselman</title>
+  <link rel="stylesheet" href="/css/generated.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+  <link rel="stylesheet" href="/css/custom.css">
+  
+    <link rel="icon" href="&#x2F;img&#x2F;yin-yang.svg" />
+  
+
+  
+    <link rel="alternate" type="application/atom+xml" title="Atom Feed for https://yamahasetter.github.io" href="/atom.xml" />
+  
+
+  <script defer src="/js/zolarwind/logic.js" integrity="sha384-GYtsrgYVRYoxdEL+C+79KROm+MCl1ArSzQnqVnPTV78UNz5a1vFxAEiKbobXhQlw"></script>
+  
+    <!-- Calculate sha384: openssl dgst -sha384 -binary FILENAME.EXT | openssl base64 -A -->
+    <link rel="stylesheet" href="/js/katex/katex.min.css" integrity="sha384-GvrOXuhMATgEsSwCs4smul74iXGOixntILdUW9XmUC6+HX0sLNAK3q71HotJqlAn">
+    <script defer src="/js/katex/katex.min.js" integrity="sha384-cpW21h6RZv/phavutF+AuVYrr+dA8xD9zs6FwLpaCct6O9ctzYFfFr4dgmgccOTx"></script>
+    <script defer src="/js/katex/contrib/auto-render.min.js" integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05"></script>
+    <script defer src="/js/katex-config.js" integrity="sha384-YTwoxG+UASh+luh6A7HRGGG9fiJpEYcH1r0/xbJP0wfpH/E4eU3lG9mg4U5OUz9S"></script>
+  
+  
+</head>
+<body>
+  
+
+  
+
+
+<header class="sticky top-0 w-full z-10">
+  <nav class="pf-nav bg-gray-600">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        <div class="flex items-center">
+          <div class="flex-shrink-0">
+            <a href="/" aria-label="Go to homepage">
+              <div class="h-8 w-8 text-gray-200 hover:text-white fill-current">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor">
+                  <path d="M3 12L5 10M5 10L12 3L19 10M5 10V20C5 20.5523 5.44772 21 6 21H9M19 10L21 12M19 10V20C19 20.5523 18.5523 21 18 21H15M9 21C9.55228 21 10 20.5523 10 20V16C10 15.4477 10.4477 15 11 15H13C13.5523 15 14 15.4477 14 16V20C14 20.5523 14.4477 21 15 21M9 21H15" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </div>
+            </a>
+          </div>
+          <div class="hidden md:block">
+            <div class="ml-8 flex items-baseline">
+              
+                
+                  
+                    <a class="px-3 py-2 ml-2 rounded-md font-medium text-gray-200 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-600" href="/pages/imprint/" title="Imprint">Imprint</a>
+                  
+                
+                  
+                    <a class="px-3 py-2 ml-2 rounded-md font-medium text-gray-200 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-600" href="/pages/about/" title="About">About</a>
+                  
+                
+              
+            </div>
+          </div>
+        </div>
+        <div class="-mr-2 flex md:hidden">
+          <button id="toggleMobileMenu" class="icon inline-flex items-center justify-center p-2 rounded-md text-gray-200 hover:text-white hover:bg-gray-700 focus:outline-none focus:bg-gray-700 focus:text-white" aria-label="Menu">
+            <span id="mobile-icon-menu-unselected">
+              <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            </span>
+            <span id="mobile-icon-menu-selected" class="hidden">
+              <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+    
+      <div id="mobile-menu" class="hidden md:hidden px-2 pt-2 pb-3 sm:px-3">
+        
+          
+            <a class="mt-1 block px-3 py-2 rounded-md font-medium text-gray-200 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-600" href="/pages/imprint/" title="Imprint">Imprint</a>
+          
+        
+          
+            <a class="mt-1 block px-3 py-2 rounded-md font-medium text-gray-200 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-600" href="/pages/about/" title="About">About</a>
+          
+        
+      </div>
+    
+  </nav>
+</header>
+
+  <div id="content">
+    
+
+  
+
+  <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
+    <article class="prose">
+      <div class="flex justify-center items-center bg-gray-100 rounded-md">
+        <img class="w-auto h-full object-contain" src="strat1.png" alt="Statistical Analysis of LRC">
+      </div>
+      <h1>Statistical Analysis of LRC</h1>
+      <div>
+        <p>
+          <span class="mr-2 text-sm">
+            <time datetime="2024-12-20">December 20, 2024</time> &middot;
+            562 words &middot;
+            3 minutes reading time
+          </span>
+          <span class="text-sm leading-5 font-medium text-indigo-600">
+
+  
+    
+      <span class="mr-2 badge badge-green"><a href="https://yamahasetter.github.io/tags/statistics/">Statistics</a></span>
+    
+      <span class="mr-2 badge badge-green"><a href="https://yamahasetter.github.io/tags/math/">math</a></span>
+    
+  
+
+</span>
+
+        </p>
+      </div>
+
+      <div>
+        <h2 id="motivation">Motivation</h2>
+<p><em>Left-Center-Right</em> (LCR) is a dice game of pure luck. Each player starts with a
+small pile of chips, and on your turn you roll one die for each chip you hold (up
+to three). The faces tell you what to do: <strong>L</strong> passes a chip left, <strong>R</strong> passes
+a chip right, <strong>C</strong> puts a chip in the center pot, and a <strong>dot</strong> means keep it.
+The last player with chips wins. Crucially, the standard game offers no
+decisions — the dice decide everything, so there is no strategy to speak of.</p>
+<p>The <em>Wild</em> variant changes this. It adds a <strong>WILD</strong> face that lets the roller
+take a chip from <em>any</em> player of their choosing (and rolling three WILDs sweeps
+the entire center pot). Suddenly there is a sliver of autonomy. The question that
+motivated this project: given that limited freedom, <strong>what is the best use of
+it?</strong> Is there a meaningful strategy, or does the game's inherent randomness wash
+out any advantage?</p>
+<p>To answer that, I built a Monte Carlo simulation of the game and pitted a chosen
+strategy against players acting under a default rule.</p>
+<h2 id="methodology">Methodology</h2>
+<p>The game is modeled directly in NumPy. There are $N = 10$ players seated in a
+ring, each starting with 5 chips. "You" are player 0; everyone else plays a
+naive baseline. A roll draws three faces from the die</p>
+<p>$$
+\text{die} = {,L,\ C,\ R,\ \text{dot},\ \text{dot},\ \text{WILD},},
+$$</p>
+<p>so each face has probability $1/6$ except the dot, which has probability $2/6$.</p>
+<p>A turn resolves the ordinary faces first — L and R move chips to neighbors, C
+moves a chip to the center — and then handles any WILDs:</p>
+<pre data-lang="python" style="background-color:#191919;color:#f8f8f2;" class="language-python "><code class="language-python" data-lang="python"><span>die </span><span style="color:#ff5e5e;">= </span><span>np.</span><span style="color:#e9fdac;">array</span><span>([</span><span style="color:#ffffff;">&#39;</span><span style="color:#fbe3bf;">L</span><span style="color:#ffffff;">&#39;</span><span>,</span><span style="color:#ffffff;">&#39;</span><span style="color:#fbe3bf;">C</span><span style="color:#ffffff;">&#39;</span><span>,</span><span style="color:#ffffff;">&#39;</span><span style="color:#fbe3bf;">R</span><span style="color:#ffffff;">&#39;</span><span>,</span><span style="color:#ffffff;">&#39;</span><span style="color:#fbe3bf;">DOT</span><span style="color:#ffffff;">&#39;</span><span>,</span><span style="color:#ffffff;">&#39;</span><span style="color:#fbe3bf;">DOT</span><span style="color:#ffffff;">&#39;</span><span>,</span><span style="color:#ffffff;">&#39;</span><span style="color:#fbe3bf;">WILD</span><span style="color:#ffffff;">&#39;</span><span>])
+</span><span>
+</span><span style="font-style:italic;color:#ff5e5e;">def </span><span style="color:#8cdaff;">doroll</span><span>():
+</span><span>    </span><span style="color:#ff5e5e;">return </span><span>np.</span><span style="color:#e9fdac;">array</span><span>([np.random.</span><span style="color:#e9fdac;">choice</span><span>(die) </span><span style="color:#ff5e5e;">for </span><span>i </span><span style="color:#ff5e5e;">in </span><span style="color:#6699cc;">range</span><span>(</span><span style="color:#fdb082;">3</span><span>)])
+</span></code></pre>
+<p><strong>The baseline rule.</strong> When a generic player rolls a WILD, they greedily take
+from whoever currently has the largest stack:</p>
+<pre data-lang="python" style="background-color:#191919;color:#f8f8f2;" class="language-python "><code class="language-python" data-lang="python"><span style="color:#ff5e5e;">elif </span><span>playerID:                      </span><span style="color:#6d6d6d;"># any player that isn&#39;t &quot;you&quot;
+</span><span>    banks[playerID] </span><span style="color:#ff5e5e;">+= </span><span>WILDcount
+</span><span>    banks[np.</span><span style="color:#e9fdac;">argmax</span><span>(banks)] </span><span style="color:#ff5e5e;">-= </span><span>WILDcount
+</span></code></pre>
+<p><strong>My strategy (player 0).</strong> Rather than always hitting the global leader, I look
+<em>across the table</em> — at the player seated opposite me and their immediate
+neighbors — and take from the wealthiest of that group. If none of them have
+chips, I fall back to taking from the richest player who is furthest from me:</p>
+<pre data-lang="python" style="background-color:#191919;color:#f8f8f2;" class="language-python "><code class="language-python" data-lang="python"><span style="font-style:italic;color:#ff5e5e;">def </span><span style="color:#8cdaff;">strategy</span><span>(</span><span style="font-style:italic;color:#fc9354;">playerID</span><span>, </span><span style="font-style:italic;color:#fc9354;">WILDcount</span><span>):
+</span><span>    </span><span style="color:#6d6d6d;"># if the players across the table have money, take from the richest of them
+</span><span>    </span><span style="color:#ff5e5e;">if </span><span>np.</span><span style="color:#e9fdac;">count_nonzero</span><span>(banks[playerID </span><span style="color:#ff5e5e;">+ </span><span>N</span><span style="color:#ff5e5e;">//</span><span style="color:#fdb082;">2 </span><span style="color:#ff5e5e;">- </span><span style="color:#fdb082;">1 </span><span>: playerID </span><span style="color:#ff5e5e;">+ </span><span>N</span><span style="color:#ff5e5e;">//</span><span style="color:#fdb082;">2 </span><span style="color:#ff5e5e;">+ </span><span style="color:#fdb082;">1</span><span>]):
+</span><span>        banks[np.</span><span style="color:#e9fdac;">argmax</span><span>(banks[playerID </span><span style="color:#ff5e5e;">+ </span><span>N</span><span style="color:#ff5e5e;">//</span><span style="color:#fdb082;">2 </span><span style="color:#ff5e5e;">- </span><span style="color:#fdb082;">1 </span><span>: playerID </span><span style="color:#ff5e5e;">+ </span><span>N</span><span style="color:#ff5e5e;">//</span><span style="color:#fdb082;">2 </span><span style="color:#ff5e5e;">+ </span><span style="color:#fdb082;">1</span><span>])] </span><span style="color:#ff5e5e;">-= </span><span>WILDcount
+</span><span>    </span><span style="color:#6d6d6d;"># otherwise take from the player with money furthest from you
+</span><span>    </span><span style="color:#ff5e5e;">else</span><span>:
+</span><span>        who_has_money </span><span style="color:#ff5e5e;">= </span><span>np.</span><span style="color:#e9fdac;">nonzero</span><span>(banks)[</span><span style="color:#fdb082;">0</span><span>]
+</span><span>        take_from </span><span style="color:#ff5e5e;">= </span><span style="color:#6699cc;">min</span><span>(who_has_money, </span><span style="font-style:italic;color:#fc9354;">key</span><span style="color:#ff5e5e;">=</span><span style="font-style:italic;color:#ff5e5e;">lambda </span><span style="font-style:italic;color:#fc9354;">x</span><span>: </span><span style="color:#6699cc;">abs</span><span>(x </span><span style="color:#ff5e5e;">- </span><span>N</span><span style="color:#ff5e5e;">//</span><span style="color:#fdb082;">2</span><span>))
+</span><span>        banks[take_from] </span><span style="color:#ff5e5e;">-= </span><span>WILDcount
+</span></code></pre>
+<p>The intuition is that depleting players <em>across</em> the table — rather than feeding
+the global-leader dynamic that everyone else plays into — keeps chips circulating
+away from your immediate neighbors, who can pass chips straight back to you.</p>
+<p>A round lets every solvent player take a turn; a game runs until only one player
+has chips left:</p>
+<pre data-lang="python" style="background-color:#191919;color:#f8f8f2;" class="language-python "><code class="language-python" data-lang="python"><span style="font-style:italic;color:#ff5e5e;">def </span><span style="color:#8cdaff;">play_a_game</span><span>():
+</span><span>    </span><span style="color:#ff5e5e;">while </span><span>np.</span><span style="color:#e9fdac;">count_nonzero</span><span>(banks) </span><span style="color:#ff5e5e;">&gt; </span><span style="color:#fdb082;">1</span><span>:
+</span><span>        </span><span style="color:#e9fdac;">play_a_round</span><span>()
+</span></code></pre>
+<p>To estimate the win probability of the strategy, the whole game is replayed
+$n_\text{games} = 10{,}000$ times and player 0's win rate is tallied. With a fair
+game and no strategy, each of the 10 players would win about $1/N = 10%$ of the
+time; the question is whether the strategy pushes player 0 meaningfully above
+that baseline.</p>
+<h2 id="results">Results</h2>
+<p><img src="https://yamahasetter.github.io/blog/statistical-analysis-of-lrc/strat1.png" alt="Win-rate distribution across simulated games" /></p>
+<p>Across the Monte Carlo runs, the central comparison is between player 0's
+observed win rate and the $10%$ chance expected under pure luck. Because the
+game is dominated by randomness, the autonomy granted by the WILD face produces
+only a modest shift — the limited freedom the <em>Wild</em> variant allows is exactly
+that: limited. The simulation framework, however, makes it straightforward to
+swap in alternative <code>strategy()</code> rules and re-run the 10,000-game sweep to
+compare their win rates head-to-head.</p>
+
+      </div>
+    </article>
+  </div>
+
+
+  <script type="application/ld+json">
+{
+   "@context": "https://schema.org"
+  ,"@type": "BlogPosting"
+  ,"mainEntityOfPage": {
+     "@type": "WebPage"
+    ,"@id": "https://yamahasetter.github.io/blog/statistical-analysis-of-lrc/"
+  }
+  ,"headline": "Statistical Analysis of LRC"
+  ,"datePublished": "2024-12-20"
+  ,"dateModified": "2024-12-20"
+  
+  ,"author": [
+    
+      {
+         "@type": "Person"
+        ,"name": "Alyn Musselman"
+      }
+      
+    
+  ]
+  ,"publisher": [
+    
+      {
+         "@type": "Person"
+        ,"name": "Alyn Musselman"
+      }
+      
+    
+  ]
+  
+  ,"description": "Using Monte Carlo to test strategies in the game &#x27;Left, Center, Right&#x27;"
+  ,"articleBody": "MotivationLeft-Center-Right (LCR) is a dice game of pure luck. Each player starts with asmall pile of chips, and on your turn you roll one die for each chip you hold (upto three). The faces tell you what to do: L passes a chip left, R passesa chip right, C puts a chip in the center pot, and a dot means keep it.The last player with chips wins. Crucially, the standard game offers nodecisions — the dice decide everything, so there is no strategy to speak of.The Wild variant changes this. It adds a WILD face that lets the rollertake a chip from any player of their choosing (and rolling three WILDs sweepsthe entire center pot). Suddenly there is a sliver of autonomy. The question thatmotivated this project: given that limited freedom, what is the best use ofit? Is there a meaningful strategy, or does the game&#x27;s inherent randomness washout any advantage?To answer that, I built a Monte Carlo simulation of the game and pitted a chosenstrategy against players acting under a default rule.MethodologyThe game is modeled directly in NumPy. There are $N = 10$ players seated in aring, each starting with 5 chips. &#x27;You&#x27; are player 0; everyone else plays anaive baseline. A roll draws three faces from the die$$\text{die} = {,L,\ C,\ R,\ \text{dot},\ \text{dot},\ \text{WILD},},$$so each face has probability $1&#x2F;6$ except the dot, which has probability $2&#x2F;6$.A turn resolves the ordinary faces first — L and R move chips to neighbors, Cmoves a chip to the center — and then handles any WILDs:die = np.array([&amp;#39;L&amp;#39;,&amp;#39;C&amp;#39;,&amp;#39;R&amp;#39;,&amp;#39;DOT&amp;#39;,&amp;#39;DOT&amp;#39;,&amp;#39;WILD&amp;#39;])def doroll():    return np.array([np.random.choice(die) for i in range(3)])The baseline rule. When a generic player rolls a WILD, they greedily takefrom whoever currently has the largest stack:elif playerID:                      # any player that isn&amp;#39;t &amp;quot;you&amp;quot;    banks[playerID] += WILDcount    banks[np.argmax(banks)] -= WILDcountMy strategy (player 0). Rather than always hitting the global leader, I lookacross the table — at the player seated opposite me and their immediateneighbors — and take from the wealthiest of that group. If none of them havechips, I fall back to taking from the richest player who is furthest from me:def strategy(playerID, WILDcount):    # if the players across the table have money, take from the richest of them    if np.count_nonzero(banks[playerID + N&#x2F;&#x2F;2 - 1 : playerID + N&#x2F;&#x2F;2 + 1]):        banks[np.argmax(banks[playerID + N&#x2F;&#x2F;2 - 1 : playerID + N&#x2F;&#x2F;2 + 1])] -= WILDcount    # otherwise take from the player with money furthest from you    else:        who_has_money = np.nonzero(banks)[0]        take_from = min(who_has_money, key=lambda x: abs(x - N&#x2F;&#x2F;2))        banks[take_from] -= WILDcountThe intuition is that depleting players across the table — rather than feedingthe global-leader dynamic that everyone else plays into — keeps chips circulatingaway from your immediate neighbors, who can pass chips straight back to you.A round lets every solvent player take a turn; a game runs until only one playerhas chips left:def play_a_game():    while np.count_nonzero(banks) &amp;gt; 1:        play_a_round()To estimate the win probability of the strategy, the whole game is replayed$n_\text{games} = 10{,}000$ times and player 0&#x27;s win rate is tallied. With a fairgame and no strategy, each of the 10 players would win about $1&#x2F;N = 10%$ of thetime; the question is whether the strategy pushes player 0 meaningfully abovethat baseline.ResultsAcross the Monte Carlo runs, the central comparison is between player 0&#x27;sobserved win rate and the $10%$ chance expected under pure luck. Because thegame is dominated by randomness, the autonomy granted by the WILD face producesonly a modest shift — the limited freedom the Wild variant allows is exactlythat: limited. The simulation framework, however, makes it straightforward toswap in alternative strategy() rules and re-run the 10,000-game sweep tocompare their win rates head-to-head."
+  
+    ,"image": "https://yamahasetter.github.io/blog/statistical-analysis-of-lrc/strat1.png"
+  
+}
+</script>
+
+
+
+  </div>
+  <footer>
+  <!-- Social Media Icons -->
+  
+    <div class="mt-4 flex justify-center">
+      
+        
+          <a
+            
+            href="https:&#x2F;&#x2F;github.com&#x2F;yamahasetter" title="Github"
+            
+              class="text-gray-400 hover:text-gray-500">
+            
+            <span class="sr-only">github</span>
+            <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 1024 1024"><path d="M8 0C3.58 0 0 3.58 0 8C0 11.54 2.29 14.53 5.47 15.59C5.87 15.66 6.02 15.42 6.02 15.21C6.02 15.02 6.01 14.39 6.01 13.72C4 14.09 3.48 13.23 3.32 12.78C3.23 12.55 2.84 11.84 2.5 11.65C2.22 11.5 1.82 11.13 2.49 11.12C3.12 11.11 3.57 11.7 3.72 11.94C4.44 13.15 5.59 12.81 6.05 12.6C6.12 12.08 6.33 11.73 6.56 11.53C4.78 11.33 2.92 10.64 2.92 7.58C2.92 6.71 3.23 5.99 3.74 5.43C3.66 5.23 3.38 4.41 3.82 3.31C3.82 3.31 4.49 3.1 6.02 4.13C6.66 3.95 7.34 3.86 8.02 3.86C8.7 3.86 9.38 3.95 10.02 4.13C11.55 3.09 12.22 3.31 12.22 3.31C12.66 4.41 12.38 5.23 12.3 5.43C12.81 5.99 13.12 6.7 13.12 7.58C13.12 10.65 11.25 11.33 9.47 11.53C9.76 11.78 10.01 12.26 10.01 13.01C10.01 14.08 10 14.94 10 15.21C10 15.42 10.15 15.67 10.55 15.59C13.71 14.53 16 11.53 16 8C16 3.58 12.42 0 8 0Z" transform="scale(64)"/></svg>
+          </a>
+        
+      
+        
+          <a
+            
+            href="https:&#x2F;&#x2F;www.linkedin.com&#x2F;in&#x2F;alyn-m-b14b17152&#x2F;" title="Linkedin"
+            
+              class="ml-8 text-gray-400 hover:text-gray-500">
+            
+            <span class="sr-only">linkedin</span>
+            <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 1024 1024"><path d="M0 1.146C0 .513.526 0 1.175 0h13.65C15.474 0 16 .513 16 1.146v13.708c0 .633-.526 1.146-1.175 1.146H1.175C.526 16 0 15.487 0 14.854zm4.943 12.248V6.169H2.542v7.225zm-1.2-8.212c.837 0 1.358-.554 1.358-1.248-.015-.709-.52-1.248-1.342-1.248S2.4 3.226 2.4 3.934c0 .694.521 1.248 1.327 1.248zm4.908 8.212V9.359c0-.216.016-.432.08-.586.173-.431.568-.878 1.232-.878.869 0 1.216.662 1.216 1.634v3.865h2.401V9.25c0-2.22-1.184-3.252-2.764-3.252-1.274 0-1.845.7-2.165 1.193v.025h-.016l.016-.025V6.169h-2.4c.03.678 0 7.225 0 7.225z" transform="scale(64)"/></svg>
+          </a>
+        
+      
+        
+          <a
+            
+            href="https:&#x2F;&#x2F;stackoverflow.com&#x2F;users&#x2F;16188373&#x2F;try-hard" title="Stackoverflow"
+            
+              class="ml-8 text-gray-400 hover:text-gray-500">
+            
+            <span class="sr-only">stackoverflow</span>
+            <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 73.099998 86.599998"><g transform="translate(-22.6,-14.9)"><path d="m 84.4,93.8 0,-23.2 7.7,0 0,30.9 -69.5,0 0,-30.9 7.7,0 0,23.2 z"/><path d="m 38.8,68.4 37.8,7.9 1.6,-7.6 -37.8,-7.9 -1.6,7.6 z m 5,-18 35,16.3 3.2,-7 -35,-16.4 -3.2,7.1 z M 53.5,33.2 83.2,57.9 88.1,52 58.4,27.3 53.5,33.2 Z m 19.2,-18.3 -6.2,4.6 23,31 6.2,-4.6 -23,-31 z M 38,86 l 38.6,0 0,-7.7 -38.6,0 0,7.7 z"/></g></svg>
+          </a>
+        
+      
+        
+      
+        
+      
+    </div>
+  
+  <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8 text-center">
+    
+      <p class="text-center text-base leading-6">
+        
+          
+          <a href="&#x2F;pages&#x2F;privacy&#x2F;">Privacy Policy</a>
+        
+           &middot; 
+          <a href="&#x2F;pages&#x2F;terms&#x2F;">Terms</a>
+        
+      </p>
+    
+    
+    <div class="mt-4">
+      <p class="text-center text-base leading-6 text-gray-400">
+        Copyright 2026 by Thomas Weitzel
+      </p>
+    </div>
+    
+  </div>
+</footer>
+
+</body>
+</html>

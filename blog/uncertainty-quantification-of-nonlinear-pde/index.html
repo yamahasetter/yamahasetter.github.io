@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en">
+<head>
+  
+  
+  
+  
+  
+
+  <meta charset="UTF-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge" />
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name=generator content="Zola v0.19.1">
+
+  
+    <meta name="description" content="Four UQ strategies — Monte Carlo, DO, gPC, and PCM — applied to a stochastic Cahn-Hilliard equation.">
+  
+
+  <title>Alyn Musselman</title>
+  <link rel="stylesheet" href="/css/generated.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+  <link rel="stylesheet" href="/css/custom.css">
+  
+    <link rel="icon" href="&#x2F;img&#x2F;yin-yang.svg" />
+  
+
+  
+    <link rel="alternate" type="application/atom+xml" title="Atom Feed for https://yamahasetter.github.io" href="/atom.xml" />
+  
+
+  <script defer src="/js/zolarwind/logic.js" integrity="sha384-GYtsrgYVRYoxdEL+C+79KROm+MCl1ArSzQnqVnPTV78UNz5a1vFxAEiKbobXhQlw"></script>
+  
+    <!-- Calculate sha384: openssl dgst -sha384 -binary FILENAME.EXT | openssl base64 -A -->
+    <link rel="stylesheet" href="/js/katex/katex.min.css" integrity="sha384-GvrOXuhMATgEsSwCs4smul74iXGOixntILdUW9XmUC6+HX0sLNAK3q71HotJqlAn">
+    <script defer src="/js/katex/katex.min.js" integrity="sha384-cpW21h6RZv/phavutF+AuVYrr+dA8xD9zs6FwLpaCct6O9ctzYFfFr4dgmgccOTx"></script>
+    <script defer src="/js/katex/contrib/auto-render.min.js" integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05"></script>
+    <script defer src="/js/katex-config.js" integrity="sha384-YTwoxG+UASh+luh6A7HRGGG9fiJpEYcH1r0/xbJP0wfpH/E4eU3lG9mg4U5OUz9S"></script>
+  
+  
+</head>
+<body>
+  
+
+  
+
+
+<header class="sticky top-0 w-full z-10">
+  <nav class="pf-nav bg-gray-600">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        <div class="flex items-center">
+          <div class="flex-shrink-0">
+            <a href="/" aria-label="Go to homepage">
+              <div class="h-8 w-8 text-gray-200 hover:text-white fill-current">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor">
+                  <path d="M3 12L5 10M5 10L12 3L19 10M5 10V20C5 20.5523 5.44772 21 6 21H9M19 10L21 12M19 10V20C19 20.5523 18.5523 21 18 21H15M9 21C9.55228 21 10 20.5523 10 20V16C10 15.4477 10.4477 15 11 15H13C13.5523 15 14 15.4477 14 16V20C14 20.5523 14.4477 21 15 21M9 21H15" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </div>
+            </a>
+          </div>
+          <div class="hidden md:block">
+            <div class="ml-8 flex items-baseline">
+              
+                
+                  
+                    <a class="px-3 py-2 ml-2 rounded-md font-medium text-gray-200 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-600" href="/pages/imprint/" title="Imprint">Imprint</a>
+                  
+                
+                  
+                    <a class="px-3 py-2 ml-2 rounded-md font-medium text-gray-200 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-600" href="/pages/about/" title="About">About</a>
+                  
+                
+              
+            </div>
+          </div>
+        </div>
+        <div class="-mr-2 flex md:hidden">
+          <button id="toggleMobileMenu" class="icon inline-flex items-center justify-center p-2 rounded-md text-gray-200 hover:text-white hover:bg-gray-700 focus:outline-none focus:bg-gray-700 focus:text-white" aria-label="Menu">
+            <span id="mobile-icon-menu-unselected">
+              <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            </span>
+            <span id="mobile-icon-menu-selected" class="hidden">
+              <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+    
+      <div id="mobile-menu" class="hidden md:hidden px-2 pt-2 pb-3 sm:px-3">
+        
+          
+            <a class="mt-1 block px-3 py-2 rounded-md font-medium text-gray-200 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-600" href="/pages/imprint/" title="Imprint">Imprint</a>
+          
+        
+          
+            <a class="mt-1 block px-3 py-2 rounded-md font-medium text-gray-200 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-600" href="/pages/about/" title="About">About</a>
+          
+        
+      </div>
+    
+  </nav>
+</header>
+
+  <div id="content">
+    
+
+  
+
+  <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
+    <article class="prose">
+      <div class="flex justify-center items-center bg-gray-100 rounded-md">
+        <img class="w-auto h-full object-contain" src="mean_solutions_compared_colorbar.png" alt="Uncertainty Quantificaton of Stochastic Nonlinear PDEs">
+      </div>
+      <h1>Uncertainty Quantificaton of Stochastic Nonlinear PDEs</h1>
+      <div>
+        <p>
+          <span class="mr-2 text-sm">
+            <time datetime="2024-09-20">September 20, 2024</time> &middot;
+            1,320 words &middot;
+            7 minutes reading time
+          </span>
+          <span class="text-sm leading-5 font-medium text-indigo-600">
+
+  
+    
+      <span class="mr-2 badge badge-green"><a href="https://yamahasetter.github.io/tags/statistics/">Statistics</a></span>
+    
+      <span class="mr-2 badge badge-green"><a href="https://yamahasetter.github.io/tags/math/">math</a></span>
+    
+  
+
+</span>
+
+        </p>
+      </div>
+
+      <div>
+        <h2 id="motivation">Motivation</h2>
+<p>The Cahn-Hilliard equation is a fourth-order, nonlinear, time-dependent PDE that
+models <strong>phase separation</strong> in a binary mixture — think of two substances (or two
+phases of one substance) un-mixing into distinct regions. It shows up all over
+materials science, and like most equations of its kind it cannot be solved
+analytically.</p>
+<p>For this project (my AM 238 research project with Daniele Venturi) I made the
+problem <em>stochastic</em>: I injected noise into the potential-energy function that
+governs how the mixture separates. The result is a stochastic, nonlinear,
+fourth-order PDE, and the question becomes one of <strong>uncertainty quantification</strong> —
+not "what is the solution?" but "what is the <em>mean</em> and <em>variance</em> of the solution
+field given a random input?" The traditional answer is Monte Carlo, but Monte
+Carlo needs an enormous number of samples to converge and quickly becomes too
+expensive. The goal here was to see whether smarter sampling methods could match
+Monte Carlo's accuracy at a fraction of the cost.</p>
+<p>I evaluate four strategies for the mean-field solution: <strong>Monte Carlo</strong>,
+<strong>Dynamically Orthogonal (DO) field equations</strong>, <strong>generalized Polynomial Chaos
+(gPC)</strong>, and the <strong>Probabilistic Collocation Method (PCM)</strong>.</p>
+<h2 id="the-cahn-hilliard-model">The Cahn-Hilliard Model</h2>
+<p>Let $u(\mathbf{x}, t)$ be the local concentration, scaled so that $u &lt; 0$ marks
+phase $A$ and $u &gt; 0$ marks phase $B$. With a chemical potential $\mu$, Fick's
+first law $\mathbf{J} = -D\nabla\mu$ and conservation of mass
+($\partial_t u + \nabla\cdot\mathbf{J} = 0$) give the general Cahn-Hilliard form</p>
+<p>$$
+\frac{\partial u}{\partial t} = \nabla\cdot(D,\nabla\mu).
+$$</p>
+<p>The physics of separation lives in $\mu$. Starting from a Landau free energy and
+keeping the symmetric double-well shape, the potential is built as
+$F(T^*, u) = \tfrac{1}{4}\big(a - (bu)^2\big)^2$, where $a, b$ depend on
+temperature $T$. For $a &lt; 0$ the well has a single minimum; as $a$ crosses zero a
+<strong>bifurcation</strong> creates two minima separated by an energy barrier at $u = 0$ — and
+that double well is exactly what drives the mixture apart.</p>
+<p><img src="https://yamahasetter.github.io/blog/uncertainty-quantification-of-nonlinear-pde/phase-diagram-01.png" alt="Phase diagram of the double-well potential" /></p>
+<p>Adding a gradient-energy term $\tfrac{\gamma}{2}|\nabla u|^2$ (which penalizes
+fine-scale mixing and forces the material into distinct domains) and
+non-dimensionalizing reduces the model to</p>
+<p>$$
+\frac{\partial u}{\partial \hat{t}} = \nabla^2!\left(\alpha^2 u^3 - u - \nabla^2 u\right),
+\qquad \alpha = \frac{b}{\sqrt{a}}.
+$$</p>
+<p>The single parameter $\alpha$ sets the shape of the potential about $u = 0$: small
+$\alpha$ pulls particles to their phase minima quickly, larger $\alpha$ more
+slowly. This is the knob I perturb to model real-world noise.</p>
+<h3 id="making-it-stochastic">Making it stochastic</h3>
+<p>In a real system the temperature is never perfectly fixed, and those fluctuations
+change $a$ and $b$ — and therefore $\alpha$. Promoting $\alpha \to \alpha(\xi)$
+for a random variable $\xi$ turns the model into a stochastic PDE,</p>
+<p>$$
+\frac{\partial u(\mathbf{x}, t, \xi)}{\partial \hat{t}}
+= \nabla^2!\left(\alpha(\xi)^2 u^3 - u - \nabla^2 u\right).
+$$</p>
+<p>Phase separation requires $0 &lt; \alpha \ll 1$, so I take $\alpha$ <strong>uniform</strong> on
+$\Omega = [0.001, 0.1]$ (exponential and Gaussian PDFs are hard to sample
+reliably at this scale). The plots below show how the potential's shape varies
+with $\alpha$.</p>
+<p><img src="https://yamahasetter.github.io/blog/uncertainty-quantification-of-nonlinear-pde/potential_energy.png" alt="Variations of the potential energy as a function of α" /></p>
+<h3 id="numerical-solver">Numerical solver</h3>
+<p>Every method below rests on the same deterministic solver: <strong>second/fourth-order
+finite differences</strong> in space (a 5-point stencil for $\partial_{xx}$ and a 5-point
+stencil for $\partial_{xxxx}$, etc.) and an explicit <strong>3-step Runge-Kutta</strong> scheme
+in time,</p>
+<p>$$
+u^{t+1} = u^{t} + \frac{\Delta t}{6}\left(k_1 + 4k_2 + k_3\right),
+$$</p>
+<p>with $\Delta x = \Delta y = 0.017$, $\Delta t = 10^{-5}$, and $\mathbf{x} \in
+[-1,1]^2$. Starting from a random initial field, this resolves the characteristic
+coarsening of the two phases over time.</p>
+<p><img src="https://yamahasetter.github.io/blog/uncertainty-quantification-of-nonlinear-pde/single_solve_colorbar.png" alt="Numerical solution of the stochastic Cahn-Hilliard equation over time" /></p>
+<h2 id="the-four-uq-methods">The Four UQ Methods</h2>
+<p><strong>Monte Carlo.</strong> Draw many samples of $\alpha$, solve the deterministic PDE for
+each, and average. It is simple and unbiased — the mean and variance are just the
+empirical mean and variance over the ensemble — and I use a <strong>5000-sample</strong> run as
+the reference "truth." Its weakness is cost: the error shrinks only like
+$1/\sqrt{N}$, so high accuracy demands enormous $N$.</p>
+<p><strong>Dynamically Orthogonal (DO) field equations.</strong> Expand the solution as a mean
+plus a sum of orthogonal spatial modes carrying zero-mean stochastic
+coefficients, $u = \bar{u} + \sum_i \hat{u}_i(\mathbf{x},t),Y_i(t,\xi)$, evolved
+under the dynamically-orthogonal constraint. In principle this propagates only the
+handful of modes that matter. In practice, applying it to Cahn-Hilliard produces
+products of high-order derivatives ($\partial^n\hat u_i,\partial^n\hat u_j$) that
+<strong>diverge</strong> for non-smooth initial data, and the propagator contains
+fourth-order tensors whose per-timestep flop count is intractable. <strong>Conclusion:
+too expensive and too algorithmically complex to solve here.</strong></p>
+<p><strong>Generalized Polynomial Chaos (gPC).</strong> Expand the solution in a basis of
+polynomials $P_k(\xi)$ that are orthogonal with respect to the input PDF,
+$u(\mathbf{x},t,\xi) = \sum_k \hat{u}_k(\mathbf{x},t),P_k(\xi)$, build the basis
+with the Stieltjes recurrence, and project the PDE onto each basis function to get
+a coupled system of deterministic PDEs. The mean is then $\hat u_0$ and the
+variance is $\sum_k \hat u_k^2,\mathbb{E}{P_k^2}$. Unfortunately the projection
+generates the <em>same</em> divergent derivative-product terms as DO, and a flop count
+makes it concrete: even a coarse $N=100$ grid, $M=10$ modes, and 1000 steps costs
+~3 teraflops for just the <strong>first part of the first term</strong>. <strong>Conclusion: also too
+expensive.</strong></p>
+<p><strong>Probabilistic Collocation Method (PCM).</strong> This is the method that works. Instead
+of coupling the modes, PCM evaluates the solution at carefully chosen
+<strong>collocation nodes</strong> $\xi^j$ in the support of the input PDF,
+$u(\mathbf{x},t,\xi) \approx \sum_j u_j(\mathbf{x},t,\xi^j),P_j(\xi)$, which
+yields an <strong>uncoupled</strong> family of deterministic PDEs — one per node — each solved
+with the same RK solver as before. I generate the nodes and weights as
+Gauss-quadrature points via the Stieltjes algorithm (the eigenvalues/eigenvectors
+of the recurrence matrix $S$). With $M = 5$ nodes the mean and variance are simple
+weighted sums,</p>
+<p>$$
+\mathbb{E}{u} \approx \sum_{j} w_j, u_j,
+\qquad
+\mathrm{Var}{u} \approx \sum_{j} w_j, u_j^2 - \Big(\sum_j w_j, u_j\Big)^2 .
+$$</p>
+<p>Because the system is uncoupled, there are no divergent cross-terms and the cost
+is just five deterministic solves.</p>
+<p><img src="https://yamahasetter.github.io/blog/uncertainty-quantification-of-nonlinear-pde/PCM_modes.png" alt="The five superimposed deterministic PCM components (binary colormap)" /></p>
+<p><img src="https://yamahasetter.github.io/blog/uncertainty-quantification-of-nonlinear-pde/PCM_solution_colorbar.png" alt="Mean and variance of the stochastic Cahn-Hilliard equation via PCM" /></p>
+<h2 id="results">Results</h2>
+<p>The headline comparison is PCM against the 5000-sample Monte Carlo reference (and
+the analytic mean). The mean fields are visually indistinguishable — PCM
+reproduces the Monte Carlo answer using only <strong>five</strong> deterministic solves rather
+than five thousand.</p>
+<p><img src="https://yamahasetter.github.io/blog/uncertainty-quantification-of-nonlinear-pde/mean_solutions_compared_colorbar.png" alt="Mean solutions compared: Monte Carlo vs. analytic vs. PCM" /></p>
+<p>The takeaways:</p>
+<ul>
+<li><strong>Monte Carlo works but is wasteful</strong> — accurate, unbiased, and the natural
+baseline, but its $1/\sqrt{N}$ convergence makes high accuracy very costly.</li>
+<li><strong>DO and gPC are elegant but impractical here.</strong> Both reduce the SPDE to
+deterministic systems in theory, but Cahn-Hilliard's nonlinearity produces
+diverging high-order derivative products and tensor terms with intractable flop
+counts. They are dead ends <em>for this particular equation</em>.</li>
+<li><strong>PCM is the winner.</strong> By decoupling the stochastic problem into a few
+independent deterministic solves at Gauss-quadrature nodes, it sidesteps the
+divergence entirely and matches the Monte Carlo mean field at a tiny fraction of
+the cost — roughly three orders of magnitude fewer solves in this experiment.</li>
+</ul>
+<p>The broader lesson is that the "obvious" spectral UQ methods (DO, gPC) are not
+universally applicable: a strongly nonlinear, high-order operator can break them,
+and a well-chosen collocation scheme can be both simpler and dramatically cheaper.</p>
+
+      </div>
+    </article>
+  </div>
+
+
+  <script type="application/ld+json">
+{
+   "@context": "https://schema.org"
+  ,"@type": "BlogPosting"
+  ,"mainEntityOfPage": {
+     "@type": "WebPage"
+    ,"@id": "https://yamahasetter.github.io/blog/uncertainty-quantification-of-nonlinear-pde/"
+  }
+  ,"headline": "Uncertainty Quantificaton of Stochastic Nonlinear PDEs"
+  ,"datePublished": "2024-09-20"
+  ,"dateModified": "2024-09-20"
+  
+  ,"author": [
+    
+      {
+         "@type": "Person"
+        ,"name": "Alyn Musselman"
+      }
+      
+    
+  ]
+  ,"publisher": [
+    
+      {
+         "@type": "Person"
+        ,"name": "Alyn Musselman"
+      }
+      
+    
+  ]
+  
+  ,"description": "Four UQ strategies — Monte Carlo, DO, gPC, and PCM — applied to a stochastic Cahn-Hilliard equation."
+  ,"articleBody": "MotivationThe Cahn-Hilliard equation is a fourth-order, nonlinear, time-dependent PDE thatmodels phase separation in a binary mixture — think of two substances (or twophases of one substance) un-mixing into distinct regions. It shows up all overmaterials science, and like most equations of its kind it cannot be solvedanalytically.For this project (my AM 238 research project with Daniele Venturi) I made theproblem stochastic: I injected noise into the potential-energy function thatgoverns how the mixture separates. The result is a stochastic, nonlinear,fourth-order PDE, and the question becomes one of uncertainty quantification —not &#x27;what is the solution?&#x27; but &#x27;what is the mean and variance of the solutionfield given a random input?&#x27; The traditional answer is Monte Carlo, but MonteCarlo needs an enormous number of samples to converge and quickly becomes tooexpensive. The goal here was to see whether smarter sampling methods could matchMonte Carlo&#x27;s accuracy at a fraction of the cost.I evaluate four strategies for the mean-field solution: Monte Carlo,Dynamically Orthogonal (DO) field equations, generalized Polynomial Chaos(gPC), and the Probabilistic Collocation Method (PCM).The Cahn-Hilliard ModelLet $u(\mathbf{x}, t)$ be the local concentration, scaled so that $u &amp;lt; 0$ marksphase $A$ and $u &amp;gt; 0$ marks phase $B$. With a chemical potential $\mu$, Fick&#x27;sfirst law $\mathbf{J} = -D\nabla\mu$ and conservation of mass($\partial_t u + \nabla\cdot\mathbf{J} = 0$) give the general Cahn-Hilliard form$$\frac{\partial u}{\partial t} = \nabla\cdot(D,\nabla\mu).$$The physics of separation lives in $\mu$. Starting from a Landau free energy andkeeping the symmetric double-well shape, the potential is built as$F(T^*, u) = \tfrac{1}{4}\big(a - (bu)^2\big)^2$, where $a, b$ depend ontemperature $T$. For $a &amp;lt; 0$ the well has a single minimum; as $a$ crosses zero abifurcation creates two minima separated by an energy barrier at $u = 0$ — andthat double well is exactly what drives the mixture apart.Adding a gradient-energy term $\tfrac{\gamma}{2}|\nabla u|^2$ (which penalizesfine-scale mixing and forces the material into distinct domains) andnon-dimensionalizing reduces the model to$$\frac{\partial u}{\partial \hat{t}} = \nabla^2!\left(\alpha^2 u^3 - u - \nabla^2 u\right),\qquad \alpha = \frac{b}{\sqrt{a}}.$$The single parameter $\alpha$ sets the shape of the potential about $u = 0$: small$\alpha$ pulls particles to their phase minima quickly, larger $\alpha$ moreslowly. This is the knob I perturb to model real-world noise.Making it stochasticIn a real system the temperature is never perfectly fixed, and those fluctuationschange $a$ and $b$ — and therefore $\alpha$. Promoting $\alpha \to \alpha(\xi)$for a random variable $\xi$ turns the model into a stochastic PDE,$$\frac{\partial u(\mathbf{x}, t, \xi)}{\partial \hat{t}}= \nabla^2!\left(\alpha(\xi)^2 u^3 - u - \nabla^2 u\right).$$Phase separation requires $0 &amp;lt; \alpha \ll 1$, so I take $\alpha$ uniform on$\Omega = [0.001, 0.1]$ (exponential and Gaussian PDFs are hard to samplereliably at this scale). The plots below show how the potential&#x27;s shape varieswith $\alpha$.Numerical solverEvery method below rests on the same deterministic solver: second&#x2F;fourth-orderfinite differences in space (a 5-point stencil for $\partial_{xx}$ and a 5-pointstencil for $\partial_{xxxx}$, etc.) and an explicit 3-step Runge-Kutta schemein time,$$u^{t+1} = u^{t} + \frac{\Delta t}{6}\left(k_1 + 4k_2 + k_3\right),$$with $\Delta x = \Delta y = 0.017$, $\Delta t = 10^{-5}$, and $\mathbf{x} \in[-1,1]^2$. Starting from a random initial field, this resolves the characteristiccoarsening of the two phases over time.The Four UQ MethodsMonte Carlo. Draw many samples of $\alpha$, solve the deterministic PDE foreach, and average. It is simple and unbiased — the mean and variance are just theempirical mean and variance over the ensemble — and I use a 5000-sample run asthe reference &#x27;truth.&#x27; Its weakness is cost: the error shrinks only like$1&#x2F;\sqrt{N}$, so high accuracy demands enormous $N$.Dynamically Orthogonal (DO) field equations. Expand the solution as a meanplus a sum of orthogonal spatial modes carrying zero-mean stochasticcoefficients, $u = \bar{u} + \sum_i \hat{u}_i(\mathbf{x},t),Y_i(t,\xi)$, evolvedunder the dynamically-orthogonal constraint. In principle this propagates only thehandful of modes that matter. In practice, applying it to Cahn-Hilliard producesproducts of high-order derivatives ($\partial^n\hat u_i,\partial^n\hat u_j$) thatdiverge for non-smooth initial data, and the propagator containsfourth-order tensors whose per-timestep flop count is intractable. Conclusion:too expensive and too algorithmically complex to solve here.Generalized Polynomial Chaos (gPC). Expand the solution in a basis ofpolynomials $P_k(\xi)$ that are orthogonal with respect to the input PDF,$u(\mathbf{x},t,\xi) = \sum_k \hat{u}_k(\mathbf{x},t),P_k(\xi)$, build the basiswith the Stieltjes recurrence, and project the PDE onto each basis function to geta coupled system of deterministic PDEs. The mean is then $\hat u_0$ and thevariance is $\sum_k \hat u_k^2,\mathbb{E}{P_k^2}$. Unfortunately the projectiongenerates the same divergent derivative-product terms as DO, and a flop countmakes it concrete: even a coarse $N=100$ grid, $M=10$ modes, and 1000 steps costs~3 teraflops for just the first part of the first term. Conclusion: also tooexpensive.Probabilistic Collocation Method (PCM). This is the method that works. Insteadof coupling the modes, PCM evaluates the solution at carefully chosencollocation nodes $\xi^j$ in the support of the input PDF,$u(\mathbf{x},t,\xi) \approx \sum_j u_j(\mathbf{x},t,\xi^j),P_j(\xi)$, whichyields an uncoupled family of deterministic PDEs — one per node — each solvedwith the same RK solver as before. I generate the nodes and weights asGauss-quadrature points via the Stieltjes algorithm (the eigenvalues&#x2F;eigenvectorsof the recurrence matrix $S$). With $M = 5$ nodes the mean and variance are simpleweighted sums,$$\mathbb{E}{u} \approx \sum_{j} w_j, u_j,\qquad\mathrm{Var}{u} \approx \sum_{j} w_j, u_j^2 - \Big(\sum_j w_j, u_j\Big)^2 .$$Because the system is uncoupled, there are no divergent cross-terms and the costis just five deterministic solves.ResultsThe headline comparison is PCM against the 5000-sample Monte Carlo reference (andthe analytic mean). The mean fields are visually indistinguishable — PCMreproduces the Monte Carlo answer using only five deterministic solves ratherthan five thousand.The takeaways:Monte Carlo works but is wasteful — accurate, unbiased, and the naturalbaseline, but its $1&#x2F;\sqrt{N}$ convergence makes high accuracy very costly.DO and gPC are elegant but impractical here. Both reduce the SPDE todeterministic systems in theory, but Cahn-Hilliard&#x27;s nonlinearity producesdiverging high-order derivative products and tensor terms with intractable flopcounts. They are dead ends for this particular equation.PCM is the winner. By decoupling the stochastic problem into a fewindependent deterministic solves at Gauss-quadrature nodes, it sidesteps thedivergence entirely and matches the Monte Carlo mean field at a tiny fraction ofthe cost — roughly three orders of magnitude fewer solves in this experiment.The broader lesson is that the &#x27;obvious&#x27; spectral UQ methods (DO, gPC) are notuniversally applicable: a strongly nonlinear, high-order operator can break them,and a well-chosen collocation scheme can be both simpler and dramatically cheaper."
+  
+    ,"image": "https://yamahasetter.github.io/blog/uncertainty-quantification-of-nonlinear-pde/mean_solutions_compared_colorbar.png"
+  
+}
+</script>
+
+
+
+  </div>
+  <footer>
+  <!-- Social Media Icons -->
+  
+    <div class="mt-4 flex justify-center">
+      
+        
+          <a
+            
+            href="https:&#x2F;&#x2F;github.com&#x2F;yamahasetter" title="Github"
+            
+              class="text-gray-400 hover:text-gray-500">
+            
+            <span class="sr-only">github</span>
+            <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 1024 1024"><path d="M8 0C3.58 0 0 3.58 0 8C0 11.54 2.29 14.53 5.47 15.59C5.87 15.66 6.02 15.42 6.02 15.21C6.02 15.02 6.01 14.39 6.01 13.72C4 14.09 3.48 13.23 3.32 12.78C3.23 12.55 2.84 11.84 2.5 11.65C2.22 11.5 1.82 11.13 2.49 11.12C3.12 11.11 3.57 11.7 3.72 11.94C4.44 13.15 5.59 12.81 6.05 12.6C6.12 12.08 6.33 11.73 6.56 11.53C4.78 11.33 2.92 10.64 2.92 7.58C2.92 6.71 3.23 5.99 3.74 5.43C3.66 5.23 3.38 4.41 3.82 3.31C3.82 3.31 4.49 3.1 6.02 4.13C6.66 3.95 7.34 3.86 8.02 3.86C8.7 3.86 9.38 3.95 10.02 4.13C11.55 3.09 12.22 3.31 12.22 3.31C12.66 4.41 12.38 5.23 12.3 5.43C12.81 5.99 13.12 6.7 13.12 7.58C13.12 10.65 11.25 11.33 9.47 11.53C9.76 11.78 10.01 12.26 10.01 13.01C10.01 14.08 10 14.94 10 15.21C10 15.42 10.15 15.67 10.55 15.59C13.71 14.53 16 11.53 16 8C16 3.58 12.42 0 8 0Z" transform="scale(64)"/></svg>
+          </a>
+        
+      
+        
+          <a
+            
+            href="https:&#x2F;&#x2F;www.linkedin.com&#x2F;in&#x2F;alyn-m-b14b17152&#x2F;" title="Linkedin"
+            
+              class="ml-8 text-gray-400 hover:text-gray-500">
+            
+            <span class="sr-only">linkedin</span>
+            <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 1024 1024"><path d="M0 1.146C0 .513.526 0 1.175 0h13.65C15.474 0 16 .513 16 1.146v13.708c0 .633-.526 1.146-1.175 1.146H1.175C.526 16 0 15.487 0 14.854zm4.943 12.248V6.169H2.542v7.225zm-1.2-8.212c.837 0 1.358-.554 1.358-1.248-.015-.709-.52-1.248-1.342-1.248S2.4 3.226 2.4 3.934c0 .694.521 1.248 1.327 1.248zm4.908 8.212V9.359c0-.216.016-.432.08-.586.173-.431.568-.878 1.232-.878.869 0 1.216.662 1.216 1.634v3.865h2.401V9.25c0-2.22-1.184-3.252-2.764-3.252-1.274 0-1.845.7-2.165 1.193v.025h-.016l.016-.025V6.169h-2.4c.03.678 0 7.225 0 7.225z" transform="scale(64)"/></svg>
+          </a>
+        
+      
+        
+          <a
+            
+            href="https:&#x2F;&#x2F;stackoverflow.com&#x2F;users&#x2F;16188373&#x2F;try-hard" title="Stackoverflow"
+            
+              class="ml-8 text-gray-400 hover:text-gray-500">
+            
+            <span class="sr-only">stackoverflow</span>
+            <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 73.099998 86.599998"><g transform="translate(-22.6,-14.9)"><path d="m 84.4,93.8 0,-23.2 7.7,0 0,30.9 -69.5,0 0,-30.9 7.7,0 0,23.2 z"/><path d="m 38.8,68.4 37.8,7.9 1.6,-7.6 -37.8,-7.9 -1.6,7.6 z m 5,-18 35,16.3 3.2,-7 -35,-16.4 -3.2,7.1 z M 53.5,33.2 83.2,57.9 88.1,52 58.4,27.3 53.5,33.2 Z m 19.2,-18.3 -6.2,4.6 23,31 6.2,-4.6 -23,-31 z M 38,86 l 38.6,0 0,-7.7 -38.6,0 0,7.7 z"/></g></svg>
+          </a>
+        
+      
+        
+      
+        
+      
+    </div>
+  
+  <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8 text-center">
+    
+      <p class="text-center text-base leading-6">
+        
+          
+          <a href="&#x2F;pages&#x2F;privacy&#x2F;">Privacy Policy</a>
+        
+           &middot; 
+          <a href="&#x2F;pages&#x2F;terms&#x2F;">Terms</a>
+        
+      </p>
+    
+    
+    <div class="mt-4">
+      <p class="text-center text-base leading-6 text-gray-400">
+        Copyright 2026 by Thomas Weitzel
+      </p>
+    </div>
+    
+  </div>
+</footer>
+
+</body>
+</html>

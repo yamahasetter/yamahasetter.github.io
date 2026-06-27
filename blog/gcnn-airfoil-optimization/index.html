@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en">
+<head>
+  
+  
+  
+  
+  
+
+  <meta charset="UTF-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge" />
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name=generator content="Zola v0.19.1">
+
+  
+    <meta name="description" content="A differentiable GCNN surrogate for CFD that optimizes airfoil shape directly through backpropagation.">
+  
+
+  <title>Alyn Musselman</title>
+  <link rel="stylesheet" href="/css/generated.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+  <link rel="stylesheet" href="/css/custom.css">
+  
+    <link rel="icon" href="&#x2F;img&#x2F;yin-yang.svg" />
+  
+
+  
+    <link rel="alternate" type="application/atom+xml" title="Atom Feed for https://yamahasetter.github.io" href="/atom.xml" />
+  
+
+  <script defer src="/js/zolarwind/logic.js" integrity="sha384-GYtsrgYVRYoxdEL+C+79KROm+MCl1ArSzQnqVnPTV78UNz5a1vFxAEiKbobXhQlw"></script>
+  
+    <!-- Calculate sha384: openssl dgst -sha384 -binary FILENAME.EXT | openssl base64 -A -->
+    <link rel="stylesheet" href="/js/katex/katex.min.css" integrity="sha384-GvrOXuhMATgEsSwCs4smul74iXGOixntILdUW9XmUC6+HX0sLNAK3q71HotJqlAn">
+    <script defer src="/js/katex/katex.min.js" integrity="sha384-cpW21h6RZv/phavutF+AuVYrr+dA8xD9zs6FwLpaCct6O9ctzYFfFr4dgmgccOTx"></script>
+    <script defer src="/js/katex/contrib/auto-render.min.js" integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05"></script>
+    <script defer src="/js/katex-config.js" integrity="sha384-YTwoxG+UASh+luh6A7HRGGG9fiJpEYcH1r0/xbJP0wfpH/E4eU3lG9mg4U5OUz9S"></script>
+  
+  
+</head>
+<body>
+  
+
+  
+
+
+<header class="sticky top-0 w-full z-10">
+  <nav class="pf-nav bg-gray-600">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        <div class="flex items-center">
+          <div class="flex-shrink-0">
+            <a href="/" aria-label="Go to homepage">
+              <div class="h-8 w-8 text-gray-200 hover:text-white fill-current">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor">
+                  <path d="M3 12L5 10M5 10L12 3L19 10M5 10V20C5 20.5523 5.44772 21 6 21H9M19 10L21 12M19 10V20C19 20.5523 18.5523 21 18 21H15M9 21C9.55228 21 10 20.5523 10 20V16C10 15.4477 10.4477 15 11 15H13C13.5523 15 14 15.4477 14 16V20C14 20.5523 14.4477 21 15 21M9 21H15" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </div>
+            </a>
+          </div>
+          <div class="hidden md:block">
+            <div class="ml-8 flex items-baseline">
+              
+                
+                  
+                    <a class="px-3 py-2 ml-2 rounded-md font-medium text-gray-200 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-600" href="/pages/imprint/" title="Imprint">Imprint</a>
+                  
+                
+                  
+                    <a class="px-3 py-2 ml-2 rounded-md font-medium text-gray-200 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-600" href="/pages/about/" title="About">About</a>
+                  
+                
+              
+            </div>
+          </div>
+        </div>
+        <div class="-mr-2 flex md:hidden">
+          <button id="toggleMobileMenu" class="icon inline-flex items-center justify-center p-2 rounded-md text-gray-200 hover:text-white hover:bg-gray-700 focus:outline-none focus:bg-gray-700 focus:text-white" aria-label="Menu">
+            <span id="mobile-icon-menu-unselected">
+              <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            </span>
+            <span id="mobile-icon-menu-selected" class="hidden">
+              <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+    
+      <div id="mobile-menu" class="hidden md:hidden px-2 pt-2 pb-3 sm:px-3">
+        
+          
+            <a class="mt-1 block px-3 py-2 rounded-md font-medium text-gray-200 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-600" href="/pages/imprint/" title="Imprint">Imprint</a>
+          
+        
+          
+            <a class="mt-1 block px-3 py-2 rounded-md font-medium text-gray-200 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-600" href="/pages/about/" title="About">About</a>
+          
+        
+      </div>
+    
+  </nav>
+</header>
+
+  <div id="content">
+    
+
+  
+
+  <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
+    <article class="prose">
+      <div class="flex justify-center items-center bg-gray-100 rounded-md">
+        <img class="w-auto h-full object-contain" src="run_summary.png" alt="Gradient-Based Airfoil Optimization with Graph Convolutional Networks">
+      </div>
+      <h1>Gradient-Based Airfoil Optimization with Graph Convolutional Networks</h1>
+      <div>
+        <p>
+          <span class="mr-2 text-sm">
+            <time datetime="2026-06-08">June 08, 2026</time> &middot;
+            1,101 words &middot;
+            6 minutes reading time
+          </span>
+          <span class="text-sm leading-5 font-medium text-indigo-600">
+
+  
+    
+      <span class="mr-2 badge badge-green"><a href="https://yamahasetter.github.io/tags/pytorch/">Pytorch</a></span>
+    
+      <span class="mr-2 badge badge-green"><a href="https://yamahasetter.github.io/tags/math/">math</a></span>
+    
+  
+
+</span>
+
+        </p>
+      </div>
+
+      <div>
+        <h2 id="motivation">Motivation</h2>
+<p>Aerodynamic shape optimization is expensive. The usual loop wraps a CFD solver
+inside a black-box optimizer: propose a shape, mesh it, solve the Navier–Stokes
+equations, read off the lift-to-drag ratio, and repeat. Each evaluation costs
+minutes of solver time, and because the optimizer treats the solver as a black
+box it has no access to gradients — it must approximate them with finite
+differences or fall back on derivative-free search.</p>
+<p>This project recreates the results of Shukla, Oommen, Peyvan et al., but
+replaces their DeepONet surrogate with a <strong>Graph Convolutional Neural Network
+(GCNN)</strong>. The goal is a <em>differentiable</em> approximation to the CFD solver: once
+the surrogate is trained, the gradient of the lift-to-drag ratio with respect to
+the shape parameters is available directly through autograd, so the optimal
+airfoil can be found by plain gradient descent rather than a black-box search.</p>
+<p>Concretely, the problem is to find the NACA 4-digit parameters $(p, m)$ — the
+position and magnitude of maximum camber — that maximize the lift-to-drag ratio
+$L/D$ of a 2D airfoil in steady, subsonic, viscous flow.</p>
+<h2 id="governing-equations">Governing Equations</h2>
+<p>The flow is governed by the 2D compressible Navier–Stokes equations:</p>
+<p>$$
+\frac{\partial \rho}{\partial t} + \nabla \cdot (\rho \mathbf{u}) = 0,
+$$</p>
+<p>$$
+\frac{\partial (\rho \mathbf{u})}{\partial t} + \nabla \cdot (\rho, \mathbf{u} \otimes \mathbf{u} + p\mathbf{I}) = \frac{1}{\mathrm{Re}}, \nabla \cdot \boldsymbol{\tau},
+$$</p>
+<p>$$
+\frac{\partial E}{\partial t} + \nabla \cdot \big((E + p)\mathbf{u}\big) = \frac{1}{\mathrm{Re}}, \nabla \cdot (\boldsymbol{\tau}\mathbf{u} + \kappa \nabla T),
+$$</p>
+<p>where $\rho$ is density, $\mathbf{u}$ the velocity vector, $p$ pressure, $E$
+total energy, $\boldsymbol{\tau}$ the viscous stress tensor, and $\kappa$ the
+thermal conductivity. Lift and drag follow from integrating pressure and wall
+shear stress over the airfoil surface.</p>
+<h2 id="generating-training-data-with-su2">Generating Training Data with SU2</h2>
+<p>Ground-truth flow fields come from <a href="https://su2code.github.io/">SU2</a>, an
+open-source CFD solver that solves the compressible Navier–Stokes equations on
+unstructured meshes. SU2 produces the full volumetric field ($u, v, p, \rho, T$)
+as well as the surface quantities ($C_p$, $C_f$) needed for the surrogate's
+labels. The pipeline for each airfoil is:</p>
+<ol>
+<li>Generate surface coordinates from the NACA equations.</li>
+<li>Mesh the flow domain with Gmsh (a body-fitted unstructured triangular mesh).</li>
+<li>Run SU2 with a config specifying $\mathrm{Re}$, $\mathrm{Ma}$, angle of attack, and boundary conditions.</li>
+<li>Extract surface $C_p$, $C_f$ and integrated $C_L$, $C_D$ from the output.</li>
+</ol>
+<p>The whole thing is scripted in Python via subprocess, so the full dataset is
+generated automatically — each run takes roughly one to five minutes depending on
+mesh resolution.</p>
+<p><img src="https://yamahasetter.github.io/blog/gcnn-airfoil-optimization/flow_field.png" alt="Flow field around a sample airfoil" />
+<img src="https://yamahasetter.github.io/blog/gcnn-airfoil-optimization/streamlines.png" alt="Streamlines colored by pressure" /></p>
+<h3 id="solver-configuration">Solver configuration</h3>
+<table><thead><tr><th>Parameter</th><th>Value</th><th>Notes</th></tr></thead><tbody>
+<tr><td>Solver</td><td>Laminar Navier–Stokes</td><td>No turbulence model</td></tr>
+<tr><td>Spatial scheme</td><td>Roe upwind</td><td>2nd order, MUSCL reconstruction</td></tr>
+<tr><td>Slope limiter</td><td>Venkatakrishnan</td><td>Stabilizes near gradients</td></tr>
+<tr><td>Time integration</td><td>Implicit (FGMRES + ILU)</td><td>Marched to steady state</td></tr>
+<tr><td>CFL number</td><td>0.5</td><td>Conservative; suitable for low Re</td></tr>
+<tr><td>Convergence</td><td>RMS($\rho$) ≤ 1e-8</td><td>Max 10,000 iterations</td></tr>
+<tr><td>Domain</td><td>$[-3, 11] \times [-3, 3]$</td><td>Matching Shukla et al.</td></tr>
+<tr><td>Flow conditions</td><td>Re = 500, Ma = 0.5, AoA = 0°</td><td></td></tr>
+</tbody></table>
+<p>The training set is 100 NACA 4-digit airfoils drawn uniformly over
+$p \in [0.2, 0.5]$, $m \in [0.0, 0.09]$ with thickness fixed at $t = 0.15$,
+split 60 train / 40 test. Each airfoil is sampled at 100 cosine-spaced surface
+points and stored as a graph: nodes are surface points, edges connect adjacent
+points along the boundary curve.</p>
+<h2 id="the-differentiable-surrogate">The Differentiable Surrogate</h2>
+<p>The surrogate is a graph convolutional network operating on the 1D boundary
+curve of the airfoil. Each node is a surface point with features
+$(x, y, \kappa, \varphi)$ — position, local curvature, and normal angle — and
+graph convolution amounts to message-passing along arc length.</p>
+<table><thead><tr><th>Component</th><th>Detail</th></tr></thead><tbody>
+<tr><td>Node features</td><td>$x, y, \kappa, \varphi$ (4 features)</td></tr>
+<tr><td>GCN layers</td><td>4 × GCNConv, residual connections, BatchNorm</td></tr>
+<tr><td>Hidden dim</td><td>128</td></tr>
+<tr><td>Activation</td><td>ReLU</td></tr>
+<tr><td>Output</td><td>per-node $(C_p, C_{fx}, C_{fy})$</td></tr>
+</tbody></table>
+<h3 id="recovering-l-d-from-the-network-output">Recovering L/D from the network output</h3>
+<p>Let $\Phi_\theta$ denote the trained GCNN and $\mathbf{x} = (m, p)$ the shape
+parameters. The network predicts per-node fields
+${\tilde{C}<em>p, \tilde{C}</em>{fx}, \tilde{C}_{fy}}$, which are integrated over the
+surface to recover $L/D$. For each panel between adjacent nodes $i$ and $i+1$:</p>
+<p>$$
+\Delta s_i = \sqrt{(x_{i+1}-x_i)^2 + (y_{i+1}-y_i)^2}, \qquad
+\hat{\mathbf{n}}_i = \frac{(-\Delta y_i,\ \Delta x_i)}{\Delta s_i},
+$$</p>
+<p>$$
+\tilde{C}_{Li} = \big(-\tilde{C}<em>p^{,\text{mid}}, \hat{n}<em>y + \tilde{C}</em>{fy}^{,\text{mid}}\big), \Delta s_i,
+\qquad
+\tilde{C}</em>{Di} = \big(-\tilde{C}_p^{,\text{mid}}, \hat{n}<em>x + \tilde{C}</em>{fx}^{,\text{mid}}\big), \Delta s_i,
+$$</p>
+<p>where "mid" denotes the midpoint average of adjacent node values. Summing over
+panels gives $\tilde{C}<em>L = \sum_i \tilde{C}</em>{Li}$, $\tilde{C}<em>D = \sum_i \tilde{C}</em>{Di}$,
+and $\tilde{L}/\tilde{D} = \tilde{C}_L / \tilde{C}_D$.</p>
+<p>Because $\Phi_\theta$ is implemented in PyTorch and the integration is itself
+differentiable, $\partial(\tilde{L}/\tilde{D}) / \partial(m, p)$ is available via
+autograd — which is the whole point. Optimization becomes gradient ascent on the
+shape parameters rather than a black-box search.</p>
+<h3 id="loss-and-normalization">Loss and normalization</h3>
+<p>Each field $f \in {C_p, C_{fx}, C_{fy}}$ is standardized independently before
+training, $\hat{y}<em>f = (y_f - \mu_f)/\sigma_f$. This matters because $C_p$ is
+$O(1\text{–}3)$ while $C</em>{fx}, C_{fy}$ are $O(10^{-3})$ — without it the loss is
+dominated by $C_p$ and the network never learns the shear fields. Training
+minimizes MSE on the standardized values,</p>
+<p>$$
+\mathcal{L} = \frac{1}{3N} \sum_f \sum_i \big(\hat{\Phi}_f(i) - \hat{y}_f(i)\big)^2,
+$$</p>
+<p>and a relative $L_2$ error,
+$\text{rel} = \tfrac{1}{3}\sum_f \lVert \Phi_f - y_f\rVert / \lVert y_f\rVert$,
+is reported in physical units as an interpretable metric (e.g. $0.05$ means
+predictions are 5% off the SU2 ground truth on average).</p>
+<p>Training uses Adam at a learning rate of $10^{-3}$ with cosine decay, batch
+size 16, for up to 500 epochs with early stopping (patience 50).</p>
+<h2 id="results">Results</h2>
+<p>After training on 100 airfoil simulations, the surrogate is queried at 300
+sampled $(p, m)$ points to build an $L/D$ landscape. The argmax of that sample
+set seeds a gradient-descent run that backpropagates through the surrogate to
+locate the true $(p, m)$ maximizing the lift-to-drag ratio — no external
+optimizer, just autograd.</p>
+<p><img src="https://yamahasetter.github.io/blog/gcnn-airfoil-optimization/run_summary.png" alt="Optimization run summary: L/D landscape and gradient-descent trajectory" /></p>
+<p>The differentiable-surrogate approach replaces minutes-per-evaluation black-box
+optimization with millisecond surrogate calls and exact gradients, recovering the
+optimal airfoil shape directly.</p>
+
+      </div>
+    </article>
+  </div>
+
+
+  <script type="application/ld+json">
+{
+   "@context": "https://schema.org"
+  ,"@type": "BlogPosting"
+  ,"mainEntityOfPage": {
+     "@type": "WebPage"
+    ,"@id": "https://yamahasetter.github.io/blog/gcnn-airfoil-optimization/"
+  }
+  ,"headline": "Gradient-Based Airfoil Optimization with Graph Convolutional Networks"
+  ,"datePublished": "2026-06-08"
+  ,"dateModified": "2026-06-08"
+  
+  ,"author": [
+    
+      {
+         "@type": "Person"
+        ,"name": "Alyn Musselman"
+      }
+      
+    
+  ]
+  ,"publisher": [
+    
+      {
+         "@type": "Person"
+        ,"name": "Alyn Musselman"
+      }
+      
+    
+  ]
+  
+  ,"description": "A differentiable GCNN surrogate for CFD that optimizes airfoil shape directly through backpropagation."
+  ,"articleBody": "MotivationAerodynamic shape optimization is expensive. The usual loop wraps a CFD solverinside a black-box optimizer: propose a shape, mesh it, solve the Navier–Stokesequations, read off the lift-to-drag ratio, and repeat. Each evaluation costsminutes of solver time, and because the optimizer treats the solver as a blackbox it has no access to gradients — it must approximate them with finitedifferences or fall back on derivative-free search.This project recreates the results of Shukla, Oommen, Peyvan et al., butreplaces their DeepONet surrogate with a Graph Convolutional Neural Network(GCNN). The goal is a differentiable approximation to the CFD solver: oncethe surrogate is trained, the gradient of the lift-to-drag ratio with respect tothe shape parameters is available directly through autograd, so the optimalairfoil can be found by plain gradient descent rather than a black-box search.Concretely, the problem is to find the NACA 4-digit parameters $(p, m)$ — theposition and magnitude of maximum camber — that maximize the lift-to-drag ratio$L&#x2F;D$ of a 2D airfoil in steady, subsonic, viscous flow.Governing EquationsThe flow is governed by the 2D compressible Navier–Stokes equations:$$\frac{\partial \rho}{\partial t} + \nabla \cdot (\rho \mathbf{u}) = 0,$$$$\frac{\partial (\rho \mathbf{u})}{\partial t} + \nabla \cdot (\rho, \mathbf{u} \otimes \mathbf{u} + p\mathbf{I}) = \frac{1}{\mathrm{Re}}, \nabla \cdot \boldsymbol{\tau},$$$$\frac{\partial E}{\partial t} + \nabla \cdot \big((E + p)\mathbf{u}\big) = \frac{1}{\mathrm{Re}}, \nabla \cdot (\boldsymbol{\tau}\mathbf{u} + \kappa \nabla T),$$where $\rho$ is density, $\mathbf{u}$ the velocity vector, $p$ pressure, $E$total energy, $\boldsymbol{\tau}$ the viscous stress tensor, and $\kappa$ thethermal conductivity. Lift and drag follow from integrating pressure and wallshear stress over the airfoil surface.Generating Training Data with SU2Ground-truth flow fields come from SU2, anopen-source CFD solver that solves the compressible Navier–Stokes equations onunstructured meshes. SU2 produces the full volumetric field ($u, v, p, \rho, T$)as well as the surface quantities ($C_p$, $C_f$) needed for the surrogate&#x27;slabels. The pipeline for each airfoil is:Generate surface coordinates from the NACA equations.Mesh the flow domain with Gmsh (a body-fitted unstructured triangular mesh).Run SU2 with a config specifying $\mathrm{Re}$, $\mathrm{Ma}$, angle of attack, and boundary conditions.Extract surface $C_p$, $C_f$ and integrated $C_L$, $C_D$ from the output.The whole thing is scripted in Python via subprocess, so the full dataset isgenerated automatically — each run takes roughly one to five minutes depending onmesh resolution.Solver configurationParameterValueNotesSolverLaminar Navier–StokesNo turbulence modelSpatial schemeRoe upwind2nd order, MUSCL reconstructionSlope limiterVenkatakrishnanStabilizes near gradientsTime integrationImplicit (FGMRES + ILU)Marched to steady stateCFL number0.5Conservative; suitable for low ReConvergenceRMS($\rho$) ≤ 1e-8Max 10,000 iterationsDomain$[-3, 11] \times [-3, 3]$Matching Shukla et al.Flow conditionsRe = 500, Ma = 0.5, AoA = 0°The training set is 100 NACA 4-digit airfoils drawn uniformly over$p \in [0.2, 0.5]$, $m \in [0.0, 0.09]$ with thickness fixed at $t = 0.15$,split 60 train &#x2F; 40 test. Each airfoil is sampled at 100 cosine-spaced surfacepoints and stored as a graph: nodes are surface points, edges connect adjacentpoints along the boundary curve.The Differentiable SurrogateThe surrogate is a graph convolutional network operating on the 1D boundarycurve of the airfoil. Each node is a surface point with features$(x, y, \kappa, \varphi)$ — position, local curvature, and normal angle — andgraph convolution amounts to message-passing along arc length.ComponentDetailNode features$x, y, \kappa, \varphi$ (4 features)GCN layers4 × GCNConv, residual connections, BatchNormHidden dim128ActivationReLUOutputper-node $(C_p, C_{fx}, C_{fy})$Recovering L&#x2F;D from the network outputLet $\Phi_\theta$ denote the trained GCNN and $\mathbf{x} = (m, p)$ the shapeparameters. The network predicts per-node fields${\tilde{C}p, \tilde{C}{fx}, \tilde{C}_{fy}}$, which are integrated over thesurface to recover $L&#x2F;D$. For each panel between adjacent nodes $i$ and $i+1$:$$\Delta s_i = \sqrt{(x_{i+1}-x_i)^2 + (y_{i+1}-y_i)^2}, \qquad\hat{\mathbf{n}}_i = \frac{(-\Delta y_i,\ \Delta x_i)}{\Delta s_i},$$$$\tilde{C}_{Li} = \big(-\tilde{C}p^{,\text{mid}}, \hat{n}y + \tilde{C}{fy}^{,\text{mid}}\big), \Delta s_i,\qquad\tilde{C}{Di} = \big(-\tilde{C}_p^{,\text{mid}}, \hat{n}x + \tilde{C}{fx}^{,\text{mid}}\big), \Delta s_i,$$where &#x27;mid&#x27; denotes the midpoint average of adjacent node values. Summing overpanels gives $\tilde{C}L = \sum_i \tilde{C}{Li}$, $\tilde{C}D = \sum_i \tilde{C}{Di}$,and $\tilde{L}&#x2F;\tilde{D} = \tilde{C}_L &#x2F; \tilde{C}_D$.Because $\Phi_\theta$ is implemented in PyTorch and the integration is itselfdifferentiable, $\partial(\tilde{L}&#x2F;\tilde{D}) &#x2F; \partial(m, p)$ is available viaautograd — which is the whole point. Optimization becomes gradient ascent on theshape parameters rather than a black-box search.Loss and normalizationEach field $f \in {C_p, C_{fx}, C_{fy}}$ is standardized independently beforetraining, $\hat{y}f = (y_f - \mu_f)&#x2F;\sigma_f$. This matters because $C_p$ is$O(1\text{–}3)$ while $C{fx}, C_{fy}$ are $O(10^{-3})$ — without it the loss isdominated by $C_p$ and the network never learns the shear fields. Trainingminimizes MSE on the standardized values,$$\mathcal{L} = \frac{1}{3N} \sum_f \sum_i \big(\hat{\Phi}_f(i) - \hat{y}_f(i)\big)^2,$$and a relative $L_2$ error,$\text{rel} = \tfrac{1}{3}\sum_f \lVert \Phi_f - y_f\rVert &#x2F; \lVert y_f\rVert$,is reported in physical units as an interpretable metric (e.g. $0.05$ meanspredictions are 5% off the SU2 ground truth on average).Training uses Adam at a learning rate of $10^{-3}$ with cosine decay, batchsize 16, for up to 500 epochs with early stopping (patience 50).ResultsAfter training on 100 airfoil simulations, the surrogate is queried at 300sampled $(p, m)$ points to build an $L&#x2F;D$ landscape. The argmax of that sampleset seeds a gradient-descent run that backpropagates through the surrogate tolocate the true $(p, m)$ maximizing the lift-to-drag ratio — no externaloptimizer, just autograd.The differentiable-surrogate approach replaces minutes-per-evaluation black-boxoptimization with millisecond surrogate calls and exact gradients, recovering theoptimal airfoil shape directly."
+  
+    ,"image": "https://yamahasetter.github.io/blog/gcnn-airfoil-optimization/run_summary.png"
+  
+}
+</script>
+
+
+
+  </div>
+  <footer>
+  <!-- Social Media Icons -->
+  
+    <div class="mt-4 flex justify-center">
+      
+        
+          <a
+            
+            href="https:&#x2F;&#x2F;github.com&#x2F;yamahasetter" title="Github"
+            
+              class="text-gray-400 hover:text-gray-500">
+            
+            <span class="sr-only">github</span>
+            <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 1024 1024"><path d="M8 0C3.58 0 0 3.58 0 8C0 11.54 2.29 14.53 5.47 15.59C5.87 15.66 6.02 15.42 6.02 15.21C6.02 15.02 6.01 14.39 6.01 13.72C4 14.09 3.48 13.23 3.32 12.78C3.23 12.55 2.84 11.84 2.5 11.65C2.22 11.5 1.82 11.13 2.49 11.12C3.12 11.11 3.57 11.7 3.72 11.94C4.44 13.15 5.59 12.81 6.05 12.6C6.12 12.08 6.33 11.73 6.56 11.53C4.78 11.33 2.92 10.64 2.92 7.58C2.92 6.71 3.23 5.99 3.74 5.43C3.66 5.23 3.38 4.41 3.82 3.31C3.82 3.31 4.49 3.1 6.02 4.13C6.66 3.95 7.34 3.86 8.02 3.86C8.7 3.86 9.38 3.95 10.02 4.13C11.55 3.09 12.22 3.31 12.22 3.31C12.66 4.41 12.38 5.23 12.3 5.43C12.81 5.99 13.12 6.7 13.12 7.58C13.12 10.65 11.25 11.33 9.47 11.53C9.76 11.78 10.01 12.26 10.01 13.01C10.01 14.08 10 14.94 10 15.21C10 15.42 10.15 15.67 10.55 15.59C13.71 14.53 16 11.53 16 8C16 3.58 12.42 0 8 0Z" transform="scale(64)"/></svg>
+          </a>
+        
+      
+        
+          <a
+            
+            href="https:&#x2F;&#x2F;www.linkedin.com&#x2F;in&#x2F;alyn-m-b14b17152&#x2F;" title="Linkedin"
+            
+              class="ml-8 text-gray-400 hover:text-gray-500">
+            
+            <span class="sr-only">linkedin</span>
+            <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 1024 1024"><path d="M0 1.146C0 .513.526 0 1.175 0h13.65C15.474 0 16 .513 16 1.146v13.708c0 .633-.526 1.146-1.175 1.146H1.175C.526 16 0 15.487 0 14.854zm4.943 12.248V6.169H2.542v7.225zm-1.2-8.212c.837 0 1.358-.554 1.358-1.248-.015-.709-.52-1.248-1.342-1.248S2.4 3.226 2.4 3.934c0 .694.521 1.248 1.327 1.248zm4.908 8.212V9.359c0-.216.016-.432.08-.586.173-.431.568-.878 1.232-.878.869 0 1.216.662 1.216 1.634v3.865h2.401V9.25c0-2.22-1.184-3.252-2.764-3.252-1.274 0-1.845.7-2.165 1.193v.025h-.016l.016-.025V6.169h-2.4c.03.678 0 7.225 0 7.225z" transform="scale(64)"/></svg>
+          </a>
+        
+      
+        
+          <a
+            
+            href="https:&#x2F;&#x2F;stackoverflow.com&#x2F;users&#x2F;16188373&#x2F;try-hard" title="Stackoverflow"
+            
+              class="ml-8 text-gray-400 hover:text-gray-500">
+            
+            <span class="sr-only">stackoverflow</span>
+            <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 73.099998 86.599998"><g transform="translate(-22.6,-14.9)"><path d="m 84.4,93.8 0,-23.2 7.7,0 0,30.9 -69.5,0 0,-30.9 7.7,0 0,23.2 z"/><path d="m 38.8,68.4 37.8,7.9 1.6,-7.6 -37.8,-7.9 -1.6,7.6 z m 5,-18 35,16.3 3.2,-7 -35,-16.4 -3.2,7.1 z M 53.5,33.2 83.2,57.9 88.1,52 58.4,27.3 53.5,33.2 Z m 19.2,-18.3 -6.2,4.6 23,31 6.2,-4.6 -23,-31 z M 38,86 l 38.6,0 0,-7.7 -38.6,0 0,7.7 z"/></g></svg>
+          </a>
+        
+      
+        
+      
+        
+      
+    </div>
+  
+  <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8 text-center">
+    
+      <p class="text-center text-base leading-6">
+        
+          
+          <a href="&#x2F;pages&#x2F;privacy&#x2F;">Privacy Policy</a>
+        
+           &middot; 
+          <a href="&#x2F;pages&#x2F;terms&#x2F;">Terms</a>
+        
+      </p>
+    
+    
+    <div class="mt-4">
+      <p class="text-center text-base leading-6 text-gray-400">
+        Copyright 2026 by Thomas Weitzel
+      </p>
+    </div>
+    
+  </div>
+</footer>
+
+</body>
+</html>

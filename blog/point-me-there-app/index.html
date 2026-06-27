@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en">
+<head>
+  
+  
+  
+  
+  
+
+  <meta charset="UTF-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge" />
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name=generator content="Zola v0.19.1">
+
+  
+    <meta name="description" content="An Android app that drops a pin or searches a location and points you toward it with a live compass.">
+  
+
+  <title>Alyn Musselman</title>
+  <link rel="stylesheet" href="/css/generated.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+  <link rel="stylesheet" href="/css/custom.css">
+  
+    <link rel="icon" href="&#x2F;img&#x2F;yin-yang.svg" />
+  
+
+  
+    <link rel="alternate" type="application/atom+xml" title="Atom Feed for https://yamahasetter.github.io" href="/atom.xml" />
+  
+
+  <script defer src="/js/zolarwind/logic.js" integrity="sha384-GYtsrgYVRYoxdEL+C+79KROm+MCl1ArSzQnqVnPTV78UNz5a1vFxAEiKbobXhQlw"></script>
+  
+    <!-- Calculate sha384: openssl dgst -sha384 -binary FILENAME.EXT | openssl base64 -A -->
+    <link rel="stylesheet" href="/js/katex/katex.min.css" integrity="sha384-GvrOXuhMATgEsSwCs4smul74iXGOixntILdUW9XmUC6+HX0sLNAK3q71HotJqlAn">
+    <script defer src="/js/katex/katex.min.js" integrity="sha384-cpW21h6RZv/phavutF+AuVYrr+dA8xD9zs6FwLpaCct6O9ctzYFfFr4dgmgccOTx"></script>
+    <script defer src="/js/katex/contrib/auto-render.min.js" integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05"></script>
+    <script defer src="/js/katex-config.js" integrity="sha384-YTwoxG+UASh+luh6A7HRGGG9fiJpEYcH1r0/xbJP0wfpH/E4eU3lG9mg4U5OUz9S"></script>
+  
+  
+</head>
+<body>
+  
+
+  
+
+
+<header class="sticky top-0 w-full z-10">
+  <nav class="pf-nav bg-gray-600">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        <div class="flex items-center">
+          <div class="flex-shrink-0">
+            <a href="/" aria-label="Go to homepage">
+              <div class="h-8 w-8 text-gray-200 hover:text-white fill-current">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor">
+                  <path d="M3 12L5 10M5 10L12 3L19 10M5 10V20C5 20.5523 5.44772 21 6 21H9M19 10L21 12M19 10V20C19 20.5523 18.5523 21 18 21H15M9 21C9.55228 21 10 20.5523 10 20V16C10 15.4477 10.4477 15 11 15H13C13.5523 15 14 15.4477 14 16V20C14 20.5523 14.4477 21 15 21M9 21H15" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </div>
+            </a>
+          </div>
+          <div class="hidden md:block">
+            <div class="ml-8 flex items-baseline">
+              
+                
+                  
+                    <a class="px-3 py-2 ml-2 rounded-md font-medium text-gray-200 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-600" href="/pages/imprint/" title="Imprint">Imprint</a>
+                  
+                
+                  
+                    <a class="px-3 py-2 ml-2 rounded-md font-medium text-gray-200 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-600" href="/pages/about/" title="About">About</a>
+                  
+                
+              
+            </div>
+          </div>
+        </div>
+        <div class="-mr-2 flex md:hidden">
+          <button id="toggleMobileMenu" class="icon inline-flex items-center justify-center p-2 rounded-md text-gray-200 hover:text-white hover:bg-gray-700 focus:outline-none focus:bg-gray-700 focus:text-white" aria-label="Menu">
+            <span id="mobile-icon-menu-unselected">
+              <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            </span>
+            <span id="mobile-icon-menu-selected" class="hidden">
+              <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+    
+      <div id="mobile-menu" class="hidden md:hidden px-2 pt-2 pb-3 sm:px-3">
+        
+          
+            <a class="mt-1 block px-3 py-2 rounded-md font-medium text-gray-200 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-600" href="/pages/imprint/" title="Imprint">Imprint</a>
+          
+        
+          
+            <a class="mt-1 block px-3 py-2 rounded-md font-medium text-gray-200 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-600" href="/pages/about/" title="About">About</a>
+          
+        
+      </div>
+    
+  </nav>
+</header>
+
+  <div id="content">
+    
+
+  
+
+  <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
+    <article class="prose">
+      <div class="flex justify-center items-center bg-gray-100 rounded-md">
+        <img class="w-auto h-full object-contain" src="compass.png" alt="Compass App with Variable Heading">
+      </div>
+      <h1>Compass App with Variable Heading</h1>
+      <div>
+        <p>
+          <span class="mr-2 text-sm">
+            <time datetime="2022-08-10">August 10, 2022</time> &middot;
+            657 words &middot;
+            4 minutes reading time
+          </span>
+          <span class="text-sm leading-5 font-medium text-indigo-600">
+
+  
+    
+      <span class="mr-2 badge badge-green"><a href="https://yamahasetter.github.io/tags/java/">Java</a></span>
+    
+      <span class="mr-2 badge badge-green"><a href="https://yamahasetter.github.io/tags/android-sdk/">Android SDK</a></span>
+    
+      <span class="mr-2 badge badge-green"><a href="https://yamahasetter.github.io/tags/google-maps-api/">Google Maps API</a></span>
+    
+      <span class="mr-2 badge badge-green"><a href="https://yamahasetter.github.io/tags/google-places-api/">Google Places API</a></span>
+    
+  
+
+</span>
+
+        </p>
+      </div>
+
+      <div>
+        <h2 id="motivation">Motivation</h2>
+<p>When I was delivering for DoorDash I kept hitting the same problem: I'd be so
+close to the delivery address that the map was useless. Even when I could see the
+house numbers on Google Maps, actually <em>reaching</em> the door in a dense apartment
+complex or a maze of identical buildings was hard once I'd lost my bearing. This
+app was built to solve exactly that — instead of a map you have to interpret, it
+gives you a single arrow that points straight at the destination.</p>
+<p>The long-term vision was a physical "hand" mounted on the car's dash, linked to
+the app, that would physically point the direction you needed to drive. That part
+is still on the to-do list, but the software side — pick a destination, get a
+live heading toward it — works.</p>
+<h2 id="methodology">Methodology</h2>
+<p>Since I was developing on an Android phone, I built the app in <strong>Android Studio
+with Java</strong> for the application logic and <strong>XML</strong> for the layouts. Three Google
+services do the heavy lifting:</p>
+<ul>
+<li><strong>Google Maps API</strong> — renders the interactive map and supplies the device's
+real-time location through a <code>FusedLocationProviderClient</code>.</li>
+<li><strong>Google Places API</strong> — powers a search bar that turns a typed address into
+coordinates.</li>
+<li>The device's <strong>orientation sensor</strong> — drives the rotating compass graphic.</li>
+</ul>
+<p>The interesting technical pieces were the navigation between screens (intents),
+passing the chosen coordinates around, computing a heading from a pair of
+coordinates, and rotating the on-screen pointer to match.</p>
+<h3 id="intents-and-passing-the-destination">Intents and passing the destination</h3>
+<p>An <em>intent</em> is the Android mechanism for moving from one screen to another (and,
+optionally, handing data along with the jump). Here I needed an intent that takes
+the user from the map screen back to the compass screen once a valid destination
+has been chosen. The map screen makes its pin <strong>draggable</strong>, and when the user
+drops it, the pin's coordinates are packed into the intent and sent to the main
+activity:</p>
+<pre data-lang="java" style="background-color:#191919;color:#f8f8f2;" class="language-java "><code class="language-java" data-lang="java"><span>googleMap.</span><span style="color:#e9fdac;">setOnMarkerDragListener</span><span>(</span><span style="color:#ff5e5e;">new </span><span style="color:#fbe3bf;">GoogleMap</span><span>.</span><span style="color:#fbe3bf;">OnMarkerDragListener</span><span>() {
+</span><span>    @</span><span style="color:#e9fdac;">Override
+</span><span>    </span><span style="color:#ff5e5e;">public </span><span style="font-style:italic;color:#fbdfb5;">void </span><span style="color:#8cdaff;">onMarkerDragEnd</span><span>(@</span><span style="color:#e9fdac;">NonNull </span><span style="color:#fbe3bf;">Marker </span><span style="font-style:italic;color:#fc9354;">marker</span><span>) {
+</span><span>        </span><span style="color:#fbe3bf;">Intent</span><span> destination </span><span style="color:#ff5e5e;">= new </span><span style="color:#fbe3bf;">Intent</span><span>(</span><span style="color:#e9fdac;">getApplicationContext</span><span>(), </span><span style="color:#fbe3bf;">MainActivity</span><span>.</span><span style="color:#e9fdac;">class</span><span>);
+</span><span>        </span><span style="color:#fbe3bf;">String</span><span> dest_coords </span><span style="color:#ff5e5e;">=</span><span> marker.</span><span style="color:#e9fdac;">getPosition</span><span>().</span><span style="color:#e9fdac;">toString</span><span>();   </span><span style="color:#6d6d6d;">// &quot;lat/lng(...)&quot;
+</span><span>        destination.</span><span style="color:#e9fdac;">putExtra</span><span>(</span><span style="color:#ffffff;">&quot;</span><span style="color:#fbe3bf;">coords</span><span style="color:#ffffff;">&quot;</span><span>, dest_coords);            </span><span style="color:#6d6d6d;">// attach to intent
+</span><span>        </span><span style="color:#e9fdac;">startActivity</span><span>(destination);                             </span><span style="color:#6d6d6d;">// hand off to compass screen
+</span><span>    }
+</span><span>    </span><span style="color:#6d6d6d;">// onMarkerDrag / onMarkerDragStart unused
+</span><span>});
+</span></code></pre>
+<p>Meanwhile the main screen continuously refreshes the user's own position from the
+fused location provider, so both ends of the heading — <em>where you are</em> and <em>where
+you're going</em> — are always available.</p>
+<h3 id="generating-the-heading">Generating the heading</h3>
+<p>This is where I got to apply some fun math. Given the user's current position
+$(\varphi_1, \lambda_1)$ and the destination $(\varphi_2, \lambda_2)$ (latitudes
+$\varphi$, longitudes $\lambda$, in radians), the <strong>initial great-circle bearing</strong>
+— the compass direction to set off in — is</p>
+<p>$$
+\theta = \operatorname{atan2}!\Big(\sin(\Delta\lambda)\cos\varphi_2,;
+\cos\varphi_1 \sin\varphi_2 - \sin\varphi_1 \cos\varphi_2 \cos(\Delta\lambda)\Big),
+\qquad \Delta\lambda = \lambda_2 - \lambda_1 .
+$$</p>
+<p>Because <code>atan2</code> returns a value in $(-\pi, \pi]$, the result is converted to
+degrees and wrapped into a clean $0^\circ$–$360^\circ$ compass bearing:</p>
+<p>$$
+\theta_{\text{deg}} = \big(\operatorname{deg}(\theta) + 360\big) \bmod 360 .
+$$</p>
+<p>Subtracting the phone's own magnetic heading from this bearing gives the angle the
+pointer needs to rotate to — so the arrow always points at the destination
+regardless of which way the phone is facing.</p>
+<h3 id="rotating-the-pointer">Rotating the pointer</h3>
+<p>The phone's heading comes from the orientation sensor. <code>MainActivity</code> implements
+<code>SensorEventListener</code>, and every sensor update carries the azimuth (rotation about
+the vertical <em>z</em>-axis) in <code>event.values[0]</code>. I feed that into a <code>RotateAnimation</code>
+to spin the pointer image smoothly to the new angle:</p>
+<pre data-lang="java" style="background-color:#191919;color:#f8f8f2;" class="language-java "><code class="language-java" data-lang="java"><span>@</span><span style="color:#e9fdac;">Override
+</span><span style="color:#ff5e5e;">public</span><span> void </span><span style="color:#e9fdac;">onSensorChanged</span><span>(</span><span style="color:#fbe3bf;">SensorEvent</span><span> event) {
+</span><span>    </span><span style="font-style:italic;color:#fbdfb5;">float</span><span> degree </span><span style="color:#ff5e5e;">= </span><span style="color:#fbe3bf;">Math</span><span>.</span><span style="color:#e9fdac;">round</span><span>(event.values[</span><span style="color:#fdb082;">0</span><span>]);     </span><span style="color:#6d6d6d;">// azimuth, degrees
+</span><span>    tvHeading.</span><span style="color:#e9fdac;">setText</span><span>(</span><span style="color:#ffffff;">&quot;</span><span style="color:#fbe3bf;">Heading: </span><span style="color:#ffffff;">&quot; </span><span style="color:#ff5e5e;">+</span><span> degree </span><span style="color:#ff5e5e;">+ </span><span style="color:#ffffff;">&quot;</span><span style="color:#fbe3bf;"> degrees</span><span style="color:#ffffff;">&quot;</span><span>);
+</span><span>
+</span><span>    </span><span style="color:#fbe3bf;">RotateAnimation</span><span> ra </span><span style="color:#ff5e5e;">= new </span><span style="color:#fbe3bf;">RotateAnimation</span><span>(
+</span><span>            currentDegree, </span><span style="color:#ff5e5e;">-</span><span>degree,                 </span><span style="color:#6d6d6d;">// from -&gt; to
+</span><span>            </span><span style="color:#fbe3bf;">Animation</span><span>.</span><span style="color:#fdb082;">RELATIVE_TO_SELF</span><span>, </span><span style="color:#fdb082;">0.5</span><span style="font-style:italic;color:#fbdfb5;">f</span><span>,       </span><span style="color:#6d6d6d;">// pivot about image center
+</span><span>            </span><span style="color:#fbe3bf;">Animation</span><span>.</span><span style="color:#fdb082;">RELATIVE_TO_SELF</span><span>, </span><span style="color:#fdb082;">0.5</span><span style="font-style:italic;color:#fbdfb5;">f</span><span>);
+</span><span>    ra.</span><span style="color:#e9fdac;">setDuration</span><span>(</span><span style="color:#fdb082;">210</span><span>);
+</span><span>    ra.</span><span style="color:#e9fdac;">setFillAfter</span><span>(</span><span style="color:#ff8942;">true</span><span>);                          </span><span style="color:#6d6d6d;">// hold final angle
+</span><span>    image.</span><span style="color:#e9fdac;">startAnimation</span><span>(ra);
+</span><span>    currentDegree </span><span style="color:#ff5e5e;">= -</span><span>degree;
+</span><span>}
+</span></code></pre>
+<p>For the pointer graphic itself I forked a small compass tutorial and swapped in
+this image of Mickey Mouse's hand:</p>
+<p><img src="https://yamahasetter.github.io/blog/point-me-there-app/pointer_hand.png" alt="The Mickey Mouse hand used as the compass pointer" /></p>
+<h2 id="results">Results</h2>
+<p>The working app does what it set out to do: open the map, drop a pin (or search an
+address), hand the coordinates back to the main screen, and watch the hand rotate
+in real time to point toward the destination as you turn. The core loop —
+permissions, live location, intent hand-off, bearing math, and a smoothly animated
+pointer — is all in place. What remains is the fun hardware extension: a
+dash-mounted physical pointer that mirrors the on-screen hand, which is a project
+for another day.</p>
+
+      </div>
+    </article>
+  </div>
+
+
+  <script type="application/ld+json">
+{
+   "@context": "https://schema.org"
+  ,"@type": "BlogPosting"
+  ,"mainEntityOfPage": {
+     "@type": "WebPage"
+    ,"@id": "https://yamahasetter.github.io/blog/point-me-there-app/"
+  }
+  ,"headline": "Compass App with Variable Heading"
+  ,"datePublished": "2022-08-10"
+  ,"dateModified": "2022-08-10"
+  
+  ,"author": [
+    
+      {
+         "@type": "Person"
+        ,"name": "Alyn Musselman"
+      }
+      
+    
+  ]
+  ,"publisher": [
+    
+      {
+         "@type": "Person"
+        ,"name": "Alyn Musselman"
+      }
+      
+    
+  ]
+  
+  ,"description": "An Android app that drops a pin or searches a location and points you toward it with a live compass."
+  ,"articleBody": "MotivationWhen I was delivering for DoorDash I kept hitting the same problem: I&#x27;d be soclose to the delivery address that the map was useless. Even when I could see thehouse numbers on Google Maps, actually reaching the door in a dense apartmentcomplex or a maze of identical buildings was hard once I&#x27;d lost my bearing. Thisapp was built to solve exactly that — instead of a map you have to interpret, itgives you a single arrow that points straight at the destination.The long-term vision was a physical &#x27;hand&#x27; mounted on the car&#x27;s dash, linked tothe app, that would physically point the direction you needed to drive. That partis still on the to-do list, but the software side — pick a destination, get alive heading toward it — works.MethodologySince I was developing on an Android phone, I built the app in Android Studiowith Java for the application logic and XML for the layouts. Three Googleservices do the heavy lifting:Google Maps API — renders the interactive map and supplies the device&#x27;sreal-time location through a FusedLocationProviderClient.Google Places API — powers a search bar that turns a typed address intocoordinates.The device&#x27;s orientation sensor — drives the rotating compass graphic.The interesting technical pieces were the navigation between screens (intents),passing the chosen coordinates around, computing a heading from a pair ofcoordinates, and rotating the on-screen pointer to match.Intents and passing the destinationAn intent is the Android mechanism for moving from one screen to another (and,optionally, handing data along with the jump). Here I needed an intent that takesthe user from the map screen back to the compass screen once a valid destinationhas been chosen. The map screen makes its pin draggable, and when the userdrops it, the pin&#x27;s coordinates are packed into the intent and sent to the mainactivity:googleMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {    @Override    public void onMarkerDragEnd(@NonNull Marker marker) {        Intent destination = new Intent(getApplicationContext(), MainActivity.class);        String dest_coords = marker.getPosition().toString();   &#x2F;&#x2F; &amp;quot;lat&#x2F;lng(...)&amp;quot;        destination.putExtra(&amp;quot;coords&amp;quot;, dest_coords);            &#x2F;&#x2F; attach to intent        startActivity(destination);                             &#x2F;&#x2F; hand off to compass screen    }    &#x2F;&#x2F; onMarkerDrag &#x2F; onMarkerDragStart unused});Meanwhile the main screen continuously refreshes the user&#x27;s own position from thefused location provider, so both ends of the heading — where you are and whereyou&#x27;re going — are always available.Generating the headingThis is where I got to apply some fun math. Given the user&#x27;s current position$(\varphi_1, \lambda_1)$ and the destination $(\varphi_2, \lambda_2)$ (latitudes$\varphi$, longitudes $\lambda$, in radians), the initial great-circle bearing— the compass direction to set off in — is$$\theta = \operatorname{atan2}!\Big(\sin(\Delta\lambda)\cos\varphi_2,;\cos\varphi_1 \sin\varphi_2 - \sin\varphi_1 \cos\varphi_2 \cos(\Delta\lambda)\Big),\qquad \Delta\lambda = \lambda_2 - \lambda_1 .$$Because atan2 returns a value in $(-\pi, \pi]$, the result is converted todegrees and wrapped into a clean $0^\circ$–$360^\circ$ compass bearing:$$\theta_{\text{deg}} = \big(\operatorname{deg}(\theta) + 360\big) \bmod 360 .$$Subtracting the phone&#x27;s own magnetic heading from this bearing gives the angle thepointer needs to rotate to — so the arrow always points at the destinationregardless of which way the phone is facing.Rotating the pointerThe phone&#x27;s heading comes from the orientation sensor. MainActivity implementsSensorEventListener, and every sensor update carries the azimuth (rotation aboutthe vertical z-axis) in event.values[0]. I feed that into a RotateAnimationto spin the pointer image smoothly to the new angle:@Overridepublic void onSensorChanged(SensorEvent event) {    float degree = Math.round(event.values[0]);     &#x2F;&#x2F; azimuth, degrees    tvHeading.setText(&amp;quot;Heading: &amp;quot; + degree + &amp;quot; degrees&amp;quot;);    RotateAnimation ra = new RotateAnimation(            currentDegree, -degree,                 &#x2F;&#x2F; from -&amp;gt; to            Animation.RELATIVE_TO_SELF, 0.5f,       &#x2F;&#x2F; pivot about image center            Animation.RELATIVE_TO_SELF, 0.5f);    ra.setDuration(210);    ra.setFillAfter(true);                          &#x2F;&#x2F; hold final angle    image.startAnimation(ra);    currentDegree = -degree;}For the pointer graphic itself I forked a small compass tutorial and swapped inthis image of Mickey Mouse&#x27;s hand:ResultsThe working app does what it set out to do: open the map, drop a pin (or search anaddress), hand the coordinates back to the main screen, and watch the hand rotatein real time to point toward the destination as you turn. The core loop —permissions, live location, intent hand-off, bearing math, and a smoothly animatedpointer — is all in place. What remains is the fun hardware extension: adash-mounted physical pointer that mirrors the on-screen hand, which is a projectfor another day."
+  
+    ,"image": "https://yamahasetter.github.io/blog/point-me-there-app/compass.png"
+  
+}
+</script>
+
+
+
+  </div>
+  <footer>
+  <!-- Social Media Icons -->
+  
+    <div class="mt-4 flex justify-center">
+      
+        
+          <a
+            
+            href="https:&#x2F;&#x2F;github.com&#x2F;yamahasetter" title="Github"
+            
+              class="text-gray-400 hover:text-gray-500">
+            
+            <span class="sr-only">github</span>
+            <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 1024 1024"><path d="M8 0C3.58 0 0 3.58 0 8C0 11.54 2.29 14.53 5.47 15.59C5.87 15.66 6.02 15.42 6.02 15.21C6.02 15.02 6.01 14.39 6.01 13.72C4 14.09 3.48 13.23 3.32 12.78C3.23 12.55 2.84 11.84 2.5 11.65C2.22 11.5 1.82 11.13 2.49 11.12C3.12 11.11 3.57 11.7 3.72 11.94C4.44 13.15 5.59 12.81 6.05 12.6C6.12 12.08 6.33 11.73 6.56 11.53C4.78 11.33 2.92 10.64 2.92 7.58C2.92 6.71 3.23 5.99 3.74 5.43C3.66 5.23 3.38 4.41 3.82 3.31C3.82 3.31 4.49 3.1 6.02 4.13C6.66 3.95 7.34 3.86 8.02 3.86C8.7 3.86 9.38 3.95 10.02 4.13C11.55 3.09 12.22 3.31 12.22 3.31C12.66 4.41 12.38 5.23 12.3 5.43C12.81 5.99 13.12 6.7 13.12 7.58C13.12 10.65 11.25 11.33 9.47 11.53C9.76 11.78 10.01 12.26 10.01 13.01C10.01 14.08 10 14.94 10 15.21C10 15.42 10.15 15.67 10.55 15.59C13.71 14.53 16 11.53 16 8C16 3.58 12.42 0 8 0Z" transform="scale(64)"/></svg>
+          </a>
+        
+      
+        
+          <a
+            
+            href="https:&#x2F;&#x2F;www.linkedin.com&#x2F;in&#x2F;alyn-m-b14b17152&#x2F;" title="Linkedin"
+            
+              class="ml-8 text-gray-400 hover:text-gray-500">
+            
+            <span class="sr-only">linkedin</span>
+            <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 1024 1024"><path d="M0 1.146C0 .513.526 0 1.175 0h13.65C15.474 0 16 .513 16 1.146v13.708c0 .633-.526 1.146-1.175 1.146H1.175C.526 16 0 15.487 0 14.854zm4.943 12.248V6.169H2.542v7.225zm-1.2-8.212c.837 0 1.358-.554 1.358-1.248-.015-.709-.52-1.248-1.342-1.248S2.4 3.226 2.4 3.934c0 .694.521 1.248 1.327 1.248zm4.908 8.212V9.359c0-.216.016-.432.08-.586.173-.431.568-.878 1.232-.878.869 0 1.216.662 1.216 1.634v3.865h2.401V9.25c0-2.22-1.184-3.252-2.764-3.252-1.274 0-1.845.7-2.165 1.193v.025h-.016l.016-.025V6.169h-2.4c.03.678 0 7.225 0 7.225z" transform="scale(64)"/></svg>
+          </a>
+        
+      
+        
+          <a
+            
+            href="https:&#x2F;&#x2F;stackoverflow.com&#x2F;users&#x2F;16188373&#x2F;try-hard" title="Stackoverflow"
+            
+              class="ml-8 text-gray-400 hover:text-gray-500">
+            
+            <span class="sr-only">stackoverflow</span>
+            <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 73.099998 86.599998"><g transform="translate(-22.6,-14.9)"><path d="m 84.4,93.8 0,-23.2 7.7,0 0,30.9 -69.5,0 0,-30.9 7.7,0 0,23.2 z"/><path d="m 38.8,68.4 37.8,7.9 1.6,-7.6 -37.8,-7.9 -1.6,7.6 z m 5,-18 35,16.3 3.2,-7 -35,-16.4 -3.2,7.1 z M 53.5,33.2 83.2,57.9 88.1,52 58.4,27.3 53.5,33.2 Z m 19.2,-18.3 -6.2,4.6 23,31 6.2,-4.6 -23,-31 z M 38,86 l 38.6,0 0,-7.7 -38.6,0 0,7.7 z"/></g></svg>
+          </a>
+        
+      
+        
+      
+        
+      
+    </div>
+  
+  <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8 text-center">
+    
+      <p class="text-center text-base leading-6">
+        
+          
+          <a href="&#x2F;pages&#x2F;privacy&#x2F;">Privacy Policy</a>
+        
+           &middot; 
+          <a href="&#x2F;pages&#x2F;terms&#x2F;">Terms</a>
+        
+      </p>
+    
+    
+    <div class="mt-4">
+      <p class="text-center text-base leading-6 text-gray-400">
+        Copyright 2026 by Thomas Weitzel
+      </p>
+    </div>
+    
+  </div>
+</footer>
+
+</body>
+</html>

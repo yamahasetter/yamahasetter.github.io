@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en">
+    <title> - Python</title>
+    <link rel="self" type="application/atom+xml" href="https://yamahasetter.github.io/tags/python/atom.xml"/>
+    <link rel="alternate" type="text/html" href="https://yamahasetter.github.io"/>
+    <generator uri="https://www.getzola.org/">Zola</generator>
+    <updated>2025-10-28T00:00:00+00:00</updated>
+    <id>https://yamahasetter.github.io/tags/python/atom.xml</id>
+    <entry xml:lang="en">
+        <title>A Real-Time Image Analyzer in PyQt</title>
+        <published>2025-10-28T00:00:00+00:00</published>
+        <updated>2025-10-28T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            Alyn Musselman
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://yamahasetter.github.io/blog/pyqt-image-analyzer/"/>
+        <id>https://yamahasetter.github.io/blog/pyqt-image-analyzer/</id>
+        
+        <content type="html" xml:base="https://yamahasetter.github.io/blog/pyqt-image-analyzer/">&lt;h2 id=&quot;motivation&quot;&gt;Motivation&lt;&#x2F;h2&gt;
+&lt;p&gt;I wanted a small, self-contained desktop tool to interactively explore what
+happens to an image when you tweak its color channels or blur it — and to see
+those changes reflected immediately in the image&#x27;s statistics. Rather than
+re-running a script every time, the goal was a live GUI: drag in an image, move a
+slider, and watch both the picture and its analytics update in real time.&lt;&#x2F;p&gt;
+&lt;p&gt;The result is a PyQt6 + PyQtGraph application that pairs a drag-and-drop image
+canvas with two live plots — an RGB histogram and a 2D Fourier spectrum — driven
+by a handful of NumPy image operations.&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;yamahasetter.github.io&#x2F;blog&#x2F;pyqt-image-analyzer&#x2F;app_example.png&quot; alt=&quot;The image analyzer in action&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;methodology&quot;&gt;Methodology&lt;&#x2F;h2&gt;
+&lt;p&gt;The app is split cleanly into two pieces: a set of pure NumPy image functions
+(&lt;code&gt;image_fncs.py&lt;&#x2F;code&gt;) and the PyQt GUI that wires them to widgets (&lt;code&gt;pyqt_gui.py&lt;&#x2F;code&gt;).
+Images are loaded as &lt;code&gt;float32&lt;&#x2F;code&gt; RGBA arrays so that repeated transformations don&#x27;t
+accumulate integer-rounding error, and only clipped back to &lt;code&gt;uint8&lt;&#x2F;code&gt; at display
+time.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;the-image-operations&quot;&gt;The image operations&lt;&#x2F;h3&gt;
+&lt;p&gt;&lt;strong&gt;Channel intensity.&lt;&#x2F;strong&gt; Each RGB slider scales one color channel by a factor
+$\alpha = v&#x2F;100$, where $v$ is the slider value. For channel $c$,&lt;&#x2F;p&gt;
+&lt;p&gt;$$
+I&#x27;&lt;em&gt;{c}(x,y) = \alpha , I&lt;&#x2F;em&gt;{c}(x,y),
+$$&lt;&#x2F;p&gt;
+&lt;p&gt;leaving the other channels untouched. This is the cheapest of the operations —
+a single broadcast multiply.&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;python&quot; style=&quot;background-color:#191919;color:#f8f8f2;&quot; class=&quot;language-python &quot;&gt;&lt;code class=&quot;language-python&quot; data-lang=&quot;python&quot;&gt;&lt;span style=&quot;font-style:italic;color:#ff5e5e;&quot;&gt;def &lt;&#x2F;span&gt;&lt;span style=&quot;color:#8cdaff;&quot;&gt;color_intensity&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fc9354;&quot;&gt;image&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fc9354;&quot;&gt;channel&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fc9354;&quot;&gt;intensity&lt;&#x2F;span&gt;&lt;span&gt;):
+&lt;&#x2F;span&gt;&lt;span&gt;    adjusted_image &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span&gt;image[:, :, :&lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;3&lt;&#x2F;span&gt;&lt;span&gt;].&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;copy&lt;&#x2F;span&gt;&lt;span&gt;()
+&lt;&#x2F;span&gt;&lt;span&gt;    adjusted_image[:, :, channel] &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span&gt;adjusted_image[:, :, channel] &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;* &lt;&#x2F;span&gt;&lt;span&gt;intensity
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;return &lt;&#x2F;span&gt;&lt;span&gt;adjusted_image
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;&lt;strong&gt;Box blur.&lt;&#x2F;strong&gt; The blur is an unnormalized-kernel box filter of radius $r$. Each
+output pixel is the mean of its neighbors within a $(r{+}1)\times(r{+}1)$ window,&lt;&#x2F;p&gt;
+&lt;p&gt;$$
+I&#x27;(x,y) = \frac{1}{|\mathcal{N}|} \sum_{(i,j)\in \mathcal{N}(x,y)} I(i,j),
+$$&lt;&#x2F;p&gt;
+&lt;p&gt;where $\mathcal{N}(x,y)$ is the set of in-bounds neighbors. It&#x27;s implemented with
+explicit loops, which is transparent but $O(W H r^2)$ — the most expensive
+control in the app, and a natural candidate for a separable-kernel or FFT-based
+speedup.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;the-live-analytics&quot;&gt;The live analytics&lt;&#x2F;h3&gt;
+&lt;p&gt;&lt;strong&gt;RGB histogram.&lt;&#x2F;strong&gt; For each channel the app computes a normalized 256-bin
+histogram (a density estimate of the pixel-intensity distribution) and draws all
+three as filled curves:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;python&quot; style=&quot;background-color:#191919;color:#f8f8f2;&quot; class=&quot;language-python &quot;&gt;&lt;code class=&quot;language-python&quot; data-lang=&quot;python&quot;&gt;&lt;span style=&quot;font-style:italic;color:#ff5e5e;&quot;&gt;def &lt;&#x2F;span&gt;&lt;span style=&quot;color:#8cdaff;&quot;&gt;image_histogram&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fc9354;&quot;&gt;image&lt;&#x2F;span&gt;&lt;span&gt;):
+&lt;&#x2F;span&gt;&lt;span&gt;    hist, bins &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span&gt;np.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;empty&lt;&#x2F;span&gt;&lt;span&gt;((&lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;3&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;256&lt;&#x2F;span&gt;&lt;span&gt;)), &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff8942;&quot;&gt;None
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;for &lt;&#x2F;span&gt;&lt;span&gt;color &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;in &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;range&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;3&lt;&#x2F;span&gt;&lt;span&gt;):
+&lt;&#x2F;span&gt;&lt;span&gt;        hist[color], bins &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span&gt;np.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;histogram&lt;&#x2F;span&gt;&lt;span&gt;(
+&lt;&#x2F;span&gt;&lt;span&gt;            image[:, :, color].&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;flatten&lt;&#x2F;span&gt;&lt;span&gt;(), &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fc9354;&quot;&gt;bins&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;=&lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;256&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fc9354;&quot;&gt;range&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;=&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;0&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;256&lt;&#x2F;span&gt;&lt;span&gt;), &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fc9354;&quot;&gt;density&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;=&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff8942;&quot;&gt;True&lt;&#x2F;span&gt;&lt;span&gt;)
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;return &lt;&#x2F;span&gt;&lt;span&gt;hist, bins
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;&lt;strong&gt;Fourier spectrum.&lt;&#x2F;strong&gt; The image is converted to grayscale by averaging the
+channels, then run through a 2D FFT. The zero-frequency component is shifted to
+the center and the magnitude is log-scaled for display:&lt;&#x2F;p&gt;
+&lt;p&gt;$$
+F(u,v) = \mathcal{F}{,g(x,y),}, \qquad
+S(u,v) = \log!\big(1 + |,\text{fftshift}(F),|\big),
+$$&lt;&#x2F;p&gt;
+&lt;p&gt;with $g = (R + G + B)&#x2F;3$. The $\log(1+\lvert\cdot\rvert)$ compression is what
+makes the spectrum legible — raw FFT magnitudes span many orders of magnitude and
+would otherwise show only the DC spike.&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;python&quot; style=&quot;background-color:#191919;color:#f8f8f2;&quot; class=&quot;language-python &quot;&gt;&lt;code class=&quot;language-python&quot; data-lang=&quot;python&quot;&gt;&lt;span style=&quot;font-style:italic;color:#ff5e5e;&quot;&gt;def &lt;&#x2F;span&gt;&lt;span style=&quot;color:#8cdaff;&quot;&gt;grayscale_fft&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fc9354;&quot;&gt;image&lt;&#x2F;span&gt;&lt;span&gt;):
+&lt;&#x2F;span&gt;&lt;span&gt;    gray &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span&gt;(image[:, :, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;0&lt;&#x2F;span&gt;&lt;span&gt;] &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;+ &lt;&#x2F;span&gt;&lt;span&gt;image[:, :, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;1&lt;&#x2F;span&gt;&lt;span&gt;] &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;+ &lt;&#x2F;span&gt;&lt;span&gt;image[:, :, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;2&lt;&#x2F;span&gt;&lt;span&gt;]) &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;&#x2F; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;3.0
+&lt;&#x2F;span&gt;&lt;span&gt;    fft &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span&gt;np.fft.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;fft2&lt;&#x2F;span&gt;&lt;span&gt;(gray)
+&lt;&#x2F;span&gt;&lt;span&gt;    fft_shifted &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span&gt;np.fft.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;fftshift&lt;&#x2F;span&gt;&lt;span&gt;(fft)
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;return &lt;&#x2F;span&gt;&lt;span&gt;np.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;log1p&lt;&#x2F;span&gt;&lt;span&gt;(np.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;abs&lt;&#x2F;span&gt;&lt;span&gt;(fft_shifted)).&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;astype&lt;&#x2F;span&gt;&lt;span&gt;(np.float32)
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;h3 id=&quot;the-gui&quot;&gt;The GUI&lt;&#x2F;h3&gt;
+&lt;p&gt;The interface is a &lt;code&gt;QMainWindow&lt;&#x2F;code&gt; with the image canvas on the left and a vertical
+stack on the right holding the two PyQtGraph plots, four sliders (R, G, B, and
+Blur), and a reset button. Images arrive via drag-and-drop: &lt;code&gt;dropEvent&lt;&#x2F;code&gt; reads the
+file into a QImage, exposes the raw buffer as a NumPy array, and keeps both an
+untouched original and a working copy. Every slider movement re-derives the
+working copy from the original, re-renders the canvas, and refreshes both plots,
+so the histogram and spectrum always track exactly what&#x27;s on screen.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;results&quot;&gt;Results&lt;&#x2F;h2&gt;
+&lt;p&gt;The finished app loads any dropped image and responds to channel and blur
+adjustments in real time, with the histogram and Fourier spectrum updating live
+alongside the picture. It&#x27;s a compact demonstration of coupling NumPy
+image processing to a responsive PyQt&#x2F;PyQtGraph front end — and a clean base to
+extend with more filters (the box blur, in particular, is the obvious first
+target for an FFT-based reimplementation).&lt;&#x2F;p&gt;
+&lt;p&gt;Dependencies are minimal: PyQt6, PyQtGraph, and NumPy, with Jupyter and
+Matplotlib used only for the unit tests.&lt;&#x2F;p&gt;
+</content>
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>Transformer Bitcoin Trading Bot</title>
+        <published>2021-12-15T00:00:00+00:00</published>
+        <updated>2021-12-15T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            Alyn Musselman
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://yamahasetter.github.io/blog/bitcoin-trade-bot/"/>
+        <id>https://yamahasetter.github.io/blog/bitcoin-trade-bot/</id>
+        
+        <content type="html" xml:base="https://yamahasetter.github.io/blog/bitcoin-trade-bot/">&lt;h2 id=&quot;motivation&quot;&gt;Motivation&lt;&#x2F;h2&gt;
+&lt;p&gt;I chose to make this project because I needed to get more familiar with ML. I had read all about CNN&#x27;s, Auto Encoders, Variational Auto Encoders, LSTM&#x27;s, RNN&#x27;s and even built a couple of them, but I wanted to make a stand alone ML project. I chose the transformer architecture for 2 reasons. Firstly, it was the most complex architecture out at the time. Secondly, it seemed to handle time-series data fairly well and with lower training cost than some of the other models.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;methodology&quot;&gt;Methodology&lt;&#x2F;h2&gt;
+&lt;p&gt;To do this project I needed to:
+- Build the model from scratch
+- Collect + Cleanup old Bitcoin data
+- Tokenize the data
+- Batchify the training data
+- Train the model
+- Test the model
+- Let it loose&lt;&#x2F;p&gt;
+&lt;p&gt;Building the model from scratch took a long time, even with the many tutorials I used:
+https:&#x2F;&#x2F;nlp.seas.harvard.edu&#x2F;2018&#x2F;04&#x2F;03&#x2F;attention.html
+https:&#x2F;&#x2F;jalammar.github.io&#x2F;illustrated-transformer&#x2F;
+https:&#x2F;&#x2F;rscircus.github.io&#x2F;posts&#x2F;2020-02-22-transformer&#x2F;&lt;&#x2F;p&gt;
+&lt;p&gt;Luckily the article &quot;The Annotated Transformer&quot; was so detailed that once I had built the model outlined there I only needed to do the data-handling in order to train the model.&lt;&#x2F;p&gt;
+&lt;p&gt;The dataset I used was taken from this Kaggle page:
+https:&#x2F;&#x2F;www.kaggle.com&#x2F;datasets&#x2F;mczielinski&#x2F;bitcoin-historical-data&lt;&#x2F;p&gt;
+&lt;p&gt;There were quite a few NaN and 0 values in the dataset that had to be removed, but lucky for me there ended up being just enough data remaining to train the model.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;results&quot;&gt;Results&lt;&#x2F;h2&gt;
+</content>
+        
+    </entry>
+</feed>

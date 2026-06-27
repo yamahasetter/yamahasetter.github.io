@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en">
+<head>
+  
+  
+  
+  
+  
+
+  <meta charset="UTF-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge" />
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name=generator content="Zola v0.19.1">
+
+  
+    <meta name="description" content="Training a 2D Fourier Neural Operator to act as a fast surrogate solver for the Cahn-Hilliard equation.">
+  
+
+  <title>Alyn Musselman</title>
+  <link rel="stylesheet" href="/css/generated.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+  <link rel="stylesheet" href="/css/custom.css">
+  
+    <link rel="icon" href="&#x2F;img&#x2F;yin-yang.svg" />
+  
+
+  
+    <link rel="alternate" type="application/atom+xml" title="Atom Feed for https://yamahasetter.github.io" href="/atom.xml" />
+  
+
+  <script defer src="/js/zolarwind/logic.js" integrity="sha384-GYtsrgYVRYoxdEL+C+79KROm+MCl1ArSzQnqVnPTV78UNz5a1vFxAEiKbobXhQlw"></script>
+  
+    <!-- Calculate sha384: openssl dgst -sha384 -binary FILENAME.EXT | openssl base64 -A -->
+    <link rel="stylesheet" href="/js/katex/katex.min.css" integrity="sha384-GvrOXuhMATgEsSwCs4smul74iXGOixntILdUW9XmUC6+HX0sLNAK3q71HotJqlAn">
+    <script defer src="/js/katex/katex.min.js" integrity="sha384-cpW21h6RZv/phavutF+AuVYrr+dA8xD9zs6FwLpaCct6O9ctzYFfFr4dgmgccOTx"></script>
+    <script defer src="/js/katex/contrib/auto-render.min.js" integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05"></script>
+    <script defer src="/js/katex-config.js" integrity="sha384-YTwoxG+UASh+luh6A7HRGGG9fiJpEYcH1r0/xbJP0wfpH/E4eU3lG9mg4U5OUz9S"></script>
+  
+  
+</head>
+<body>
+  
+
+  
+
+
+<header class="sticky top-0 w-full z-10">
+  <nav class="pf-nav bg-gray-600">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        <div class="flex items-center">
+          <div class="flex-shrink-0">
+            <a href="/" aria-label="Go to homepage">
+              <div class="h-8 w-8 text-gray-200 hover:text-white fill-current">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor">
+                  <path d="M3 12L5 10M5 10L12 3L19 10M5 10V20C5 20.5523 5.44772 21 6 21H9M19 10L21 12M19 10V20C19 20.5523 18.5523 21 18 21H15M9 21C9.55228 21 10 20.5523 10 20V16C10 15.4477 10.4477 15 11 15H13C13.5523 15 14 15.4477 14 16V20C14 20.5523 14.4477 21 15 21M9 21H15" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </div>
+            </a>
+          </div>
+          <div class="hidden md:block">
+            <div class="ml-8 flex items-baseline">
+              
+                
+                  
+                    <a class="px-3 py-2 ml-2 rounded-md font-medium text-gray-200 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-600" href="/pages/imprint/" title="Imprint">Imprint</a>
+                  
+                
+                  
+                    <a class="px-3 py-2 ml-2 rounded-md font-medium text-gray-200 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-600" href="/pages/about/" title="About">About</a>
+                  
+                
+              
+            </div>
+          </div>
+        </div>
+        <div class="-mr-2 flex md:hidden">
+          <button id="toggleMobileMenu" class="icon inline-flex items-center justify-center p-2 rounded-md text-gray-200 hover:text-white hover:bg-gray-700 focus:outline-none focus:bg-gray-700 focus:text-white" aria-label="Menu">
+            <span id="mobile-icon-menu-unselected">
+              <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            </span>
+            <span id="mobile-icon-menu-selected" class="hidden">
+              <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+    
+      <div id="mobile-menu" class="hidden md:hidden px-2 pt-2 pb-3 sm:px-3">
+        
+          
+            <a class="mt-1 block px-3 py-2 rounded-md font-medium text-gray-200 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-600" href="/pages/imprint/" title="Imprint">Imprint</a>
+          
+        
+          
+            <a class="mt-1 block px-3 py-2 rounded-md font-medium text-gray-200 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-600" href="/pages/about/" title="About">About</a>
+          
+        
+      </div>
+    
+  </nav>
+</header>
+
+  <div id="content">
+    
+
+  
+
+  <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
+    <article class="prose">
+      <div class="flex justify-center items-center bg-gray-100 rounded-md">
+        <img class="w-auto h-full object-contain" src="single_sample.png" alt="Learning the Cahn-Hilliard Equation with Fourier Neural Operators">
+      </div>
+      <h1>Learning the Cahn-Hilliard Equation with Fourier Neural Operators</h1>
+      <div>
+        <p>
+          <span class="mr-2 text-sm">
+            <time datetime="2025-06-11">June 11, 2025</time> &middot;
+            801 words &middot;
+            5 minutes reading time
+          </span>
+          <span class="text-sm leading-5 font-medium text-indigo-600">
+
+  
+    
+      <span class="mr-2 badge badge-green"><a href="https://yamahasetter.github.io/tags/pytorch/">Pytorch</a></span>
+    
+      <span class="mr-2 badge badge-green"><a href="https://yamahasetter.github.io/tags/math/">math</a></span>
+    
+  
+
+</span>
+
+        </p>
+      </div>
+
+      <div>
+        <h2 id="motivation">Motivation</h2>
+<p>The Cahn-Hilliard equation models <strong>phase separation</strong> — the way a mixed binary
+system (two substances, or two phases of one) spontaneously un-mixes into distinct
+domains that slowly coarsen over time. It is a fourth-order, nonlinear, stiff PDE,
+and resolving its dynamics with a classical solver is expensive: the stiffness
+forces tiny timesteps, so marching a single simulation out to long times can mean
+hundreds of thousands of steps.</p>
+<p>This project asks whether a <strong>Fourier Neural Operator (FNO)</strong> can learn the
+equation's dynamics and act as a fast surrogate. Unlike an ordinary network that
+maps vectors to vectors, an FNO learns a mapping between <em>functions</em> — here, from
+the recent history of the concentration field to its future. If it works, you get
+a solver that advances the field in a single forward pass instead of thousands of
+fine timesteps, and that generalizes across resolutions because its core operation
+lives in Fourier space.</p>
+<h2 id="generating-the-data">Generating the Data</h2>
+<p>Training data comes from a high-fidelity <strong>Dedalus</strong> spectral solver run on the
+non-dimensional Cahn-Hilliard equation,</p>
+<p>$$
+\frac{\partial u}{\partial t} = \nabla^2!\left(\alpha^2 u^3 - u - \nabla^2 u\right),
+$$</p>
+<p>on a $64 \times 64$ periodic grid with $\Delta t = 10^{-5}$, $\Delta x = 0.01$,
+and $\alpha = 0.1$. Each run starts from random noise and is integrated forward;
+the figure below shows a single sample evolving from initial static to fully
+coarsened phase domains.</p>
+<p><img src="https://yamahasetter.github.io/blog/learning-cahn-hilliard/single_sample.png" alt="A Cahn-Hilliard sample evolving from noise to coarsened phase domains" /></p>
+<p>At $t = 0$ the field is pure noise; by a few steps in, fine structure begins to
+organize; and over thousands of steps the characteristic blob-like domains emerge
+and grow. This whole trajectory is what the FNO has to learn to reproduce.</p>
+<h2 id="the-fourier-neural-operator">The Fourier Neural Operator</h2>
+<p>The model is a standard 2D FNO. Its key building block is the <strong>spectral
+convolution layer</strong>, which transforms the field into Fourier space, keeps only the
+lowest modes, multiplies them by learned complex weights, and transforms back:</p>
+<pre data-lang="python" style="background-color:#191919;color:#f8f8f2;" class="language-python "><code class="language-python" data-lang="python"><span style="font-style:italic;color:#ff5e5e;">class </span><span style="text-decoration:underline;color:#8cdaff;">SpectralConv2d</span><span>(</span><span style="text-decoration:underline;font-style:italic;color:#8cdaff;">nn.Module</span><span>):
+</span><span>    </span><span style="font-style:italic;color:#ff5e5e;">def </span><span style="color:#6699cc;">__init__</span><span>(</span><span style="font-style:italic;color:#fc9354;">self</span><span>, </span><span style="font-style:italic;color:#fc9354;">in_channels</span><span>, </span><span style="font-style:italic;color:#fc9354;">out_channels</span><span>, </span><span style="font-style:italic;color:#fc9354;">modes1</span><span>, </span><span style="font-style:italic;color:#fc9354;">modes2</span><span>):
+</span><span>        </span><span style="color:#6699cc;">super</span><span>().</span><span style="color:#6699cc;">__init__</span><span>()
+</span><span>        </span><span style="color:#e9fdac;">self</span><span>.modes1, </span><span style="color:#e9fdac;">self</span><span>.modes2 </span><span style="color:#ff5e5e;">= </span><span>modes1, modes2   </span><span style="color:#6d6d6d;"># # of Fourier modes kept
+</span><span>        scale </span><span style="color:#ff5e5e;">= </span><span style="color:#fdb082;">1 </span><span style="color:#ff5e5e;">/ </span><span>(in_channels </span><span style="color:#ff5e5e;">* </span><span>out_channels)
+</span><span>        </span><span style="color:#e9fdac;">self</span><span>.weights1 </span><span style="color:#ff5e5e;">= </span><span>nn.</span><span style="color:#e9fdac;">Parameter</span><span>(scale </span><span style="color:#ff5e5e;">* </span><span>torch.</span><span style="color:#e9fdac;">rand</span><span>(
+</span><span>            in_channels, out_channels, modes1, modes2, </span><span style="font-style:italic;color:#fc9354;">dtype</span><span style="color:#ff5e5e;">=</span><span>torch.cfloat))
+</span><span>        </span><span style="color:#e9fdac;">self</span><span>.weights2 </span><span style="color:#ff5e5e;">= </span><span>nn.</span><span style="color:#e9fdac;">Parameter</span><span>(scale </span><span style="color:#ff5e5e;">* </span><span>torch.</span><span style="color:#e9fdac;">rand</span><span>(
+</span><span>            in_channels, out_channels, modes1, modes2, </span><span style="font-style:italic;color:#fc9354;">dtype</span><span style="color:#ff5e5e;">=</span><span>torch.cfloat))
+</span><span>
+</span><span>    </span><span style="font-style:italic;color:#ff5e5e;">def </span><span style="color:#8cdaff;">compl_mul2d</span><span>(</span><span style="font-style:italic;color:#fc9354;">self</span><span>, </span><span style="font-style:italic;color:#fc9354;">input</span><span>, </span><span style="font-style:italic;color:#fc9354;">weights</span><span>):
+</span><span>        </span><span style="color:#6d6d6d;"># FFT -&gt; keep low modes -&gt; multiply -&gt; iFFT
+</span><span>        </span><span style="color:#ff5e5e;">return </span><span>torch.</span><span style="color:#e9fdac;">einsum</span><span>(</span><span style="color:#ffffff;">&quot;</span><span style="color:#fbe3bf;">bixy,ioxy-&gt;boxy</span><span style="color:#ffffff;">&quot;</span><span>, </span><span style="color:#6699cc;">input</span><span>, weights)
+</span></code></pre>
+<p>Truncating to a fixed number of modes is what makes the operator <em>resolution
+independent</em>: the learned weights act on frequencies, not pixels, so the same
+model can be applied to grids of different sizes. I used <strong>16 modes</strong> and a
+channel <strong>width of 20</strong>.</p>
+<p>The learning task is set up as a sliding window in time: the input is a stack of
+<strong>10 consecutive timesteps</strong> of the field, and the target is the <strong>next 10
+timesteps</strong>.</p>
+<pre data-lang="python" style="background-color:#191919;color:#f8f8f2;" class="language-python "><code class="language-python" data-lang="python"><span>train_a </span><span style="color:#ff5e5e;">= </span><span>data[:n_train, :, :, :</span><span style="color:#fdb082;">10</span><span>]   </span><span style="color:#6d6d6d;"># input: 10 past frames
+</span><span>train_u </span><span style="color:#ff5e5e;">= </span><span>data[:n_train, :, :, </span><span style="color:#fdb082;">10</span><span>:]   </span><span style="color:#6d6d6d;"># target: next 10 frames
+</span></code></pre>
+<p>Training uses an 80/20 train/test split, the Adam optimizer at a learning rate of
+$10^{-3}$, MSE loss, and a learning-rate scheduler, for up to 10 epochs. Both the
+training and test loss fall by more than an order of magnitude and track each
+other closely, so the model isn't simply overfitting.</p>
+<p><img src="https://yamahasetter.github.io/blog/learning-cahn-hilliard/loss.png" alt="Training and test MSE over 10 epochs" /></p>
+<h2 id="results">Results</h2>
+<p>On held-out data the FNO reproduces the true field strikingly well. The panels
+below compare the ground-truth field, the FNO prediction, and their pointwise
+difference (note the logarithmic color scale on the difference) for a single
+prediction window — the MSE is $\approx 1.5 \times 10^{-4}$, and the error is
+diffuse and tiny rather than concentrated on any structure.</p>
+<p><img src="https://yamahasetter.github.io/blog/learning-cahn-hilliard/single_difference.png" alt="True field, FNO prediction, and their difference (log scale)" /></p>
+<p>The harder test is <strong>autoregressive rollout</strong>: feed the model's own predictions
+back in as input and let it march far beyond the window it was trained on. Here the
+picture is more nuanced. Errors accumulate step by step, as they must for any
+learned time-stepper, but the amount of training matters enormously. Rolling out
+to 500 timesteps, the under-trained models saturate near $10^{-1}$ error almost
+immediately, while the fully trained 10-epoch model keeps its error around
+$10^{-2}$ across the entire horizon.</p>
+<p><img src="https://yamahasetter.github.io/blog/learning-cahn-hilliard/auto_reg_err.png" alt="Autoregressive rollout error vs. timestep for models trained for different numbers of epochs" /></p>
+<p>The takeaways:</p>
+<ul>
+<li><strong>As a one-shot surrogate, the FNO works well.</strong> It predicts the next block of
+Cahn-Hilliard evolution to ~$10^{-4}$ MSE in a single forward pass, far faster
+than re-running the fine-timestep Dedalus solver.</li>
+<li><strong>Long rollouts are the real challenge.</strong> Autoregressive error compounds, so
+pushing predictions hundreds of steps out degrades accuracy — though more
+training visibly flattens that growth, suggesting the rollout stability is
+partly a matter of how well the operator has been fit.</li>
+<li><strong>The spectral structure pays off.</strong> Because the model operates on a fixed set
+of Fourier modes, it is naturally tied to the same spectral picture that makes
+Cahn-Hilliard tractable in the first place, and it inherits resolution
+flexibility for free.</li>
+</ul>
+<p>This is an encouraging proof of concept that operator learning can stand in for an
+expensive stiff PDE solver, with the next obvious direction being techniques to
+tame the autoregressive error growth for genuinely long-horizon prediction.</p>
+
+      </div>
+    </article>
+  </div>
+
+
+  <script type="application/ld+json">
+{
+   "@context": "https://schema.org"
+  ,"@type": "BlogPosting"
+  ,"mainEntityOfPage": {
+     "@type": "WebPage"
+    ,"@id": "https://yamahasetter.github.io/blog/learning-cahn-hilliard/"
+  }
+  ,"headline": "Learning the Cahn-Hilliard Equation with Fourier Neural Operators"
+  ,"datePublished": "2025-06-11"
+  ,"dateModified": "2025-06-11"
+  
+  ,"author": [
+    
+      {
+         "@type": "Person"
+        ,"name": "Alyn Musselman"
+      }
+      
+    
+  ]
+  ,"publisher": [
+    
+      {
+         "@type": "Person"
+        ,"name": "Alyn Musselman"
+      }
+      
+    
+  ]
+  
+  ,"description": "Training a 2D Fourier Neural Operator to act as a fast surrogate solver for the Cahn-Hilliard equation."
+  ,"articleBody": "MotivationThe Cahn-Hilliard equation models phase separation — the way a mixed binarysystem (two substances, or two phases of one) spontaneously un-mixes into distinctdomains that slowly coarsen over time. It is a fourth-order, nonlinear, stiff PDE,and resolving its dynamics with a classical solver is expensive: the stiffnessforces tiny timesteps, so marching a single simulation out to long times can meanhundreds of thousands of steps.This project asks whether a Fourier Neural Operator (FNO) can learn theequation&#x27;s dynamics and act as a fast surrogate. Unlike an ordinary network thatmaps vectors to vectors, an FNO learns a mapping between functions — here, fromthe recent history of the concentration field to its future. If it works, you geta solver that advances the field in a single forward pass instead of thousands offine timesteps, and that generalizes across resolutions because its core operationlives in Fourier space.Generating the DataTraining data comes from a high-fidelity Dedalus spectral solver run on thenon-dimensional Cahn-Hilliard equation,$$\frac{\partial u}{\partial t} = \nabla^2!\left(\alpha^2 u^3 - u - \nabla^2 u\right),$$on a $64 \times 64$ periodic grid with $\Delta t = 10^{-5}$, $\Delta x = 0.01$,and $\alpha = 0.1$. Each run starts from random noise and is integrated forward;the figure below shows a single sample evolving from initial static to fullycoarsened phase domains.At $t = 0$ the field is pure noise; by a few steps in, fine structure begins toorganize; and over thousands of steps the characteristic blob-like domains emergeand grow. This whole trajectory is what the FNO has to learn to reproduce.The Fourier Neural OperatorThe model is a standard 2D FNO. Its key building block is the spectralconvolution layer, which transforms the field into Fourier space, keeps only thelowest modes, multiplies them by learned complex weights, and transforms back:class SpectralConv2d(nn.Module):    def __init__(self, in_channels, out_channels, modes1, modes2):        super().__init__()        self.modes1, self.modes2 = modes1, modes2   # # of Fourier modes kept        scale = 1 &#x2F; (in_channels * out_channels)        self.weights1 = nn.Parameter(scale * torch.rand(            in_channels, out_channels, modes1, modes2, dtype=torch.cfloat))        self.weights2 = nn.Parameter(scale * torch.rand(            in_channels, out_channels, modes1, modes2, dtype=torch.cfloat))    def compl_mul2d(self, input, weights):        # FFT -&amp;gt; keep low modes -&amp;gt; multiply -&amp;gt; iFFT        return torch.einsum(&amp;quot;bixy,ioxy-&amp;gt;boxy&amp;quot;, input, weights)Truncating to a fixed number of modes is what makes the operator resolutionindependent: the learned weights act on frequencies, not pixels, so the samemodel can be applied to grids of different sizes. I used 16 modes and achannel width of 20.The learning task is set up as a sliding window in time: the input is a stack of10 consecutive timesteps of the field, and the target is the next 10timesteps.train_a = data[:n_train, :, :, :10]   # input: 10 past framestrain_u = data[:n_train, :, :, 10:]   # target: next 10 framesTraining uses an 80&#x2F;20 train&#x2F;test split, the Adam optimizer at a learning rate of$10^{-3}$, MSE loss, and a learning-rate scheduler, for up to 10 epochs. Both thetraining and test loss fall by more than an order of magnitude and track eachother closely, so the model isn&#x27;t simply overfitting.ResultsOn held-out data the FNO reproduces the true field strikingly well. The panelsbelow compare the ground-truth field, the FNO prediction, and their pointwisedifference (note the logarithmic color scale on the difference) for a singleprediction window — the MSE is $\approx 1.5 \times 10^{-4}$, and the error isdiffuse and tiny rather than concentrated on any structure.The harder test is autoregressive rollout: feed the model&#x27;s own predictionsback in as input and let it march far beyond the window it was trained on. Here thepicture is more nuanced. Errors accumulate step by step, as they must for anylearned time-stepper, but the amount of training matters enormously. Rolling outto 500 timesteps, the under-trained models saturate near $10^{-1}$ error almostimmediately, while the fully trained 10-epoch model keeps its error around$10^{-2}$ across the entire horizon.The takeaways:As a one-shot surrogate, the FNO works well. It predicts the next block ofCahn-Hilliard evolution to ~$10^{-4}$ MSE in a single forward pass, far fasterthan re-running the fine-timestep Dedalus solver.Long rollouts are the real challenge. Autoregressive error compounds, sopushing predictions hundreds of steps out degrades accuracy — though moretraining visibly flattens that growth, suggesting the rollout stability ispartly a matter of how well the operator has been fit.The spectral structure pays off. Because the model operates on a fixed setof Fourier modes, it is naturally tied to the same spectral picture that makesCahn-Hilliard tractable in the first place, and it inherits resolutionflexibility for free.This is an encouraging proof of concept that operator learning can stand in for anexpensive stiff PDE solver, with the next obvious direction being techniques totame the autoregressive error growth for genuinely long-horizon prediction."
+  
+    ,"image": "https://yamahasetter.github.io/blog/learning-cahn-hilliard/single_sample.png"
+  
+}
+</script>
+
+
+
+  </div>
+  <footer>
+  <!-- Social Media Icons -->
+  
+    <div class="mt-4 flex justify-center">
+      
+        
+          <a
+            
+            href="https:&#x2F;&#x2F;github.com&#x2F;yamahasetter" title="Github"
+            
+              class="text-gray-400 hover:text-gray-500">
+            
+            <span class="sr-only">github</span>
+            <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 1024 1024"><path d="M8 0C3.58 0 0 3.58 0 8C0 11.54 2.29 14.53 5.47 15.59C5.87 15.66 6.02 15.42 6.02 15.21C6.02 15.02 6.01 14.39 6.01 13.72C4 14.09 3.48 13.23 3.32 12.78C3.23 12.55 2.84 11.84 2.5 11.65C2.22 11.5 1.82 11.13 2.49 11.12C3.12 11.11 3.57 11.7 3.72 11.94C4.44 13.15 5.59 12.81 6.05 12.6C6.12 12.08 6.33 11.73 6.56 11.53C4.78 11.33 2.92 10.64 2.92 7.58C2.92 6.71 3.23 5.99 3.74 5.43C3.66 5.23 3.38 4.41 3.82 3.31C3.82 3.31 4.49 3.1 6.02 4.13C6.66 3.95 7.34 3.86 8.02 3.86C8.7 3.86 9.38 3.95 10.02 4.13C11.55 3.09 12.22 3.31 12.22 3.31C12.66 4.41 12.38 5.23 12.3 5.43C12.81 5.99 13.12 6.7 13.12 7.58C13.12 10.65 11.25 11.33 9.47 11.53C9.76 11.78 10.01 12.26 10.01 13.01C10.01 14.08 10 14.94 10 15.21C10 15.42 10.15 15.67 10.55 15.59C13.71 14.53 16 11.53 16 8C16 3.58 12.42 0 8 0Z" transform="scale(64)"/></svg>
+          </a>
+        
+      
+        
+          <a
+            
+            href="https:&#x2F;&#x2F;www.linkedin.com&#x2F;in&#x2F;alyn-m-b14b17152&#x2F;" title="Linkedin"
+            
+              class="ml-8 text-gray-400 hover:text-gray-500">
+            
+            <span class="sr-only">linkedin</span>
+            <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 1024 1024"><path d="M0 1.146C0 .513.526 0 1.175 0h13.65C15.474 0 16 .513 16 1.146v13.708c0 .633-.526 1.146-1.175 1.146H1.175C.526 16 0 15.487 0 14.854zm4.943 12.248V6.169H2.542v7.225zm-1.2-8.212c.837 0 1.358-.554 1.358-1.248-.015-.709-.52-1.248-1.342-1.248S2.4 3.226 2.4 3.934c0 .694.521 1.248 1.327 1.248zm4.908 8.212V9.359c0-.216.016-.432.08-.586.173-.431.568-.878 1.232-.878.869 0 1.216.662 1.216 1.634v3.865h2.401V9.25c0-2.22-1.184-3.252-2.764-3.252-1.274 0-1.845.7-2.165 1.193v.025h-.016l.016-.025V6.169h-2.4c.03.678 0 7.225 0 7.225z" transform="scale(64)"/></svg>
+          </a>
+        
+      
+        
+          <a
+            
+            href="https:&#x2F;&#x2F;stackoverflow.com&#x2F;users&#x2F;16188373&#x2F;try-hard" title="Stackoverflow"
+            
+              class="ml-8 text-gray-400 hover:text-gray-500">
+            
+            <span class="sr-only">stackoverflow</span>
+            <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 73.099998 86.599998"><g transform="translate(-22.6,-14.9)"><path d="m 84.4,93.8 0,-23.2 7.7,0 0,30.9 -69.5,0 0,-30.9 7.7,0 0,23.2 z"/><path d="m 38.8,68.4 37.8,7.9 1.6,-7.6 -37.8,-7.9 -1.6,7.6 z m 5,-18 35,16.3 3.2,-7 -35,-16.4 -3.2,7.1 z M 53.5,33.2 83.2,57.9 88.1,52 58.4,27.3 53.5,33.2 Z m 19.2,-18.3 -6.2,4.6 23,31 6.2,-4.6 -23,-31 z M 38,86 l 38.6,0 0,-7.7 -38.6,0 0,7.7 z"/></g></svg>
+          </a>
+        
+      
+        
+      
+        
+      
+    </div>
+  
+  <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8 text-center">
+    
+      <p class="text-center text-base leading-6">
+        
+          
+          <a href="&#x2F;pages&#x2F;privacy&#x2F;">Privacy Policy</a>
+        
+           &middot; 
+          <a href="&#x2F;pages&#x2F;terms&#x2F;">Terms</a>
+        
+      </p>
+    
+    
+    <div class="mt-4">
+      <p class="text-center text-base leading-6 text-gray-400">
+        Copyright 2026 by Thomas Weitzel
+      </p>
+    </div>
+    
+  </div>
+</footer>
+
+</body>
+</html>
