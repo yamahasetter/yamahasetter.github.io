@@ -1,0 +1,377 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en">
+    <title> - Statistics</title>
+    <link rel="self" type="application/atom+xml" href="https://yamahasetter.github.io/tags/statistics/atom.xml"/>
+    <link rel="alternate" type="text/html" href="https://yamahasetter.github.io"/>
+    <generator uri="https://www.getzola.org/">Zola</generator>
+    <updated>2024-12-20T00:00:00+00:00</updated>
+    <id>https://yamahasetter.github.io/tags/statistics/atom.xml</id>
+    <entry xml:lang="en">
+        <title>Statistical Analysis of LRC</title>
+        <published>2024-12-20T00:00:00+00:00</published>
+        <updated>2024-12-20T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            Alyn Musselman
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://yamahasetter.github.io/blog/statistical-analysis-of-lrc/"/>
+        <id>https://yamahasetter.github.io/blog/statistical-analysis-of-lrc/</id>
+        
+        <content type="html" xml:base="https://yamahasetter.github.io/blog/statistical-analysis-of-lrc/">&lt;h2 id=&quot;motivation&quot;&gt;Motivation&lt;&#x2F;h2&gt;
+&lt;p&gt;&lt;em&gt;Left-Center-Right&lt;&#x2F;em&gt; (LCR) is a dice game of pure luck. Each player starts with a
+small pile of chips, and on your turn you roll one die for each chip you hold (up
+to three). The faces tell you what to do: &lt;strong&gt;L&lt;&#x2F;strong&gt; passes a chip left, &lt;strong&gt;R&lt;&#x2F;strong&gt; passes
+a chip right, &lt;strong&gt;C&lt;&#x2F;strong&gt; puts a chip in the center pot, and a &lt;strong&gt;dot&lt;&#x2F;strong&gt; means keep it.
+The last player with chips wins. Crucially, the standard game offers no
+decisions — the dice decide everything, so there is no strategy to speak of.&lt;&#x2F;p&gt;
+&lt;p&gt;The &lt;em&gt;Wild&lt;&#x2F;em&gt; variant changes this. It adds a &lt;strong&gt;WILD&lt;&#x2F;strong&gt; face that lets the roller
+take a chip from &lt;em&gt;any&lt;&#x2F;em&gt; player of their choosing (and rolling three WILDs sweeps
+the entire center pot). Suddenly there is a sliver of autonomy. The question that
+motivated this project: given that limited freedom, &lt;strong&gt;what is the best use of
+it?&lt;&#x2F;strong&gt; Is there a meaningful strategy, or does the game&#x27;s inherent randomness wash
+out any advantage?&lt;&#x2F;p&gt;
+&lt;p&gt;To answer that, I built a Monte Carlo simulation of the game and pitted a chosen
+strategy against players acting under a default rule.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;methodology&quot;&gt;Methodology&lt;&#x2F;h2&gt;
+&lt;p&gt;The game is modeled directly in NumPy. There are $N = 10$ players seated in a
+ring, each starting with 5 chips. &quot;You&quot; are player 0; everyone else plays a
+naive baseline. A roll draws three faces from the die&lt;&#x2F;p&gt;
+&lt;p&gt;$$
+\text{die} = {,L,\ C,\ R,\ \text{dot},\ \text{dot},\ \text{WILD},},
+$$&lt;&#x2F;p&gt;
+&lt;p&gt;so each face has probability $1&#x2F;6$ except the dot, which has probability $2&#x2F;6$.&lt;&#x2F;p&gt;
+&lt;p&gt;A turn resolves the ordinary faces first — L and R move chips to neighbors, C
+moves a chip to the center — and then handles any WILDs:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;python&quot; style=&quot;background-color:#191919;color:#f8f8f2;&quot; class=&quot;language-python &quot;&gt;&lt;code class=&quot;language-python&quot; data-lang=&quot;python&quot;&gt;&lt;span&gt;die &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span&gt;np.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;array&lt;&#x2F;span&gt;&lt;span&gt;([&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ffffff;&quot;&gt;&amp;#39;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#fbe3bf;&quot;&gt;L&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ffffff;&quot;&gt;&amp;#39;&lt;&#x2F;span&gt;&lt;span&gt;,&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ffffff;&quot;&gt;&amp;#39;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#fbe3bf;&quot;&gt;C&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ffffff;&quot;&gt;&amp;#39;&lt;&#x2F;span&gt;&lt;span&gt;,&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ffffff;&quot;&gt;&amp;#39;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#fbe3bf;&quot;&gt;R&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ffffff;&quot;&gt;&amp;#39;&lt;&#x2F;span&gt;&lt;span&gt;,&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ffffff;&quot;&gt;&amp;#39;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#fbe3bf;&quot;&gt;DOT&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ffffff;&quot;&gt;&amp;#39;&lt;&#x2F;span&gt;&lt;span&gt;,&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ffffff;&quot;&gt;&amp;#39;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#fbe3bf;&quot;&gt;DOT&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ffffff;&quot;&gt;&amp;#39;&lt;&#x2F;span&gt;&lt;span&gt;,&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ffffff;&quot;&gt;&amp;#39;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#fbe3bf;&quot;&gt;WILD&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ffffff;&quot;&gt;&amp;#39;&lt;&#x2F;span&gt;&lt;span&gt;])
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#ff5e5e;&quot;&gt;def &lt;&#x2F;span&gt;&lt;span style=&quot;color:#8cdaff;&quot;&gt;doroll&lt;&#x2F;span&gt;&lt;span&gt;():
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;return &lt;&#x2F;span&gt;&lt;span&gt;np.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;array&lt;&#x2F;span&gt;&lt;span&gt;([np.random.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;choice&lt;&#x2F;span&gt;&lt;span&gt;(die) &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;for &lt;&#x2F;span&gt;&lt;span&gt;i &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;in &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;range&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;3&lt;&#x2F;span&gt;&lt;span&gt;)])
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;&lt;strong&gt;The baseline rule.&lt;&#x2F;strong&gt; When a generic player rolls a WILD, they greedily take
+from whoever currently has the largest stack:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;python&quot; style=&quot;background-color:#191919;color:#f8f8f2;&quot; class=&quot;language-python &quot;&gt;&lt;code class=&quot;language-python&quot; data-lang=&quot;python&quot;&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;elif &lt;&#x2F;span&gt;&lt;span&gt;playerID:                      &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6d6d6d;&quot;&gt;# any player that isn&amp;#39;t &amp;quot;you&amp;quot;
+&lt;&#x2F;span&gt;&lt;span&gt;    banks[playerID] &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;+= &lt;&#x2F;span&gt;&lt;span&gt;WILDcount
+&lt;&#x2F;span&gt;&lt;span&gt;    banks[np.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;argmax&lt;&#x2F;span&gt;&lt;span&gt;(banks)] &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;-= &lt;&#x2F;span&gt;&lt;span&gt;WILDcount
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;&lt;strong&gt;My strategy (player 0).&lt;&#x2F;strong&gt; Rather than always hitting the global leader, I look
+&lt;em&gt;across the table&lt;&#x2F;em&gt; — at the player seated opposite me and their immediate
+neighbors — and take from the wealthiest of that group. If none of them have
+chips, I fall back to taking from the richest player who is furthest from me:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;python&quot; style=&quot;background-color:#191919;color:#f8f8f2;&quot; class=&quot;language-python &quot;&gt;&lt;code class=&quot;language-python&quot; data-lang=&quot;python&quot;&gt;&lt;span style=&quot;font-style:italic;color:#ff5e5e;&quot;&gt;def &lt;&#x2F;span&gt;&lt;span style=&quot;color:#8cdaff;&quot;&gt;strategy&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fc9354;&quot;&gt;playerID&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fc9354;&quot;&gt;WILDcount&lt;&#x2F;span&gt;&lt;span&gt;):
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6d6d6d;&quot;&gt;# if the players across the table have money, take from the richest of them
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;if &lt;&#x2F;span&gt;&lt;span&gt;np.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;count_nonzero&lt;&#x2F;span&gt;&lt;span&gt;(banks[playerID &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;+ &lt;&#x2F;span&gt;&lt;span&gt;N&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;&#x2F;&#x2F;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;2 &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;- &lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;1 &lt;&#x2F;span&gt;&lt;span&gt;: playerID &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;+ &lt;&#x2F;span&gt;&lt;span&gt;N&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;&#x2F;&#x2F;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;2 &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;+ &lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;1&lt;&#x2F;span&gt;&lt;span&gt;]):
+&lt;&#x2F;span&gt;&lt;span&gt;        banks[np.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;argmax&lt;&#x2F;span&gt;&lt;span&gt;(banks[playerID &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;+ &lt;&#x2F;span&gt;&lt;span&gt;N&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;&#x2F;&#x2F;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;2 &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;- &lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;1 &lt;&#x2F;span&gt;&lt;span&gt;: playerID &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;+ &lt;&#x2F;span&gt;&lt;span&gt;N&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;&#x2F;&#x2F;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;2 &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;+ &lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;1&lt;&#x2F;span&gt;&lt;span&gt;])] &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;-= &lt;&#x2F;span&gt;&lt;span&gt;WILDcount
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6d6d6d;&quot;&gt;# otherwise take from the player with money furthest from you
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;else&lt;&#x2F;span&gt;&lt;span&gt;:
+&lt;&#x2F;span&gt;&lt;span&gt;        who_has_money &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span&gt;np.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;nonzero&lt;&#x2F;span&gt;&lt;span&gt;(banks)[&lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;0&lt;&#x2F;span&gt;&lt;span&gt;]
+&lt;&#x2F;span&gt;&lt;span&gt;        take_from &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;min&lt;&#x2F;span&gt;&lt;span&gt;(who_has_money, &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fc9354;&quot;&gt;key&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;=&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#ff5e5e;&quot;&gt;lambda &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fc9354;&quot;&gt;x&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;abs&lt;&#x2F;span&gt;&lt;span&gt;(x &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;- &lt;&#x2F;span&gt;&lt;span&gt;N&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;&#x2F;&#x2F;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;2&lt;&#x2F;span&gt;&lt;span&gt;))
+&lt;&#x2F;span&gt;&lt;span&gt;        banks[take_from] &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;-= &lt;&#x2F;span&gt;&lt;span&gt;WILDcount
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;The intuition is that depleting players &lt;em&gt;across&lt;&#x2F;em&gt; the table — rather than feeding
+the global-leader dynamic that everyone else plays into — keeps chips circulating
+away from your immediate neighbors, who can pass chips straight back to you.&lt;&#x2F;p&gt;
+&lt;p&gt;A round lets every solvent player take a turn; a game runs until only one player
+has chips left:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;python&quot; style=&quot;background-color:#191919;color:#f8f8f2;&quot; class=&quot;language-python &quot;&gt;&lt;code class=&quot;language-python&quot; data-lang=&quot;python&quot;&gt;&lt;span style=&quot;font-style:italic;color:#ff5e5e;&quot;&gt;def &lt;&#x2F;span&gt;&lt;span style=&quot;color:#8cdaff;&quot;&gt;play_a_game&lt;&#x2F;span&gt;&lt;span&gt;():
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;while &lt;&#x2F;span&gt;&lt;span&gt;np.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;count_nonzero&lt;&#x2F;span&gt;&lt;span&gt;(banks) &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;&amp;gt; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;1&lt;&#x2F;span&gt;&lt;span&gt;:
+&lt;&#x2F;span&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;play_a_round&lt;&#x2F;span&gt;&lt;span&gt;()
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;To estimate the win probability of the strategy, the whole game is replayed
+$n_\text{games} = 10{,}000$ times and player 0&#x27;s win rate is tallied. With a fair
+game and no strategy, each of the 10 players would win about $1&#x2F;N = 10%$ of the
+time; the question is whether the strategy pushes player 0 meaningfully above
+that baseline.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;results&quot;&gt;Results&lt;&#x2F;h2&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;yamahasetter.github.io&#x2F;blog&#x2F;statistical-analysis-of-lrc&#x2F;strat1.png&quot; alt=&quot;Win-rate distribution across simulated games&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;Across the Monte Carlo runs, the central comparison is between player 0&#x27;s
+observed win rate and the $10%$ chance expected under pure luck. Because the
+game is dominated by randomness, the autonomy granted by the WILD face produces
+only a modest shift — the limited freedom the &lt;em&gt;Wild&lt;&#x2F;em&gt; variant allows is exactly
+that: limited. The simulation framework, however, makes it straightforward to
+swap in alternative &lt;code&gt;strategy()&lt;&#x2F;code&gt; rules and re-run the 10,000-game sweep to
+compare their win rates head-to-head.&lt;&#x2F;p&gt;
+</content>
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>Uncertainty Quantificaton of Stochastic Nonlinear PDEs</title>
+        <published>2024-09-20T00:00:00+00:00</published>
+        <updated>2024-09-20T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            Alyn Musselman
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://yamahasetter.github.io/blog/uncertainty-quantification-of-nonlinear-pde/"/>
+        <id>https://yamahasetter.github.io/blog/uncertainty-quantification-of-nonlinear-pde/</id>
+        
+        <content type="html" xml:base="https://yamahasetter.github.io/blog/uncertainty-quantification-of-nonlinear-pde/">&lt;h2 id=&quot;motivation&quot;&gt;Motivation&lt;&#x2F;h2&gt;
+&lt;p&gt;The Cahn-Hilliard equation is a fourth-order, nonlinear, time-dependent PDE that
+models &lt;strong&gt;phase separation&lt;&#x2F;strong&gt; in a binary mixture — think of two substances (or two
+phases of one substance) un-mixing into distinct regions. It shows up all over
+materials science, and like most equations of its kind it cannot be solved
+analytically.&lt;&#x2F;p&gt;
+&lt;p&gt;For this project (my AM 238 research project with Daniele Venturi) I made the
+problem &lt;em&gt;stochastic&lt;&#x2F;em&gt;: I injected noise into the potential-energy function that
+governs how the mixture separates. The result is a stochastic, nonlinear,
+fourth-order PDE, and the question becomes one of &lt;strong&gt;uncertainty quantification&lt;&#x2F;strong&gt; —
+not &quot;what is the solution?&quot; but &quot;what is the &lt;em&gt;mean&lt;&#x2F;em&gt; and &lt;em&gt;variance&lt;&#x2F;em&gt; of the solution
+field given a random input?&quot; The traditional answer is Monte Carlo, but Monte
+Carlo needs an enormous number of samples to converge and quickly becomes too
+expensive. The goal here was to see whether smarter sampling methods could match
+Monte Carlo&#x27;s accuracy at a fraction of the cost.&lt;&#x2F;p&gt;
+&lt;p&gt;I evaluate four strategies for the mean-field solution: &lt;strong&gt;Monte Carlo&lt;&#x2F;strong&gt;,
+&lt;strong&gt;Dynamically Orthogonal (DO) field equations&lt;&#x2F;strong&gt;, &lt;strong&gt;generalized Polynomial Chaos
+(gPC)&lt;&#x2F;strong&gt;, and the &lt;strong&gt;Probabilistic Collocation Method (PCM)&lt;&#x2F;strong&gt;.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;the-cahn-hilliard-model&quot;&gt;The Cahn-Hilliard Model&lt;&#x2F;h2&gt;
+&lt;p&gt;Let $u(\mathbf{x}, t)$ be the local concentration, scaled so that $u &amp;lt; 0$ marks
+phase $A$ and $u &amp;gt; 0$ marks phase $B$. With a chemical potential $\mu$, Fick&#x27;s
+first law $\mathbf{J} = -D\nabla\mu$ and conservation of mass
+($\partial_t u + \nabla\cdot\mathbf{J} = 0$) give the general Cahn-Hilliard form&lt;&#x2F;p&gt;
+&lt;p&gt;$$
+\frac{\partial u}{\partial t} = \nabla\cdot(D,\nabla\mu).
+$$&lt;&#x2F;p&gt;
+&lt;p&gt;The physics of separation lives in $\mu$. Starting from a Landau free energy and
+keeping the symmetric double-well shape, the potential is built as
+$F(T^*, u) = \tfrac{1}{4}\big(a - (bu)^2\big)^2$, where $a, b$ depend on
+temperature $T$. For $a &amp;lt; 0$ the well has a single minimum; as $a$ crosses zero a
+&lt;strong&gt;bifurcation&lt;&#x2F;strong&gt; creates two minima separated by an energy barrier at $u = 0$ — and
+that double well is exactly what drives the mixture apart.&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;yamahasetter.github.io&#x2F;blog&#x2F;uncertainty-quantification-of-nonlinear-pde&#x2F;phase-diagram-01.png&quot; alt=&quot;Phase diagram of the double-well potential&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;Adding a gradient-energy term $\tfrac{\gamma}{2}|\nabla u|^2$ (which penalizes
+fine-scale mixing and forces the material into distinct domains) and
+non-dimensionalizing reduces the model to&lt;&#x2F;p&gt;
+&lt;p&gt;$$
+\frac{\partial u}{\partial \hat{t}} = \nabla^2!\left(\alpha^2 u^3 - u - \nabla^2 u\right),
+\qquad \alpha = \frac{b}{\sqrt{a}}.
+$$&lt;&#x2F;p&gt;
+&lt;p&gt;The single parameter $\alpha$ sets the shape of the potential about $u = 0$: small
+$\alpha$ pulls particles to their phase minima quickly, larger $\alpha$ more
+slowly. This is the knob I perturb to model real-world noise.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;making-it-stochastic&quot;&gt;Making it stochastic&lt;&#x2F;h3&gt;
+&lt;p&gt;In a real system the temperature is never perfectly fixed, and those fluctuations
+change $a$ and $b$ — and therefore $\alpha$. Promoting $\alpha \to \alpha(\xi)$
+for a random variable $\xi$ turns the model into a stochastic PDE,&lt;&#x2F;p&gt;
+&lt;p&gt;$$
+\frac{\partial u(\mathbf{x}, t, \xi)}{\partial \hat{t}}
+= \nabla^2!\left(\alpha(\xi)^2 u^3 - u - \nabla^2 u\right).
+$$&lt;&#x2F;p&gt;
+&lt;p&gt;Phase separation requires $0 &amp;lt; \alpha \ll 1$, so I take $\alpha$ &lt;strong&gt;uniform&lt;&#x2F;strong&gt; on
+$\Omega = [0.001, 0.1]$ (exponential and Gaussian PDFs are hard to sample
+reliably at this scale). The plots below show how the potential&#x27;s shape varies
+with $\alpha$.&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;yamahasetter.github.io&#x2F;blog&#x2F;uncertainty-quantification-of-nonlinear-pde&#x2F;potential_energy.png&quot; alt=&quot;Variations of the potential energy as a function of α&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;numerical-solver&quot;&gt;Numerical solver&lt;&#x2F;h3&gt;
+&lt;p&gt;Every method below rests on the same deterministic solver: &lt;strong&gt;second&#x2F;fourth-order
+finite differences&lt;&#x2F;strong&gt; in space (a 5-point stencil for $\partial_{xx}$ and a 5-point
+stencil for $\partial_{xxxx}$, etc.) and an explicit &lt;strong&gt;3-step Runge-Kutta&lt;&#x2F;strong&gt; scheme
+in time,&lt;&#x2F;p&gt;
+&lt;p&gt;$$
+u^{t+1} = u^{t} + \frac{\Delta t}{6}\left(k_1 + 4k_2 + k_3\right),
+$$&lt;&#x2F;p&gt;
+&lt;p&gt;with $\Delta x = \Delta y = 0.017$, $\Delta t = 10^{-5}$, and $\mathbf{x} \in
+[-1,1]^2$. Starting from a random initial field, this resolves the characteristic
+coarsening of the two phases over time.&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;yamahasetter.github.io&#x2F;blog&#x2F;uncertainty-quantification-of-nonlinear-pde&#x2F;single_solve_colorbar.png&quot; alt=&quot;Numerical solution of the stochastic Cahn-Hilliard equation over time&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;the-four-uq-methods&quot;&gt;The Four UQ Methods&lt;&#x2F;h2&gt;
+&lt;p&gt;&lt;strong&gt;Monte Carlo.&lt;&#x2F;strong&gt; Draw many samples of $\alpha$, solve the deterministic PDE for
+each, and average. It is simple and unbiased — the mean and variance are just the
+empirical mean and variance over the ensemble — and I use a &lt;strong&gt;5000-sample&lt;&#x2F;strong&gt; run as
+the reference &quot;truth.&quot; Its weakness is cost: the error shrinks only like
+$1&#x2F;\sqrt{N}$, so high accuracy demands enormous $N$.&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;strong&gt;Dynamically Orthogonal (DO) field equations.&lt;&#x2F;strong&gt; Expand the solution as a mean
+plus a sum of orthogonal spatial modes carrying zero-mean stochastic
+coefficients, $u = \bar{u} + \sum_i \hat{u}_i(\mathbf{x},t),Y_i(t,\xi)$, evolved
+under the dynamically-orthogonal constraint. In principle this propagates only the
+handful of modes that matter. In practice, applying it to Cahn-Hilliard produces
+products of high-order derivatives ($\partial^n\hat u_i,\partial^n\hat u_j$) that
+&lt;strong&gt;diverge&lt;&#x2F;strong&gt; for non-smooth initial data, and the propagator contains
+fourth-order tensors whose per-timestep flop count is intractable. &lt;strong&gt;Conclusion:
+too expensive and too algorithmically complex to solve here.&lt;&#x2F;strong&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;strong&gt;Generalized Polynomial Chaos (gPC).&lt;&#x2F;strong&gt; Expand the solution in a basis of
+polynomials $P_k(\xi)$ that are orthogonal with respect to the input PDF,
+$u(\mathbf{x},t,\xi) = \sum_k \hat{u}_k(\mathbf{x},t),P_k(\xi)$, build the basis
+with the Stieltjes recurrence, and project the PDE onto each basis function to get
+a coupled system of deterministic PDEs. The mean is then $\hat u_0$ and the
+variance is $\sum_k \hat u_k^2,\mathbb{E}{P_k^2}$. Unfortunately the projection
+generates the &lt;em&gt;same&lt;&#x2F;em&gt; divergent derivative-product terms as DO, and a flop count
+makes it concrete: even a coarse $N=100$ grid, $M=10$ modes, and 1000 steps costs
+~3 teraflops for just the &lt;strong&gt;first part of the first term&lt;&#x2F;strong&gt;. &lt;strong&gt;Conclusion: also too
+expensive.&lt;&#x2F;strong&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;strong&gt;Probabilistic Collocation Method (PCM).&lt;&#x2F;strong&gt; This is the method that works. Instead
+of coupling the modes, PCM evaluates the solution at carefully chosen
+&lt;strong&gt;collocation nodes&lt;&#x2F;strong&gt; $\xi^j$ in the support of the input PDF,
+$u(\mathbf{x},t,\xi) \approx \sum_j u_j(\mathbf{x},t,\xi^j),P_j(\xi)$, which
+yields an &lt;strong&gt;uncoupled&lt;&#x2F;strong&gt; family of deterministic PDEs — one per node — each solved
+with the same RK solver as before. I generate the nodes and weights as
+Gauss-quadrature points via the Stieltjes algorithm (the eigenvalues&#x2F;eigenvectors
+of the recurrence matrix $S$). With $M = 5$ nodes the mean and variance are simple
+weighted sums,&lt;&#x2F;p&gt;
+&lt;p&gt;$$
+\mathbb{E}{u} \approx \sum_{j} w_j, u_j,
+\qquad
+\mathrm{Var}{u} \approx \sum_{j} w_j, u_j^2 - \Big(\sum_j w_j, u_j\Big)^2 .
+$$&lt;&#x2F;p&gt;
+&lt;p&gt;Because the system is uncoupled, there are no divergent cross-terms and the cost
+is just five deterministic solves.&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;yamahasetter.github.io&#x2F;blog&#x2F;uncertainty-quantification-of-nonlinear-pde&#x2F;PCM_modes.png&quot; alt=&quot;The five superimposed deterministic PCM components (binary colormap)&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;yamahasetter.github.io&#x2F;blog&#x2F;uncertainty-quantification-of-nonlinear-pde&#x2F;PCM_solution_colorbar.png&quot; alt=&quot;Mean and variance of the stochastic Cahn-Hilliard equation via PCM&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;results&quot;&gt;Results&lt;&#x2F;h2&gt;
+&lt;p&gt;The headline comparison is PCM against the 5000-sample Monte Carlo reference (and
+the analytic mean). The mean fields are visually indistinguishable — PCM
+reproduces the Monte Carlo answer using only &lt;strong&gt;five&lt;&#x2F;strong&gt; deterministic solves rather
+than five thousand.&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;yamahasetter.github.io&#x2F;blog&#x2F;uncertainty-quantification-of-nonlinear-pde&#x2F;mean_solutions_compared_colorbar.png&quot; alt=&quot;Mean solutions compared: Monte Carlo vs. analytic vs. PCM&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;The takeaways:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Monte Carlo works but is wasteful&lt;&#x2F;strong&gt; — accurate, unbiased, and the natural
+baseline, but its $1&#x2F;\sqrt{N}$ convergence makes high accuracy very costly.&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;strong&gt;DO and gPC are elegant but impractical here.&lt;&#x2F;strong&gt; Both reduce the SPDE to
+deterministic systems in theory, but Cahn-Hilliard&#x27;s nonlinearity produces
+diverging high-order derivative products and tensor terms with intractable flop
+counts. They are dead ends &lt;em&gt;for this particular equation&lt;&#x2F;em&gt;.&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;strong&gt;PCM is the winner.&lt;&#x2F;strong&gt; By decoupling the stochastic problem into a few
+independent deterministic solves at Gauss-quadrature nodes, it sidesteps the
+divergence entirely and matches the Monte Carlo mean field at a tiny fraction of
+the cost — roughly three orders of magnitude fewer solves in this experiment.&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;The broader lesson is that the &quot;obvious&quot; spectral UQ methods (DO, gPC) are not
+universally applicable: a strongly nonlinear, high-order operator can break them,
+and a well-chosen collocation scheme can be both simpler and dramatically cheaper.&lt;&#x2F;p&gt;
+</content>
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>Image Compression with the SVD in C++</title>
+        <published>2024-03-20T00:00:00+00:00</published>
+        <updated>2024-03-20T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            Alyn Musselman
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://yamahasetter.github.io/blog/svd-image-compression/"/>
+        <id>https://yamahasetter.github.io/blog/svd-image-compression/</id>
+        
+        <content type="html" xml:base="https://yamahasetter.github.io/blog/svd-image-compression/">&lt;h2 id=&quot;motivation&quot;&gt;Motivation&lt;&#x2F;h2&gt;
+&lt;p&gt;The singular value decomposition is one of the most useful factorizations in
+numerical linear algebra, and image compression is its most visual demo. A
+grayscale image is just a matrix of pixel intensities; the SVD lets you keep only
+the handful of directions that carry the most information and throw the rest
+away. This was the SVD half of my AM213A final project: load a high-resolution
+image as a matrix in C++, compute its SVD with &lt;strong&gt;LAPACK&lt;&#x2F;strong&gt;, and reconstruct it at
+a sequence of ranks to watch quality trade against compression.&lt;&#x2F;p&gt;
+&lt;p&gt;The test image is a $1279 \times 1920$ grayscale photo of a dog, read in as a
+matrix of doubles.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;the-math&quot;&gt;The Math&lt;&#x2F;h2&gt;
+&lt;p&gt;Any real $m \times n$ matrix $A$ factors as&lt;&#x2F;p&gt;
+&lt;p&gt;$$
+A = U \Sigma V^{T},
+$$&lt;&#x2F;p&gt;
+&lt;p&gt;where $U \in \mathbb{R}^{m\times m}$ and $V \in \mathbb{R}^{n\times n}$ are
+orthogonal and $\Sigma$ is diagonal with the singular values
+$\sigma_1 \ge \sigma_2 \ge \dots \ge 0$ on its diagonal. Because the singular
+values are sorted, the sum&lt;&#x2F;p&gt;
+&lt;p&gt;$$
+A = \sum_{i=1}^{r} \sigma_i, u_i v_i^{T}
+$$&lt;&#x2F;p&gt;
+&lt;p&gt;is dominated by its first few terms. The &lt;strong&gt;rank-$K$ truncation&lt;&#x2F;strong&gt; keeps only the
+$K$ largest singular values,&lt;&#x2F;p&gt;
+&lt;p&gt;$$
+A_K = \sum_{i=1}^{K} \sigma_i, u_i v_i^{T},
+$$&lt;&#x2F;p&gt;
+&lt;p&gt;which the Eckart–Young theorem guarantees is the &lt;em&gt;best&lt;&#x2F;em&gt; rank-$K$ approximation of
+$A$ in both the spectral and Frobenius norms. In practice I built $A_K$ by zeroing
+out every diagonal entry of $\Sigma$ past index $K$ and re-multiplying
+$U \Sigma_K V^{T}$.&lt;&#x2F;p&gt;
+&lt;p&gt;The savings: instead of storing $m \times n$ numbers, a rank-$K$ image needs only
+$K(m + n + 1)$ — the kept columns of $U$, rows of $V^{T}$, and singular values.
+For this image, $K = 160$ stores roughly 12% of the original data.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;the-c-implementation&quot;&gt;The C++ Implementation&lt;&#x2F;h2&gt;
+&lt;p&gt;The heavy lifting is done by &lt;code&gt;dgesvd&lt;&#x2F;code&gt;, the LAPACK double-precision SVD routine,
+called here through Apple&#x27;s Accelerate framework. (LAPACK is the modern successor
+to the original LINPACK library.) The workflow in &lt;code&gt;driver.cpp&lt;&#x2F;code&gt;:&lt;&#x2F;p&gt;
+&lt;ol&gt;
+&lt;li&gt;Read the &lt;code&gt;.dat&lt;&#x2F;code&gt; pixel file into a &lt;code&gt;vector&amp;lt;vector&amp;lt;double&amp;gt;&amp;gt;&lt;&#x2F;code&gt;, then flatten it
+into a &lt;strong&gt;column-major&lt;&#x2F;strong&gt; &lt;code&gt;double*&lt;&#x2F;code&gt; array — the layout LAPACK expects.&lt;&#x2F;li&gt;
+&lt;li&gt;Call &lt;code&gt;dgesvd_&lt;&#x2F;code&gt; with &lt;code&gt;JOBU = JOBVT = &#x27;A&#x27;&lt;&#x2F;code&gt; to get the full $U$, $\Sigma$, and
+$V^{T}$.&lt;&#x2F;li&gt;
+&lt;li&gt;Rebuild $\Sigma$ as a diagonal matrix, then loop over a list of target ranks,
+zeroing the tail of $\Sigma$ and reconstructing.&lt;&#x2F;li&gt;
+&lt;&#x2F;ol&gt;
+&lt;pre data-lang=&quot;cpp&quot; style=&quot;background-color:#191919;color:#f8f8f2;&quot; class=&quot;language-cpp &quot;&gt;&lt;code class=&quot;language-cpp&quot; data-lang=&quot;cpp&quot;&gt;&lt;span style=&quot;font-style:italic;color:#fbdfb5;&quot;&gt;char&lt;&#x2F;span&gt;&lt;span&gt; JOBU &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ffffff;&quot;&gt;&amp;#39;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#fbe3bf;&quot;&gt;A&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ffffff;&quot;&gt;&amp;#39;&lt;&#x2F;span&gt;&lt;span&gt;, JOBVT &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ffffff;&quot;&gt;&amp;#39;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#fbe3bf;&quot;&gt;A&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ffffff;&quot;&gt;&amp;#39;&lt;&#x2F;span&gt;&lt;span&gt;;
+&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fbdfb5;&quot;&gt;int&lt;&#x2F;span&gt;&lt;span&gt; M &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;1279&lt;&#x2F;span&gt;&lt;span&gt;, N &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;1920&lt;&#x2F;span&gt;&lt;span&gt;, LDA &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;=&lt;&#x2F;span&gt;&lt;span&gt; M, LDU &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;=&lt;&#x2F;span&gt;&lt;span&gt; M, LDVT &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;=&lt;&#x2F;span&gt;&lt;span&gt; N;
+&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fbdfb5;&quot;&gt;int&lt;&#x2F;span&gt;&lt;span&gt; mn &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;min&lt;&#x2F;span&gt;&lt;span&gt;(M, N), MN &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;max&lt;&#x2F;span&gt;&lt;span&gt;(M, N);
+&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fbdfb5;&quot;&gt;int&lt;&#x2F;span&gt;&lt;span&gt; LWORK &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;2 &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;* &lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;max&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;3&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;*&lt;&#x2F;span&gt;&lt;span&gt;mn &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;+&lt;&#x2F;span&gt;&lt;span&gt; MN, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;5&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;*&lt;&#x2F;span&gt;&lt;span&gt;mn);
+&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fbdfb5;&quot;&gt;int&lt;&#x2F;span&gt;&lt;span&gt; INFO;
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fbdfb5;&quot;&gt;double&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;*&lt;&#x2F;span&gt;&lt;span&gt; S    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;= new &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fbdfb5;&quot;&gt;double&lt;&#x2F;span&gt;&lt;span&gt;[mn];
+&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fbdfb5;&quot;&gt;double&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;*&lt;&#x2F;span&gt;&lt;span&gt; U    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;= new &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fbdfb5;&quot;&gt;double&lt;&#x2F;span&gt;&lt;span&gt;[LDU&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;*&lt;&#x2F;span&gt;&lt;span&gt;M];
+&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fbdfb5;&quot;&gt;double&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;*&lt;&#x2F;span&gt;&lt;span&gt; VT   &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;= new &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fbdfb5;&quot;&gt;double&lt;&#x2F;span&gt;&lt;span&gt;[LDVT&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;*&lt;&#x2F;span&gt;&lt;span&gt;N];
+&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fbdfb5;&quot;&gt;double&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;*&lt;&#x2F;span&gt;&lt;span&gt; WORK &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;= new &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fbdfb5;&quot;&gt;double&lt;&#x2F;span&gt;&lt;span&gt;[LWORK];
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;dgesvd_&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;&amp;amp;&lt;&#x2F;span&gt;&lt;span&gt;JOBU, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;&amp;amp;&lt;&#x2F;span&gt;&lt;span&gt;JOBVT, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;&amp;amp;&lt;&#x2F;span&gt;&lt;span&gt;M, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;&amp;amp;&lt;&#x2F;span&gt;&lt;span&gt;N,
+&lt;&#x2F;span&gt;&lt;span&gt;        doggy_arr, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;&amp;amp;&lt;&#x2F;span&gt;&lt;span&gt;LDA,
+&lt;&#x2F;span&gt;&lt;span&gt;        S, U, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;&amp;amp;&lt;&#x2F;span&gt;&lt;span&gt;LDU, VT, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;&amp;amp;&lt;&#x2F;span&gt;&lt;span&gt;LDVT,
+&lt;&#x2F;span&gt;&lt;span&gt;        WORK, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;&amp;amp;&lt;&#x2F;span&gt;&lt;span&gt;LWORK, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;&amp;amp;&lt;&#x2F;span&gt;&lt;span&gt;INFO);
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;The compression loop sweeps $K \in {1279, 640, 320, 160, 80, 40, 20, 10}$:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;cpp&quot; style=&quot;background-color:#191919;color:#f8f8f2;&quot; class=&quot;language-cpp &quot;&gt;&lt;code class=&quot;language-cpp&quot; data-lang=&quot;cpp&quot;&gt;&lt;span style=&quot;font-style:italic;color:#fbdfb5;&quot;&gt;int&lt;&#x2F;span&gt;&lt;span&gt; k[&lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;8&lt;&#x2F;span&gt;&lt;span&gt;] &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span&gt;{&lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;1279&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;640&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;320&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;160&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;80&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;40&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;20&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;10&lt;&#x2F;span&gt;&lt;span&gt;};
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;for &lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fbdfb5;&quot;&gt;int&lt;&#x2F;span&gt;&lt;span&gt; i &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;0&lt;&#x2F;span&gt;&lt;span&gt;; i &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;&amp;lt; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;8&lt;&#x2F;span&gt;&lt;span&gt;; i&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;++&lt;&#x2F;span&gt;&lt;span&gt;) {
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;for &lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fbdfb5;&quot;&gt;int&lt;&#x2F;span&gt;&lt;span&gt; j &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;0&lt;&#x2F;span&gt;&lt;span&gt;; j &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;&amp;lt;&lt;&#x2F;span&gt;&lt;span&gt; M; j&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;++&lt;&#x2F;span&gt;&lt;span&gt;)
+&lt;&#x2F;span&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;if &lt;&#x2F;span&gt;&lt;span&gt;(j &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;&amp;gt;&lt;&#x2F;span&gt;&lt;span&gt; k[i]) Sdag[j][j] &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;0&lt;&#x2F;span&gt;&lt;span&gt;;      &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6d6d6d;&quot;&gt;&#x2F;&#x2F; truncate Sigma
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;    US &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;matrixmult&lt;&#x2F;span&gt;&lt;span&gt;(Uvec, Sdag);
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fbdfb5;&quot;&gt;auto&lt;&#x2F;span&gt;&lt;span&gt; USVT2 &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;matrixmult&lt;&#x2F;span&gt;&lt;span&gt;(US, VTvec);    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6d6d6d;&quot;&gt;&#x2F;&#x2F; reconstruct A_K
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fbdfb5;&quot;&gt;auto&lt;&#x2F;span&gt;&lt;span&gt; diff &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;difference&lt;&#x2F;span&gt;&lt;span&gt;(USVT, USVT2);   &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6d6d6d;&quot;&gt;&#x2F;&#x2F; error vs full-rank
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fbdfb5;&quot;&gt;double&lt;&#x2F;span&gt;&lt;span&gt; err &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;frobnorm&lt;&#x2F;span&gt;&lt;span&gt;(diff) &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;&#x2F; &lt;&#x2F;span&gt;&lt;span&gt;(M&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;*&lt;&#x2F;span&gt;&lt;span&gt;N);
+&lt;&#x2F;span&gt;&lt;span&gt;}
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;Reconstruction error is measured with the &lt;strong&gt;Frobenius norm&lt;&#x2F;strong&gt;, computed via
+$\lVert A \rVert_F = \sqrt{\operatorname{tr}(A^{T} A)}$, then normalized by the
+pixel count:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;cpp&quot; style=&quot;background-color:#191919;color:#f8f8f2;&quot; class=&quot;language-cpp &quot;&gt;&lt;code class=&quot;language-cpp&quot; data-lang=&quot;cpp&quot;&gt;&lt;span style=&quot;font-style:italic;color:#fbdfb5;&quot;&gt;double &lt;&#x2F;span&gt;&lt;span style=&quot;color:#8cdaff;&quot;&gt;frobnorm&lt;&#x2F;span&gt;&lt;span&gt;(vector&amp;lt;vector&amp;lt;&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fbdfb5;&quot;&gt;double&lt;&#x2F;span&gt;&lt;span&gt;&amp;gt;&amp;gt; &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fc9354;&quot;&gt;A&lt;&#x2F;span&gt;&lt;span&gt;) {
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fbdfb5;&quot;&gt;auto&lt;&#x2F;span&gt;&lt;span&gt; AT  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;transpose&lt;&#x2F;span&gt;&lt;span&gt;(A);
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fbdfb5;&quot;&gt;auto&lt;&#x2F;span&gt;&lt;span&gt; ATA &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;matrixmult&lt;&#x2F;span&gt;&lt;span&gt;(AT, A);
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;return &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;sqrt&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;trace&lt;&#x2F;span&gt;&lt;span&gt;(ATA, A.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;size&lt;&#x2F;span&gt;&lt;span&gt;()));
+&lt;&#x2F;span&gt;&lt;span&gt;}
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;h2 id=&quot;results&quot;&gt;Results&lt;&#x2F;h2&gt;
+&lt;p&gt;The reconstructions show how quickly the image becomes recognizable. At rank 10
+only the broadest light&#x2F;dark structure survives; by rank 40 the subject is
+clearly emerging; rank 160 is visually close to the original; and rank 1279
+(full) is the exact image.&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;yamahasetter.github.io&#x2F;blog&#x2F;svd-image-compression&#x2F;K_10.png&quot; alt=&quot;Rank 10 reconstruction&quot; &#x2F;&gt;
+&lt;img src=&quot;https:&#x2F;&#x2F;yamahasetter.github.io&#x2F;blog&#x2F;svd-image-compression&#x2F;K_40.png&quot; alt=&quot;Rank 40 reconstruction&quot; &#x2F;&gt;
+&lt;img src=&quot;https:&#x2F;&#x2F;yamahasetter.github.io&#x2F;blog&#x2F;svd-image-compression&#x2F;K_160.png&quot; alt=&quot;Rank 160 reconstruction&quot; &#x2F;&gt;
+&lt;img src=&quot;https:&#x2F;&#x2F;yamahasetter.github.io&#x2F;blog&#x2F;svd-image-compression&#x2F;K_1279.png&quot; alt=&quot;Full-rank (K = 1279) reconstruction&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;key-takeaways&quot;&gt;Key Takeaways&lt;&#x2F;h2&gt;
+&lt;p&gt;The project distilled down to a few lessons:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;A few singular values carry most of the picture.&lt;&#x2F;strong&gt; Because $\sigma_i$ decays
+fast, low ranks reconstruct a faithful image — the SVD concentrates information
+into its leading modes, which is exactly why it compresses.&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;strong&gt;Eckart–Young makes truncation optimal.&lt;&#x2F;strong&gt; Zeroing the smallest singular values
+isn&#x27;t a heuristic; it provably gives the best possible rank-$K$ approximation,
+so there&#x27;s no better way to spend a fixed storage budget.&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;strong&gt;Memory layout is the real work of calling LAPACK.&lt;&#x2F;strong&gt; &lt;code&gt;dgesvd&lt;&#x2F;code&gt; is one function
+call; getting the image into the column-major &lt;code&gt;double*&lt;&#x2F;code&gt; it expects, sizing the
+&lt;code&gt;LWORK&lt;&#x2F;code&gt; workspace, and shuttling $U$, $\Sigma$, $V^{T}$ back into matrices was
+the bulk of the C++.&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;strong&gt;Compression vs. fidelity is a tunable knob.&lt;&#x2F;strong&gt; Sweeping $K$ and tracking the
+normalized Frobenius error turns &quot;how compressed?&quot; into a quantitative curve
+rather than a guess — error falls monotonically as $K$ grows, with diminishing
+returns past the point where the image already looks right.&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+</content>
+        
+    </entry>
+</feed>

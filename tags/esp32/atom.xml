@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en">
+    <title> - ESP32</title>
+    <link rel="self" type="application/atom+xml" href="https://yamahasetter.github.io/tags/esp32/atom.xml"/>
+    <link rel="alternate" type="text/html" href="https://yamahasetter.github.io"/>
+    <generator uri="https://www.getzola.org/">Zola</generator>
+    <updated>2026-08-18T00:00:00+00:00</updated>
+    <id>https://yamahasetter.github.io/tags/esp32/atom.xml</id>
+    <entry xml:lang="en">
+        <title>Clauke</title>
+        <published>2026-08-18T00:00:00+00:00</published>
+        <updated>2026-08-18T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            Alyn Musselman
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://yamahasetter.github.io/blog/clauke/"/>
+        <id>https://yamahasetter.github.io/blog/clauke/</id>
+        
+        <content type="html" xml:base="https://yamahasetter.github.io/blog/clauke/">&lt;h2 id=&quot;motivation&quot;&gt;Motivation&lt;&#x2F;h2&gt;
+&lt;p&gt;I wanted a way to keep an eye on Claude Code usage and my machine&#x27;s vitals
+without another menu bar percentage competing for attention. A gauge you
+glance at, rather than a number you have to parse, felt like the right
+interface — and I had a real Harley-Davidson tachometer sitting around from
+one of the &lt;a href=&quot;https:&#x2F;&#x2F;yamahasetter.github.io&#x2F;blog&#x2F;motorcycles&#x2F;&quot;&gt;motorcycles&lt;&#x2F;a&gt; I&#x27;ve rebuilt over the
+years. Motorcycle tachs are simple, elegant, purely mechanical-looking
+instruments, but under the dial they just count ignition pulses. If I could
+generate the right pulse train, nothing would stop the needle from tracking
+CPU load, memory pressure, or a Claude session&#x27;s percent-to-limit instead of
+engine RPM.&lt;&#x2F;p&gt;
+&lt;p&gt;Clauke is the result: a battery-powered ESP32 gadget that drives a real
+tachometer needle from live data, paired with a touchscreen for context and a
+Mac menu bar app that feeds it.&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;yamahasetter.github.io&#x2F;blog&#x2F;clauke&#x2F;photoshoot.png&quot; alt=&quot;The finished gauge, tachometer parked on OVERVIEW with the touchscreen showing live stats&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;methodology&quot;&gt;Methodology&lt;&#x2F;h2&gt;
+&lt;h3 id=&quot;emulating-the-tach-s-ignition-signal&quot;&gt;Emulating the tach&#x27;s ignition signal&lt;&#x2F;h3&gt;
+&lt;p&gt;A Harley tachometer expects one pulse per engine revolution — that&#x27;s the
+entire interface. To make the needle move, an ESP32-S3 outputs calibrated
+pulses on a GPIO pin, which drive a 2N2222 transistor wired as a switch: base
+through a ~1k resistor off the GPIO, emitter to ground, collector to the
+tach&#x27;s signal line with a 1k pull-up to a boosted 12V rail (the gauge wants
+automotive-ish voltage, not the ESP32&#x27;s 3.3V logic). An MT3608 boost converter
+steps the LiPo&#x27;s ~3.7–4.2V up to that 12V rail, and a small cap across the
+signal line smooths the needle at idle so it doesn&#x27;t chatter between pulses.&lt;&#x2F;p&gt;
+&lt;pre style=&quot;background-color:#191919;color:#f8f8f2;&quot;&gt;&lt;code&gt;&lt;span&gt;TP4056 USB charging module
+&lt;&#x2F;span&gt;&lt;span&gt;   │
+&lt;&#x2F;span&gt;&lt;span&gt;Battery
+&lt;&#x2F;span&gt;&lt;span&gt;   │
+&lt;&#x2F;span&gt;&lt;span&gt;   ├──&amp;gt; ESP32 board
+&lt;&#x2F;span&gt;&lt;span&gt;   │
+&lt;&#x2F;span&gt;&lt;span&gt;   ├──&amp;gt; MT3608 boost → 12V
+&lt;&#x2F;span&gt;&lt;span&gt;   │                     │
+&lt;&#x2F;span&gt;&lt;span&gt;   │                     ├──&amp;gt; Tach +12V
+&lt;&#x2F;span&gt;&lt;span&gt;   │                     │
+&lt;&#x2F;span&gt;&lt;span&gt;   │                     └──&amp;gt; Pullup resistor
+&lt;&#x2F;span&gt;&lt;span&gt;   │                               │
+&lt;&#x2F;span&gt;&lt;span&gt;   │                          Tach Signal
+&lt;&#x2F;span&gt;&lt;span&gt;   │                               │
+&lt;&#x2F;span&gt;&lt;span&gt;   │                         Collector
+&lt;&#x2F;span&gt;&lt;span&gt;   │                            2N2222
+&lt;&#x2F;span&gt;&lt;span&gt;   │                         Emitter
+&lt;&#x2F;span&gt;&lt;span&gt;   │                            GND
+&lt;&#x2F;span&gt;&lt;span&gt;ESP32 GPIO ──&amp;gt; Base resistor ──&amp;gt; 2N2222
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;Pulse width scales with RPM — wider at idle — which keeps the needle steady
+rather than jittery at low readings. The mapping itself is deliberately
+mechanical-feeling: 0–80% of whatever metric is selected maps linearly to
+0–8000 RPM, so 80% lands exactly on the tach&#x27;s 8k redline mark. Below roughly
+500 RPM the needle rests at true zero, and above 80% it doesn&#x27;t just pin —
+it shakes against the redline the way a real engine bounces off a rev
+limiter. The needle is always live and simply follows whichever page is
+active; there&#x27;s no separate on&#x2F;off state for it.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;five-pages-one-touchscreen&quot;&gt;Five pages, one touchscreen&lt;&#x2F;h3&gt;
+&lt;p&gt;The enclosure is 3D printed and holds the tach, an ESP32-S3 board with a
+built-in AMOLED touchscreen, and the battery and charging circuit. Swiping
+up or down anywhere on the screen pages through five views (borderless dots
+down the right edge show position):&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;OVERVIEW&lt;&#x2F;strong&gt; — an at-a-glance summary of usage, battery, and CPU. The tach
+needle parks here, so this page doubles as a &quot;sleep&quot; state.&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;strong&gt;RIDE&lt;&#x2F;strong&gt; — the Claude usage feed: session percent (drives the needle,
+rendered as a moto-style gauge bar with a redline), burn rate, and reset
+time, plus the all-models weekly percent and its own reset. Falls back to
+a &quot;NO DATA&quot; state after ten minutes of silence from the host.&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;strong&gt;SYS&lt;&#x2F;strong&gt; — retro CPU &#x2F; GPU &#x2F; MEM &#x2F; TEMP bars pulled from the host machine.
+Tapping a bar selects which metric drives the needle (CPU by default).&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;strong&gt;LIPO&lt;&#x2F;strong&gt; — real battery percentage and voltage, read off the divider on
+GPIO1, with a charging-bolt indicator when powered over USB.&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;strong&gt;TEST&lt;&#x2F;strong&gt; — sweeps 0–8000 RPM, or holds a fixed RPM if you tap the left
+half of the screen — mostly there for calibrating the pulse driver against
+a multimeter.&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;Firmware runs on an ESP32-S3 (Arduino_GFX for the display, NimBLE-Arduino for
+the wireless side). It exposes a GATT server advertised as &lt;code&gt;HD-TACH&lt;&#x2F;code&gt;: a
+&lt;code&gt;CMD&lt;&#x2F;code&gt; characteristic the host writes usage&#x2F;system lines to, and a &lt;code&gt;BATT&lt;&#x2F;code&gt;
+characteristic that notifies battery percent on change. If BLE drops, the
+firmware just re-advertises — no reboot required.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;the-host-a-mac-menu-bar-app&quot;&gt;The host: a Mac menu bar app&lt;&#x2F;h3&gt;
+&lt;p&gt;&lt;code&gt;clauke.py&lt;&#x2F;code&gt; is a single-file Python program with two personalities. Run
+without arguments, it launches as a &lt;code&gt;rumps&lt;&#x2F;code&gt;-based menu bar app that owns the
+link to the gauge: it prefers Bluetooth (scanning for the &lt;code&gt;HD-TACH&lt;&#x2F;code&gt; service
+UUID via &lt;code&gt;bleak&lt;&#x2F;code&gt;), and if nothing turns up it falls back automatically to USB
+serial, matching the board by its Espressif USB vendor ID rather than a
+volatile &lt;code&gt;&#x2F;dev&lt;&#x2F;code&gt; name. A &lt;code&gt;--cli&lt;&#x2F;code&gt; flag switches it to a plain serial loop for
+testing without importing &lt;code&gt;rumps&lt;&#x2F;code&gt;&#x2F;&lt;code&gt;bleak&lt;&#x2F;code&gt; at all.&lt;&#x2F;p&gt;
+&lt;div style=&quot;display:flex;gap:1.5rem;align-items:center;flex-wrap:wrap;margin:1.5rem 0;&quot;&gt;
+&lt;img src=&quot;clauke_logo.png&quot; alt=&quot;The Clauke app icon&quot; style=&quot;width:140px;height:140px;&quot;&gt;
+&lt;img src=&quot;menubar_icon.png&quot; alt=&quot;The macOS menu bar template icon&quot; style=&quot;width:140px;height:140px;&quot;&gt;
+&lt;&#x2F;div&gt;
+&lt;p&gt;The menu bar icon on the right is a macOS &lt;em&gt;template&lt;&#x2F;em&gt; image — flat black
+shapes on a transparent background — so the OS can tint it automatically for
+light and dark menu bars; the app icon on the left is the full-color mark
+used for the packaged &lt;code&gt;.app&lt;&#x2F;code&gt;. Dropping a replacement &lt;code&gt;menubar_icon.png&lt;&#x2F;code&gt; into
+&lt;code&gt;host&#x2F;assets&#x2F;&lt;&#x2F;code&gt; is picked up automatically, no rebuild needed.&lt;&#x2F;p&gt;
+&lt;p&gt;The interesting part of the host is how it turns Claude usage into a live
+number without hammering the API. A background thread estimates usage
+locally every five seconds from &lt;code&gt;ccusage&lt;&#x2F;code&gt;&#x27;s active-block token count, and
+checks in against the authoritative OAuth usage endpoint only once every
+three minutes — snapping the estimate back to truth whenever the two
+disagree by more than 10 points:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;python&quot; style=&quot;background-color:#191919;color:#f8f8f2;&quot; class=&quot;language-python &quot;&gt;&lt;code class=&quot;language-python&quot; data-lang=&quot;python&quot;&gt;&lt;span style=&quot;font-style:italic;color:#ff5e5e;&quot;&gt;def &lt;&#x2F;span&gt;&lt;span style=&quot;color:#8cdaff;&quot;&gt;poll&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fc9354;&quot;&gt;self&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fc9354;&quot;&gt;now&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;=&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff8942;&quot;&gt;None&lt;&#x2F;span&gt;&lt;span&gt;):
+&lt;&#x2F;span&gt;&lt;span&gt;    now &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span&gt;time.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;time&lt;&#x2F;span&gt;&lt;span&gt;() &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;if &lt;&#x2F;span&gt;&lt;span&gt;now &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;is &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff8942;&quot;&gt;None &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;else &lt;&#x2F;span&gt;&lt;span&gt;now
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;if &lt;&#x2F;span&gt;&lt;span&gt;now &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;- &lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;self&lt;&#x2F;span&gt;&lt;span&gt;.last_verify &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;&amp;gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;VERIFY_S&lt;&#x2F;span&gt;&lt;span&gt;:
+&lt;&#x2F;span&gt;&lt;span&gt;        a &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;fetch_actual&lt;&#x2F;span&gt;&lt;span&gt;()
+&lt;&#x2F;span&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;if &lt;&#x2F;span&gt;&lt;span&gt;a:
+&lt;&#x2F;span&gt;&lt;span&gt;            &lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;self&lt;&#x2F;span&gt;&lt;span&gt;.actual &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span&gt;a
+&lt;&#x2F;span&gt;&lt;span&gt;            &lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;self&lt;&#x2F;span&gt;&lt;span&gt;.last_verify &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span&gt;now
+&lt;&#x2F;span&gt;&lt;span&gt;            tokens &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;fetch_block_tokens&lt;&#x2F;span&gt;&lt;span&gt;()
+&lt;&#x2F;span&gt;&lt;span&gt;            &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;if &lt;&#x2F;span&gt;&lt;span&gt;tokens &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;and &lt;&#x2F;span&gt;&lt;span&gt;a[&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ffffff;&quot;&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#fbe3bf;&quot;&gt;session_pct&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ffffff;&quot;&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;span&gt;] &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;&amp;gt; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;1.0&lt;&#x2F;span&gt;&lt;span&gt;:
+&lt;&#x2F;span&gt;&lt;span&gt;                &lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;self&lt;&#x2F;span&gt;&lt;span&gt;.limit_tokens &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span&gt;tokens &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;&#x2F; &lt;&#x2F;span&gt;&lt;span&gt;(a[&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ffffff;&quot;&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#fbe3bf;&quot;&gt;session_pct&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ffffff;&quot;&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;span&gt;] &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;&#x2F; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;100.0&lt;&#x2F;span&gt;&lt;span&gt;)
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;    session_pct &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;self&lt;&#x2F;span&gt;&lt;span&gt;.actual[&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ffffff;&quot;&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#fbe3bf;&quot;&gt;session_pct&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ffffff;&quot;&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;span&gt;] &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;if &lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;self&lt;&#x2F;span&gt;&lt;span&gt;.actual &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;else &lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;0.0
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;if &lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;self&lt;&#x2F;span&gt;&lt;span&gt;.limit_tokens:
+&lt;&#x2F;span&gt;&lt;span&gt;        tokens &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;fetch_block_tokens&lt;&#x2F;span&gt;&lt;span&gt;()
+&lt;&#x2F;span&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;if &lt;&#x2F;span&gt;&lt;span&gt;tokens &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;is not &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff8942;&quot;&gt;None&lt;&#x2F;span&gt;&lt;span&gt;:
+&lt;&#x2F;span&gt;&lt;span&gt;            est &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;min&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;100.0&lt;&#x2F;span&gt;&lt;span&gt;, tokens &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;&#x2F; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;self&lt;&#x2F;span&gt;&lt;span&gt;.limit_tokens &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;* &lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;100.0&lt;&#x2F;span&gt;&lt;span&gt;)
+&lt;&#x2F;span&gt;&lt;span&gt;            &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;if &lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;self&lt;&#x2F;span&gt;&lt;span&gt;.actual &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;and &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;abs&lt;&#x2F;span&gt;&lt;span&gt;(est &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;- &lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;self&lt;&#x2F;span&gt;&lt;span&gt;.actual[&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ffffff;&quot;&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#fbe3bf;&quot;&gt;session_pct&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ffffff;&quot;&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;span&gt;]) &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;&amp;gt; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;DISCREPANCY_PCT &lt;&#x2F;span&gt;&lt;span&gt;\
+&lt;&#x2F;span&gt;&lt;span&gt;                    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;and &lt;&#x2F;span&gt;&lt;span&gt;now &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;- &lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;self&lt;&#x2F;span&gt;&lt;span&gt;.last_verify &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;&amp;lt; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;VERIFY_S&lt;&#x2F;span&gt;&lt;span&gt;:
+&lt;&#x2F;span&gt;&lt;span&gt;                session_pct &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;self&lt;&#x2F;span&gt;&lt;span&gt;.actual[&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ffffff;&quot;&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#fbe3bf;&quot;&gt;session_pct&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ffffff;&quot;&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;span&gt;]  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6d6d6d;&quot;&gt;# distrust the estimate
+&lt;&#x2F;span&gt;&lt;span&gt;            &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;else&lt;&#x2F;span&gt;&lt;span&gt;:
+&lt;&#x2F;span&gt;&lt;span&gt;                session_pct &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span&gt;est
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff8942;&quot;&gt;...
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;That estimate, plus CPU&#x2F;GPU&#x2F;MEM&#x2F;temperature from &lt;code&gt;psutil&lt;&#x2F;code&gt;, gets written to
+the wire as two plain ASCII lines — &lt;code&gt;D,&amp;lt;sessPct&amp;gt;,&amp;lt;sessReset&amp;gt;,&amp;lt;ratePctHr&amp;gt;, &amp;lt;weekPct&amp;gt;,&amp;lt;weekReset&amp;gt;&lt;&#x2F;code&gt; and &lt;code&gt;S,&amp;lt;cpuPct&amp;gt;,&amp;lt;gpuPct&amp;gt;,&amp;lt;memPct&amp;gt;,&amp;lt;tempC&amp;gt;&lt;&#x2F;code&gt; — sent over
+whichever transport is currently connected. The battery percentage flows the
+other direction, from device to host, over the same serial line or a BLE
+notify. For day-to-day use, &lt;code&gt;host&#x2F;setup.py&lt;&#x2F;code&gt; packages the whole thing with
+&lt;code&gt;py2app&lt;&#x2F;code&gt; into a standalone &lt;code&gt;Clauke.app&lt;&#x2F;code&gt; — &lt;code&gt;LSUIElement&lt;&#x2F;code&gt; is set, so it runs
+with no Dock icon and no Cmd-Tab entry, just the menu bar glyph.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;bill-of-materials&quot;&gt;Bill of Materials&lt;&#x2F;h2&gt;
+&lt;table&gt;&lt;thead&gt;&lt;tr&gt;&lt;th&gt;Component&lt;&#x2F;th&gt;&lt;th&gt;Part&lt;&#x2F;th&gt;&lt;th&gt;Notes&lt;&#x2F;th&gt;&lt;&#x2F;tr&gt;&lt;&#x2F;thead&gt;&lt;tbody&gt;
+&lt;tr&gt;&lt;td&gt;Controller&lt;&#x2F;td&gt;&lt;td&gt;&lt;a href=&quot;https:&#x2F;&#x2F;www.waveshare.com&#x2F;esp32-s3-amoled-1.91.htm?sku=28871&quot;&gt;ESP32-S3 AMOLED dev board&lt;&#x2F;a&gt;&lt;&#x2F;td&gt;&lt;td&gt;Drives the tach + touchscreen, handles BLE&#x2F;USB&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;
+&lt;tr&gt;&lt;td&gt;Battery&lt;&#x2F;td&gt;&lt;td&gt;Single-cell Li-ion (18650 or LiPo)&lt;&#x2F;td&gt;&lt;td&gt;Powers the whole gadget&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;
+&lt;tr&gt;&lt;td&gt;Battery holder&lt;&#x2F;td&gt;&lt;td&gt;&lt;a href=&quot;https:&#x2F;&#x2F;www.amazon.com&#x2F;gp&#x2F;product&#x2F;B07XFPSVRS&#x2F;ref=ewc_pr_img_3?smid=ACRAF3O0AXJNI&amp;amp;psc=1&quot;&gt;Wired battery pack&lt;&#x2F;a&gt;&lt;&#x2F;td&gt;&lt;td&gt;Holds the cell, brings out leads&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;
+&lt;tr&gt;&lt;td&gt;Boost converter&lt;&#x2F;td&gt;&lt;td&gt;&lt;a href=&quot;https:&#x2F;&#x2F;www.amazon.com&#x2F;gp&#x2F;product&#x2F;B089JYBF25&#x2F;ref=ewc_pr_img_1?smid=A3CX4TQNUXMB0L&amp;amp;psc=1&quot;&gt;MT3608&lt;&#x2F;a&gt;, set to 12V&lt;&#x2F;td&gt;&lt;td&gt;Powers the tach&#x27;s signal&#x2F;lamp rail&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;
+&lt;tr&gt;&lt;td&gt;Pulse driver&lt;&#x2F;td&gt;&lt;td&gt;2N2222 transistor&lt;&#x2F;td&gt;&lt;td&gt;Emulates the ignition pulse the tach expects&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;
+&lt;tr&gt;&lt;td&gt;Gauge&lt;&#x2F;td&gt;&lt;td&gt;Vintage Harley-Davidson tachometer&lt;&#x2F;td&gt;&lt;td&gt;The reused instrument itself&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;
+&lt;tr&gt;&lt;td&gt;Enclosure&lt;&#x2F;td&gt;&lt;td&gt;Custom 3D-printed housing&lt;&#x2F;td&gt;&lt;td&gt;Holds gauge, board, and battery&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;
+&lt;&#x2F;tbody&gt;&lt;&#x2F;table&gt;
+&lt;h2 id=&quot;results&quot;&gt;Results&lt;&#x2F;h2&gt;
+&lt;p&gt;The electronics and firmware side is done: the needle tracks live data
+convincingly, complete with the redline shake, and the BLE&#x2F;USB fallback
+means the gauge reconnects on its own whether or not the Mac happens to be
+in range. The menu bar app is the daily driver — it&#x27;s the thing that&#x27;s
+actually running while I work, quietly estimating usage between the
+authoritative checks and pushing it to the gauge over whatever link is up.&lt;&#x2F;p&gt;
+&lt;p&gt;A couple of things are still on the list rather than fully nailed down: the
+LiPo voltage divider&#x27;s resistor values came off a flattened PDF extraction
+of the schematic rather than a trace-by-eye or a multimeter reading, so the
+LIPO page&#x27;s percentage is closer than not but wants verification against a
+real battery. And GPU percent and CPU temperature both need privileged
+tooling (&lt;code&gt;powermetrics&lt;&#x2F;code&gt; via &lt;code&gt;sudo&lt;&#x2F;code&gt;) that the host doesn&#x27;t invoke yet, so SYS
+shows &lt;code&gt;--&lt;&#x2F;code&gt; for those two on macOS for now. Neither blocks daily use — the
+gauge sits on my desk, needle live, telling me what my session and my
+machine are doing without a single glance at a menu bar number.&lt;&#x2F;p&gt;
+</content>
+        
+    </entry>
+</feed>

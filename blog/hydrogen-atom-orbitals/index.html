@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en">
+<head>
+  
+  
+  
+  
+  
+
+  <meta charset="UTF-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge" />
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name=generator content="Zola v0.19.1">
+
+  
+    <meta name="description" content="Deriving and visualizing the hydrogen wave function in Mathematica, and exploring the symmetry of its orbitals.">
+  
+
+  <title>Alyn Musselman</title>
+  <link rel="stylesheet" href="/css/generated.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
+  <link rel="stylesheet" href="/css/custom.css">
+  
+    <link rel="icon" href="&#x2F;img&#x2F;yin-yang.svg" />
+  
+
+  
+    <link rel="alternate" type="application/atom+xml" title="Atom Feed for https://yamahasetter.github.io" href="/atom.xml" />
+  
+
+  <script defer src="/js/zolarwind/logic.js" integrity="sha384-GYtsrgYVRYoxdEL+C+79KROm+MCl1ArSzQnqVnPTV78UNz5a1vFxAEiKbobXhQlw"></script>
+  
+    <!-- Calculate sha384: openssl dgst -sha384 -binary FILENAME.EXT | openssl base64 -A -->
+    <link rel="stylesheet" href="/js/katex/katex.min.css" integrity="sha384-GvrOXuhMATgEsSwCs4smul74iXGOixntILdUW9XmUC6+HX0sLNAK3q71HotJqlAn">
+    <script defer src="/js/katex/katex.min.js" integrity="sha384-cpW21h6RZv/phavutF+AuVYrr+dA8xD9zs6FwLpaCct6O9ctzYFfFr4dgmgccOTx"></script>
+    <script defer src="/js/katex/contrib/auto-render.min.js" integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05"></script>
+    <script defer src="/js/katex-config.js" integrity="sha384-YTwoxG+UASh+luh6A7HRGGG9fiJpEYcH1r0/xbJP0wfpH/E4eU3lG9mg4U5OUz9S"></script>
+  
+  
+</head>
+<body>
+  
+
+  
+
+
+<header class="sticky top-0 w-full z-10">
+  <nav class="pf-nav bg-gray-600">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        <div class="flex items-center">
+          <div class="flex-shrink-0">
+            <a href="/" aria-label="Go to homepage">
+              <div class="h-8 w-8 text-gray-200 hover:text-white fill-current">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor">
+                  <path d="M3 12L5 10M5 10L12 3L19 10M5 10V20C5 20.5523 5.44772 21 6 21H9M19 10L21 12M19 10V20C19 20.5523 18.5523 21 18 21H15M9 21C9.55228 21 10 20.5523 10 20V16C10 15.4477 10.4477 15 11 15H13C13.5523 15 14 15.4477 14 16V20C14 20.5523 14.4477 21 15 21M9 21H15" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </div>
+            </a>
+          </div>
+          <div class="hidden md:block">
+            <div class="ml-8 flex items-baseline">
+              
+                
+                  
+                    <a class="px-3 py-2 ml-2 rounded-md font-medium text-gray-200 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-600" href="/pages/imprint/" title="Imprint">Imprint</a>
+                  
+                
+                  
+                    <a class="px-3 py-2 ml-2 rounded-md font-medium text-gray-200 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-600" href="/pages/about/" title="About">About</a>
+                  
+                
+              
+            </div>
+          </div>
+        </div>
+        <div class="-mr-2 flex md:hidden">
+          <button id="toggleMobileMenu" class="icon inline-flex items-center justify-center p-2 rounded-md text-gray-200 hover:text-white hover:bg-gray-700 focus:outline-none focus:bg-gray-700 focus:text-white" aria-label="Menu">
+            <span id="mobile-icon-menu-unselected">
+              <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            </span>
+            <span id="mobile-icon-menu-selected" class="hidden">
+              <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+    
+      <div id="mobile-menu" class="hidden md:hidden px-2 pt-2 pb-3 sm:px-3">
+        
+          
+            <a class="mt-1 block px-3 py-2 rounded-md font-medium text-gray-200 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-600" href="/pages/imprint/" title="Imprint">Imprint</a>
+          
+        
+          
+            <a class="mt-1 block px-3 py-2 rounded-md font-medium text-gray-200 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-600" href="/pages/about/" title="About">About</a>
+          
+        
+      </div>
+    
+  </nav>
+</header>
+
+  <div id="content">
+    
+
+  
+
+  <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
+    <article class="prose">
+      <div class="flex justify-center items-center bg-gray-100 rounded-md">
+        <img class="w-auto h-full object-contain" src="orbitals.png" alt="Hydrogen Orbitals Simulation">
+      </div>
+      <h1>Hydrogen Orbitals Simulation</h1>
+      <div>
+        <p>
+          <span class="mr-2 text-sm">
+            <time datetime="2023-05-09">May 09, 2023</time> &middot;
+            811 words &middot;
+            5 minutes reading time
+          </span>
+          <span class="text-sm leading-5 font-medium text-indigo-600">
+
+  
+    
+      <span class="mr-2 badge badge-green"><a href="https://yamahasetter.github.io/tags/mathematica/">Mathematica</a></span>
+    
+      <span class="mr-2 badge badge-green"><a href="https://yamahasetter.github.io/tags/math/">math</a></span>
+    
+  
+
+</span>
+
+        </p>
+      </div>
+
+      <div>
+        <h2 id="motivation">Motivation</h2>
+<p>One of the first profound ideas you meet in quantum mechanics is the standing
+wave, and it appears in its grandest form in Schrödinger's time-dependent
+equation:</p>
+<p>$$
+i \hbar \frac{\partial \Psi}{\partial t} = - \frac{\hbar^2}{2m} \nabla^2 \Psi + V \Psi .
+$$</p>
+<p>To a physicist this equation is profound; to a mathematician it is a close
+relative of the diffusion equation, only with an imaginary coefficient on the
+time derivative — which is exactly what turns spreading, decaying solutions into
+<em>oscillating</em> standing waves.</p>
+<p>In Griffiths' <em>Introduction to Quantum Mechanics</em> there is a beautiful figure of
+density plots showing the probability distribution of the electron around the
+hydrogen nucleus (a single proton). What strikes you immediately about that
+figure is its symmetry. For this project — my final for M303 — I set out to
+re-derive the hydrogen wave function myself and build a Mathematica notebook that
+evaluates and plots it in 2D and 3D, so I could explore that symmetry directly.</p>
+<h2 id="methodology">Methodology</h2>
+<p>For a single electron bound to a proton, the potential is the Coulomb attraction
+$V(r) = -e^2 / (4\pi\varepsilon_0 r)$, which depends only on the radial distance
+$r$. Because the potential is spherically symmetric, the time-independent
+equation separates in spherical coordinates into a radial part and an angular
+part. The stationary states are labeled by three integers — the <strong>principal
+quantum number</strong> $n$, the <strong>angular momentum</strong> number $\ell$, and the
+<strong>magnetic</strong> number $m$ — and the full wave function factorizes as</p>
+<p>$$
+\Psi_{n\ell m}(r, \theta, \phi) = R_{n\ell}(r), Y_{\ell}^{m}(\theta, \phi).
+$$</p>
+<p><strong>The radial part.</strong> $R_{n\ell}(r)$ carries the dependence on distance from the
+nucleus and is built from an <strong>associated Laguerre polynomial</strong> $L$:</p>
+<p>$$
+R_{n\ell}(r) = \sqrt{\left(\frac{2}{n a_0}\right)^{!3} \frac{(n-\ell-1)!}{2n,(n+\ell)!}};
+e^{-r/n a_0} \left(\frac{2r}{n a_0}\right)^{!\ell}
+L_{n-\ell-1}^{,2\ell+1}!\left(\frac{2r}{n a_0}\right),
+$$</p>
+<p>where $a_0$ is the Bohr radius. The decaying exponential is what confines the
+electron near the nucleus.</p>
+<p><strong>The angular part.</strong> $Y_\ell^m(\theta, \phi)$ is a <strong>normalized spherical
+harmonic</strong>, which in turn contains an <strong>associated Legendre polynomial</strong>
+$P_\ell^m$:</p>
+<p>$$
+Y_\ell^m(\theta, \phi) = \sqrt{\frac{(2\ell+1)}{4\pi}\frac{(\ell-m)!}{(\ell+m)!}};
+P_\ell^m(\cos\theta), e^{i m \phi}.
+$$</p>
+<p>Conveniently, Mathematica ships both <code>LaguerreL</code> and <code>SphericalHarmonicY</code> as
+built-in functions, so the notebook defines $\Psi$ directly. Picking values of
+$(n, \ell, m)$ fixes all of the pieces, and substituting them back into
+$\Psi_{n\ell m}$ gives a concrete wave function. The electron's <strong>probability
+density</strong> is then $|\Psi_{n\ell m}|^2$, which is what actually gets plotted.</p>
+<p>To make the orbitals explorable I wrapped the plots in <code>Manipulate</code>, with sliders
+over $n$, $\ell$, and $m$ (and a sampling-resolution control). The 2D views are
+<code>DensityPlot</code>s of $|\Psi|$ taken on a slice through the atom — in spherical terms
+with $r = \sqrt{x^2 + z^2}$ and $\theta = \arctan(z, x)$ — and the 3D views are
+volumetric density plots of the same quantity.</p>
+<h2 id="results">Results</h2>
+<p><img src="https://yamahasetter.github.io/blog/hydrogen-atom-orbitals/orbitals.png" alt="3D and 2D probability-density plots of several hydrogen orbitals, labeled by {n, l, m}" /></p>
+<p>The figure shows several orbitals, each labeled by its quantum numbers
+${n, \ell, m}$: the top row gives the 3D probability density and the bottom row
+the corresponding 2D slice. The familiar shapes all appear — the spherical
+$1s$ state ${1,0,0}$, the dumbbell ${2,1,1}$, and the lobed orbitals at
+${3,2,0}$, ${3,2,1}$, and ${4,2,0}$.</p>
+<p>What stands out is the <strong>symmetry</strong>. In the 2D slices, any line through the
+center reflects one half of the image onto the other; in 3D, the same holds for
+any plane through the origin. There are two reasons for this. The first is
+physical: in deriving the wave function we required the electron to remain bound
+near the nucleus, and that constraint restricts where it can be found into
+symmetric patterns. The second — and the one I find more illuminating — is that
+we are working in <strong>spherical coordinates</strong>. The angular variables $\theta$ and
+$\phi$ don't run off to infinity along a straight line like Cartesian
+coordinates; they wrap around and around, and that circling is what imprints the
+circular and spherical symmetry onto the graphs.</p>
+<p>A small one-dimensional analogy makes the point. Compare the Cartesian parabola
+$y = x^2$ with the <em>same</em> squaring map written in polar form, $r = \theta^2$:</p>
+<p>$$
+y = x^2 \qquad \text{vs.} \qquad r = \theta^2 .
+$$</p>
+<p>They are the identical operation — take an argument, return its square — yet the
+Cartesian version produces an up-down (vertical) symmetry while the polar version
+wraps that parabola into a spiral with circular symmetry. The coordinate system,
+not just the physics, is doing some of the symmetry work, and the hydrogen
+orbitals are the three-dimensional version of exactly that effect.</p>
+
+      </div>
+    </article>
+  </div>
+
+
+  <script type="application/ld+json">
+{
+   "@context": "https://schema.org"
+  ,"@type": "BlogPosting"
+  ,"mainEntityOfPage": {
+     "@type": "WebPage"
+    ,"@id": "https://yamahasetter.github.io/blog/hydrogen-atom-orbitals/"
+  }
+  ,"headline": "Hydrogen Orbitals Simulation"
+  ,"datePublished": "2023-05-09"
+  ,"dateModified": "2023-05-09"
+  
+  ,"author": [
+    
+      {
+         "@type": "Person"
+        ,"name": "Alyn Musselman"
+      }
+      
+    
+  ]
+  ,"publisher": [
+    
+      {
+         "@type": "Person"
+        ,"name": "Alyn Musselman"
+      }
+      
+    
+  ]
+  
+  ,"description": "Deriving and visualizing the hydrogen wave function in Mathematica, and exploring the symmetry of its orbitals."
+  ,"articleBody": "MotivationOne of the first profound ideas you meet in quantum mechanics is the standingwave, and it appears in its grandest form in Schrödinger&#x27;s time-dependentequation:$$i \hbar \frac{\partial \Psi}{\partial t} = - \frac{\hbar^2}{2m} \nabla^2 \Psi + V \Psi .$$To a physicist this equation is profound; to a mathematician it is a closerelative of the diffusion equation, only with an imaginary coefficient on thetime derivative — which is exactly what turns spreading, decaying solutions intooscillating standing waves.In Griffiths&#x27; Introduction to Quantum Mechanics there is a beautiful figure ofdensity plots showing the probability distribution of the electron around thehydrogen nucleus (a single proton). What strikes you immediately about thatfigure is its symmetry. For this project — my final for M303 — I set out tore-derive the hydrogen wave function myself and build a Mathematica notebook thatevaluates and plots it in 2D and 3D, so I could explore that symmetry directly.MethodologyFor a single electron bound to a proton, the potential is the Coulomb attraction$V(r) = -e^2 &#x2F; (4\pi\varepsilon_0 r)$, which depends only on the radial distance$r$. Because the potential is spherically symmetric, the time-independentequation separates in spherical coordinates into a radial part and an angularpart. The stationary states are labeled by three integers — the principalquantum number $n$, the angular momentum number $\ell$, and themagnetic number $m$ — and the full wave function factorizes as$$\Psi_{n\ell m}(r, \theta, \phi) = R_{n\ell}(r), Y_{\ell}^{m}(\theta, \phi).$$The radial part. $R_{n\ell}(r)$ carries the dependence on distance from thenucleus and is built from an associated Laguerre polynomial $L$:$$R_{n\ell}(r) = \sqrt{\left(\frac{2}{n a_0}\right)^{!3} \frac{(n-\ell-1)!}{2n,(n+\ell)!}};e^{-r&#x2F;n a_0} \left(\frac{2r}{n a_0}\right)^{!\ell}L_{n-\ell-1}^{,2\ell+1}!\left(\frac{2r}{n a_0}\right),$$where $a_0$ is the Bohr radius. The decaying exponential is what confines theelectron near the nucleus.The angular part. $Y_\ell^m(\theta, \phi)$ is a normalized sphericalharmonic, which in turn contains an associated Legendre polynomial$P_\ell^m$:$$Y_\ell^m(\theta, \phi) = \sqrt{\frac{(2\ell+1)}{4\pi}\frac{(\ell-m)!}{(\ell+m)!}};P_\ell^m(\cos\theta), e^{i m \phi}.$$Conveniently, Mathematica ships both LaguerreL and SphericalHarmonicY asbuilt-in functions, so the notebook defines $\Psi$ directly. Picking values of$(n, \ell, m)$ fixes all of the pieces, and substituting them back into$\Psi_{n\ell m}$ gives a concrete wave function. The electron&#x27;s probabilitydensity is then $|\Psi_{n\ell m}|^2$, which is what actually gets plotted.To make the orbitals explorable I wrapped the plots in Manipulate, with slidersover $n$, $\ell$, and $m$ (and a sampling-resolution control). The 2D views areDensityPlots of $|\Psi|$ taken on a slice through the atom — in spherical termswith $r = \sqrt{x^2 + z^2}$ and $\theta = \arctan(z, x)$ — and the 3D views arevolumetric density plots of the same quantity.ResultsThe figure shows several orbitals, each labeled by its quantum numbers${n, \ell, m}$: the top row gives the 3D probability density and the bottom rowthe corresponding 2D slice. The familiar shapes all appear — the spherical$1s$ state ${1,0,0}$, the dumbbell ${2,1,1}$, and the lobed orbitals at${3,2,0}$, ${3,2,1}$, and ${4,2,0}$.What stands out is the symmetry. In the 2D slices, any line through thecenter reflects one half of the image onto the other; in 3D, the same holds forany plane through the origin. There are two reasons for this. The first isphysical: in deriving the wave function we required the electron to remain boundnear the nucleus, and that constraint restricts where it can be found intosymmetric patterns. The second — and the one I find more illuminating — is thatwe are working in spherical coordinates. The angular variables $\theta$ and$\phi$ don&#x27;t run off to infinity along a straight line like Cartesiancoordinates; they wrap around and around, and that circling is what imprints thecircular and spherical symmetry onto the graphs.A small one-dimensional analogy makes the point. Compare the Cartesian parabola$y = x^2$ with the same squaring map written in polar form, $r = \theta^2$:$$y = x^2 \qquad \text{vs.} \qquad r = \theta^2 .$$They are the identical operation — take an argument, return its square — yet theCartesian version produces an up-down (vertical) symmetry while the polar versionwraps that parabola into a spiral with circular symmetry. The coordinate system,not just the physics, is doing some of the symmetry work, and the hydrogenorbitals are the three-dimensional version of exactly that effect."
+  
+    ,"image": "https://yamahasetter.github.io/blog/hydrogen-atom-orbitals/orbitals.png"
+  
+}
+</script>
+
+
+
+  </div>
+  <footer>
+  <!-- Social Media Icons -->
+  
+    <div class="mt-4 flex justify-center">
+      
+        
+          <a
+            
+            href="https:&#x2F;&#x2F;github.com&#x2F;yamahasetter" title="Github"
+            
+              class="text-gray-400 hover:text-gray-500">
+            
+            <span class="sr-only">github</span>
+            <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 1024 1024"><path d="M8 0C3.58 0 0 3.58 0 8C0 11.54 2.29 14.53 5.47 15.59C5.87 15.66 6.02 15.42 6.02 15.21C6.02 15.02 6.01 14.39 6.01 13.72C4 14.09 3.48 13.23 3.32 12.78C3.23 12.55 2.84 11.84 2.5 11.65C2.22 11.5 1.82 11.13 2.49 11.12C3.12 11.11 3.57 11.7 3.72 11.94C4.44 13.15 5.59 12.81 6.05 12.6C6.12 12.08 6.33 11.73 6.56 11.53C4.78 11.33 2.92 10.64 2.92 7.58C2.92 6.71 3.23 5.99 3.74 5.43C3.66 5.23 3.38 4.41 3.82 3.31C3.82 3.31 4.49 3.1 6.02 4.13C6.66 3.95 7.34 3.86 8.02 3.86C8.7 3.86 9.38 3.95 10.02 4.13C11.55 3.09 12.22 3.31 12.22 3.31C12.66 4.41 12.38 5.23 12.3 5.43C12.81 5.99 13.12 6.7 13.12 7.58C13.12 10.65 11.25 11.33 9.47 11.53C9.76 11.78 10.01 12.26 10.01 13.01C10.01 14.08 10 14.94 10 15.21C10 15.42 10.15 15.67 10.55 15.59C13.71 14.53 16 11.53 16 8C16 3.58 12.42 0 8 0Z" transform="scale(64)"/></svg>
+          </a>
+        
+      
+        
+          <a
+            
+            href="https:&#x2F;&#x2F;www.linkedin.com&#x2F;in&#x2F;alyn-m-b14b17152&#x2F;" title="Linkedin"
+            
+              class="ml-8 text-gray-400 hover:text-gray-500">
+            
+            <span class="sr-only">linkedin</span>
+            <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 1024 1024"><path d="M0 1.146C0 .513.526 0 1.175 0h13.65C15.474 0 16 .513 16 1.146v13.708c0 .633-.526 1.146-1.175 1.146H1.175C.526 16 0 15.487 0 14.854zm4.943 12.248V6.169H2.542v7.225zm-1.2-8.212c.837 0 1.358-.554 1.358-1.248-.015-.709-.52-1.248-1.342-1.248S2.4 3.226 2.4 3.934c0 .694.521 1.248 1.327 1.248zm4.908 8.212V9.359c0-.216.016-.432.08-.586.173-.431.568-.878 1.232-.878.869 0 1.216.662 1.216 1.634v3.865h2.401V9.25c0-2.22-1.184-3.252-2.764-3.252-1.274 0-1.845.7-2.165 1.193v.025h-.016l.016-.025V6.169h-2.4c.03.678 0 7.225 0 7.225z" transform="scale(64)"/></svg>
+          </a>
+        
+      
+        
+          <a
+            
+            href="https:&#x2F;&#x2F;stackoverflow.com&#x2F;users&#x2F;16188373&#x2F;try-hard" title="Stackoverflow"
+            
+              class="ml-8 text-gray-400 hover:text-gray-500">
+            
+            <span class="sr-only">stackoverflow</span>
+            <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 73.099998 86.599998"><g transform="translate(-22.6,-14.9)"><path d="m 84.4,93.8 0,-23.2 7.7,0 0,30.9 -69.5,0 0,-30.9 7.7,0 0,23.2 z"/><path d="m 38.8,68.4 37.8,7.9 1.6,-7.6 -37.8,-7.9 -1.6,7.6 z m 5,-18 35,16.3 3.2,-7 -35,-16.4 -3.2,7.1 z M 53.5,33.2 83.2,57.9 88.1,52 58.4,27.3 53.5,33.2 Z m 19.2,-18.3 -6.2,4.6 23,31 6.2,-4.6 -23,-31 z M 38,86 l 38.6,0 0,-7.7 -38.6,0 0,7.7 z"/></g></svg>
+          </a>
+        
+      
+        
+      
+        
+      
+    </div>
+  
+  <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8 text-center">
+    
+      <p class="text-center text-base leading-6">
+        
+          
+          <a href="&#x2F;pages&#x2F;privacy&#x2F;">Privacy Policy</a>
+        
+           &middot; 
+          <a href="&#x2F;pages&#x2F;terms&#x2F;">Terms</a>
+        
+      </p>
+    
+    
+    <div class="mt-4">
+      <p class="text-center text-base leading-6 text-gray-400">
+        Copyright 2026 by Thomas Weitzel
+      </p>
+    </div>
+    
+  </div>
+</footer>
+
+</body>
+</html>

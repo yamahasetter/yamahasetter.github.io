@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en">
+    <title> - Mathematica</title>
+    <link rel="self" type="application/atom+xml" href="https://yamahasetter.github.io/tags/mathematica/atom.xml"/>
+    <link rel="alternate" type="text/html" href="https://yamahasetter.github.io"/>
+    <generator uri="https://www.getzola.org/">Zola</generator>
+    <updated>2024-02-02T00:00:00+00:00</updated>
+    <id>https://yamahasetter.github.io/tags/mathematica/atom.xml</id>
+    <entry xml:lang="en">
+        <title>Gershgorin Circle Plotter</title>
+        <published>2024-02-02T00:00:00+00:00</published>
+        <updated>2024-02-02T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            Alyn Musselman
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://yamahasetter.github.io/blog/gershgorin-cirlce-plotter/"/>
+        <id>https://yamahasetter.github.io/blog/gershgorin-cirlce-plotter/</id>
+        
+        <content type="html" xml:base="https://yamahasetter.github.io/blog/gershgorin-cirlce-plotter/">&lt;h2 id=&quot;motivation&quot;&gt;Motivation&lt;&#x2F;h2&gt;
+&lt;h2 id=&quot;methodology&quot;&gt;Methodology&lt;&#x2F;h2&gt;
+&lt;h2 id=&quot;results&quot;&gt;Results&lt;&#x2F;h2&gt;
+</content>
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>Hydrogen Orbitals Simulation</title>
+        <published>2023-05-09T00:00:00+00:00</published>
+        <updated>2023-05-09T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            Alyn Musselman
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://yamahasetter.github.io/blog/hydrogen-atom-orbitals/"/>
+        <id>https://yamahasetter.github.io/blog/hydrogen-atom-orbitals/</id>
+        
+        <content type="html" xml:base="https://yamahasetter.github.io/blog/hydrogen-atom-orbitals/">&lt;h2 id=&quot;motivation&quot;&gt;Motivation&lt;&#x2F;h2&gt;
+&lt;p&gt;One of the first profound ideas you meet in quantum mechanics is the standing
+wave, and it appears in its grandest form in Schrödinger&#x27;s time-dependent
+equation:&lt;&#x2F;p&gt;
+&lt;p&gt;$$
+i \hbar \frac{\partial \Psi}{\partial t} = - \frac{\hbar^2}{2m} \nabla^2 \Psi + V \Psi .
+$$&lt;&#x2F;p&gt;
+&lt;p&gt;To a physicist this equation is profound; to a mathematician it is a close
+relative of the diffusion equation, only with an imaginary coefficient on the
+time derivative — which is exactly what turns spreading, decaying solutions into
+&lt;em&gt;oscillating&lt;&#x2F;em&gt; standing waves.&lt;&#x2F;p&gt;
+&lt;p&gt;In Griffiths&#x27; &lt;em&gt;Introduction to Quantum Mechanics&lt;&#x2F;em&gt; there is a beautiful figure of
+density plots showing the probability distribution of the electron around the
+hydrogen nucleus (a single proton). What strikes you immediately about that
+figure is its symmetry. For this project — my final for M303 — I set out to
+re-derive the hydrogen wave function myself and build a Mathematica notebook that
+evaluates and plots it in 2D and 3D, so I could explore that symmetry directly.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;methodology&quot;&gt;Methodology&lt;&#x2F;h2&gt;
+&lt;p&gt;For a single electron bound to a proton, the potential is the Coulomb attraction
+$V(r) = -e^2 &#x2F; (4\pi\varepsilon_0 r)$, which depends only on the radial distance
+$r$. Because the potential is spherically symmetric, the time-independent
+equation separates in spherical coordinates into a radial part and an angular
+part. The stationary states are labeled by three integers — the &lt;strong&gt;principal
+quantum number&lt;&#x2F;strong&gt; $n$, the &lt;strong&gt;angular momentum&lt;&#x2F;strong&gt; number $\ell$, and the
+&lt;strong&gt;magnetic&lt;&#x2F;strong&gt; number $m$ — and the full wave function factorizes as&lt;&#x2F;p&gt;
+&lt;p&gt;$$
+\Psi_{n\ell m}(r, \theta, \phi) = R_{n\ell}(r), Y_{\ell}^{m}(\theta, \phi).
+$$&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;strong&gt;The radial part.&lt;&#x2F;strong&gt; $R_{n\ell}(r)$ carries the dependence on distance from the
+nucleus and is built from an &lt;strong&gt;associated Laguerre polynomial&lt;&#x2F;strong&gt; $L$:&lt;&#x2F;p&gt;
+&lt;p&gt;$$
+R_{n\ell}(r) = \sqrt{\left(\frac{2}{n a_0}\right)^{!3} \frac{(n-\ell-1)!}{2n,(n+\ell)!}};
+e^{-r&#x2F;n a_0} \left(\frac{2r}{n a_0}\right)^{!\ell}
+L_{n-\ell-1}^{,2\ell+1}!\left(\frac{2r}{n a_0}\right),
+$$&lt;&#x2F;p&gt;
+&lt;p&gt;where $a_0$ is the Bohr radius. The decaying exponential is what confines the
+electron near the nucleus.&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;strong&gt;The angular part.&lt;&#x2F;strong&gt; $Y_\ell^m(\theta, \phi)$ is a &lt;strong&gt;normalized spherical
+harmonic&lt;&#x2F;strong&gt;, which in turn contains an &lt;strong&gt;associated Legendre polynomial&lt;&#x2F;strong&gt;
+$P_\ell^m$:&lt;&#x2F;p&gt;
+&lt;p&gt;$$
+Y_\ell^m(\theta, \phi) = \sqrt{\frac{(2\ell+1)}{4\pi}\frac{(\ell-m)!}{(\ell+m)!}};
+P_\ell^m(\cos\theta), e^{i m \phi}.
+$$&lt;&#x2F;p&gt;
+&lt;p&gt;Conveniently, Mathematica ships both &lt;code&gt;LaguerreL&lt;&#x2F;code&gt; and &lt;code&gt;SphericalHarmonicY&lt;&#x2F;code&gt; as
+built-in functions, so the notebook defines $\Psi$ directly. Picking values of
+$(n, \ell, m)$ fixes all of the pieces, and substituting them back into
+$\Psi_{n\ell m}$ gives a concrete wave function. The electron&#x27;s &lt;strong&gt;probability
+density&lt;&#x2F;strong&gt; is then $|\Psi_{n\ell m}|^2$, which is what actually gets plotted.&lt;&#x2F;p&gt;
+&lt;p&gt;To make the orbitals explorable I wrapped the plots in &lt;code&gt;Manipulate&lt;&#x2F;code&gt;, with sliders
+over $n$, $\ell$, and $m$ (and a sampling-resolution control). The 2D views are
+&lt;code&gt;DensityPlot&lt;&#x2F;code&gt;s of $|\Psi|$ taken on a slice through the atom — in spherical terms
+with $r = \sqrt{x^2 + z^2}$ and $\theta = \arctan(z, x)$ — and the 3D views are
+volumetric density plots of the same quantity.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;results&quot;&gt;Results&lt;&#x2F;h2&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;yamahasetter.github.io&#x2F;blog&#x2F;hydrogen-atom-orbitals&#x2F;orbitals.png&quot; alt=&quot;3D and 2D probability-density plots of several hydrogen orbitals, labeled by {n, l, m}&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;The figure shows several orbitals, each labeled by its quantum numbers
+${n, \ell, m}$: the top row gives the 3D probability density and the bottom row
+the corresponding 2D slice. The familiar shapes all appear — the spherical
+$1s$ state ${1,0,0}$, the dumbbell ${2,1,1}$, and the lobed orbitals at
+${3,2,0}$, ${3,2,1}$, and ${4,2,0}$.&lt;&#x2F;p&gt;
+&lt;p&gt;What stands out is the &lt;strong&gt;symmetry&lt;&#x2F;strong&gt;. In the 2D slices, any line through the
+center reflects one half of the image onto the other; in 3D, the same holds for
+any plane through the origin. There are two reasons for this. The first is
+physical: in deriving the wave function we required the electron to remain bound
+near the nucleus, and that constraint restricts where it can be found into
+symmetric patterns. The second — and the one I find more illuminating — is that
+we are working in &lt;strong&gt;spherical coordinates&lt;&#x2F;strong&gt;. The angular variables $\theta$ and
+$\phi$ don&#x27;t run off to infinity along a straight line like Cartesian
+coordinates; they wrap around and around, and that circling is what imprints the
+circular and spherical symmetry onto the graphs.&lt;&#x2F;p&gt;
+&lt;p&gt;A small one-dimensional analogy makes the point. Compare the Cartesian parabola
+$y = x^2$ with the &lt;em&gt;same&lt;&#x2F;em&gt; squaring map written in polar form, $r = \theta^2$:&lt;&#x2F;p&gt;
+&lt;p&gt;$$
+y = x^2 \qquad \text{vs.} \qquad r = \theta^2 .
+$$&lt;&#x2F;p&gt;
+&lt;p&gt;They are the identical operation — take an argument, return its square — yet the
+Cartesian version produces an up-down (vertical) symmetry while the polar version
+wraps that parabola into a spiral with circular symmetry. The coordinate system,
+not just the physics, is doing some of the symmetry work, and the hydrogen
+orbitals are the three-dimensional version of exactly that effect.&lt;&#x2F;p&gt;
+</content>
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>Pi from Monte Carlo</title>
+        <published>2022-10-10T00:00:00+00:00</published>
+        <updated>2022-10-10T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            Alyn Musselman
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://yamahasetter.github.io/blog/pi-from-monte-carlo/"/>
+        <id>https://yamahasetter.github.io/blog/pi-from-monte-carlo/</id>
+        
+        <content type="html" xml:base="https://yamahasetter.github.io/blog/pi-from-monte-carlo/">&lt;h2 id=&quot;motivation&quot;&gt;Motivation&lt;&#x2F;h2&gt;
+&lt;p&gt;Typically when someone thinks of a random process they don&#x27;t think that anything orderly could come from it. However, depending on the restraints imposed upon a random process it is very possible to recreate orderly structures. In fact, this is one of the fundamental philosophies of the theory of thermodynamics, condensed matter theory and other stochastic models in physics. A toy problem that shows how order can be derived from a random process is shown in this project, where I approximated pi with a bunch of (psuedo)random numbers.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;methodology&quot;&gt;Methodology&lt;&#x2F;h2&gt;
+&lt;p&gt;For simple projects like this, I really like to use Mathematica. It has really great plotting support and tons of built in functions that you don&#x27;t have to import.&lt;&#x2F;p&gt;
+&lt;p&gt;To start the project, we need to generate random numbers that lie within a unit square. Since the unit square is 2D, we actually need to generate 2-tuples of random numbers where each element is between -1 and 1.&lt;&#x2F;p&gt;
+&lt;p&gt;Once we can generate these pairs, we want to count how many of them lie within the unit circle. Recall that by definition the unit disk is generated by all points such that the 2-norm of the points is less than or equal to one:&lt;&#x2F;p&gt;
+&lt;p&gt;$$ \{ \sqrt{x^2 + y^2} \leq 1 ~ | ~ x,y \in R \} $$&lt;&#x2F;p&gt;
+&lt;p&gt;We also need to count the number of random points that landed outside of the unit circle. To do this we simply count the complement of the set of points in the unit disk:&lt;&#x2F;p&gt;
+&lt;p&gt;$$ \{ \sqrt{x^2 + y^2} \geq 1 ~ | ~ x,y \in R \} $$&lt;&#x2F;p&gt;
+&lt;p&gt;Now from here, recall the area of a disk is $ \pi r^2 $ and in our case since $ r =1 $ the area of our disk is just $\pi$. Now also notice that the area of the square is 1. Thus if we take the ratio of points inside the circle, and divide them by the points outside the circle but inside the square, we should get something approximating $\pi$.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;results&quot;&gt;Results&lt;&#x2F;h2&gt;
+</content>
+        
+    </entry>
+</feed>

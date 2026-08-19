@@ -1,0 +1,525 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en">
+    <title> - Pytorch</title>
+    <link rel="self" type="application/atom+xml" href="https://yamahasetter.github.io/tags/pytorch/atom.xml"/>
+    <link rel="alternate" type="text/html" href="https://yamahasetter.github.io"/>
+    <generator uri="https://www.getzola.org/">Zola</generator>
+    <updated>2026-06-20T00:00:00+00:00</updated>
+    <id>https://yamahasetter.github.io/tags/pytorch/atom.xml</id>
+    <entry xml:lang="en">
+        <title>Fourier Neural Operators Are a Reduced-Order Spectral Method</title>
+        <published>2026-06-20T00:00:00+00:00</published>
+        <updated>2026-06-20T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            Alyn Musselman
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://yamahasetter.github.io/blog/fno-as-spectral-method/"/>
+        <id>https://yamahasetter.github.io/blog/fno-as-spectral-method/</id>
+        
+        <content type="html" xml:base="https://yamahasetter.github.io/blog/fno-as-spectral-method/">&lt;h2 id=&quot;abstract&quot;&gt;Abstract&lt;&#x2F;h2&gt;
+&lt;p&gt;A Fourier Neural Operator (FNO) learns a mapping $G_\theta : A \to U$ between
+function spaces. Here I show that, with a few modifications, a single FNO layer
+reduces to the canonical &lt;strong&gt;Fourier spectral method&lt;&#x2F;strong&gt;. A single FNO
+integral-kernel layer is trained on heat-equation snapshots $u^n \to u^{n+1}$,
+with no physics supplied, and the result is striking:&lt;&#x2F;p&gt;
+&lt;ol&gt;
+&lt;li&gt;The learned weights $R_\theta$ match the analytic &lt;strong&gt;amplification factor&lt;&#x2F;strong&gt;
+$M_m = 1&#x2F;(1 + \Delta t, k_m^2)$ to ~$10^{-7}$, showing the FNO recovers the
+Fourier spectral method.&lt;&#x2F;li&gt;
+&lt;li&gt;Only the active POD modes ($k = 1, 2, 3$) are learned; the rest stay ~0.&lt;&#x2F;li&gt;
+&lt;li&gt;Truncating $R_\theta$ to those three modes reproduces the full solution
+through time.&lt;&#x2F;li&gt;
+&lt;li&gt;Taken together: the FNO, at its core, is a reduced-order Fourier spectral
+method.&lt;&#x2F;li&gt;
+&lt;&#x2F;ol&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;yamahasetter.github.io&#x2F;blog&#x2F;fno-as-spectral-method&#x2F;poster.png&quot; alt=&quot;Project poster&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;the-fourier-spectral-method&quot;&gt;The Fourier Spectral Method&lt;&#x2F;h2&gt;
+&lt;p&gt;On a periodic grid of $N$ points, the discrete Fourier transform (DFT) pair is&lt;&#x2F;p&gt;
+&lt;p&gt;$$
+\hat{u}&lt;em&gt;m = \sum&lt;&#x2F;em&gt;{j=1}^{N} u_j, e^{-i k_m x_j},
+\qquad
+u_j = \frac{1}{N}\sum_{m} \hat{u}_m, e^{i k_m x_j},
+$$&lt;&#x2F;p&gt;
+&lt;p&gt;where $u_j = u(x_j)$ is the field sampled at grid point $x_j$; $\hat{u}_m$ is the
+$m$-th Fourier coefficient ($-N&#x2F;2 &amp;lt; m \le N&#x2F;2$); and $k_m = 2\pi m &#x2F; L$ is the
+wavenumber of mode $m$ on a domain of length $L$. Differentiation is &lt;strong&gt;diagonal&lt;&#x2F;strong&gt;
+in this basis:&lt;&#x2F;p&gt;
+&lt;p&gt;$$
+\frac{\partial}{\partial x} \to i k_m,
+\qquad
+\frac{\partial^2}{\partial x^2} \to -k_m^2,
+$$&lt;&#x2F;p&gt;
+&lt;p&gt;so each spatial derivative becomes a multiplication of $\hat{u}_m$ by a known
+function of $k_m$ — the source of the method&#x27;s spectral accuracy.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;the-fno-layer-and-integral-kernel-operator&quot;&gt;The FNO Layer and Integral Kernel Operator&lt;&#x2F;h2&gt;
+&lt;p&gt;A single FNO layer maps $v_\ell(x) \mapsto v_{\ell+1}(x)$ via&lt;&#x2F;p&gt;
+&lt;p&gt;$$
+v_{\ell+1}(x) = \sigma!\Big( W v_\ell(x) + (\mathcal{K} v_\ell)(x) \Big),
+$$&lt;&#x2F;p&gt;
+&lt;p&gt;with activation $\sigma$, local linear transform $W$, and &lt;strong&gt;integral kernel
+operator&lt;&#x2F;strong&gt; $\mathcal{K}$ applied in Fourier space:&lt;&#x2F;p&gt;
+&lt;p&gt;$$
+(\mathcal{K} v_\ell)(x) = \mathcal{F}^{-1}!\big(, R_\theta \cdot \mathcal{F}(v_\ell), \big).
+$$&lt;&#x2F;p&gt;
+&lt;p&gt;Here $R_\theta$ is a &lt;strong&gt;learned&lt;&#x2F;strong&gt; complex weight per retained mode. The operator&#x27;s
+structure is: FFT $\to$ multiply each mode by a weight $\to$ inverse FFT.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;connecting-m-m-and-r-theta&quot;&gt;Connecting $M_m$ and $R_\theta$&lt;&#x2F;h2&gt;
+&lt;p&gt;The kernel operator begins with an FFT and ends with an inverse FFT, with a
+per-mode multiplication between — exactly the structure of a spectral update,
+$u^{n+1} = \mathcal{F}^{-1}(M_m \cdot \mathcal{F}(u^n))$. They are the same
+operation; only the multiplier&#x27;s origin differs: $R_\theta$ is &lt;strong&gt;learned&lt;&#x2F;strong&gt;,
+$M_m$ is the &lt;strong&gt;analytic amplification factor&lt;&#x2F;strong&gt; of the PDE update. We recover the
+spectral method by dropping $\sigma$ and $W$, keeping all modes, and setting
+$R_\theta = M_m$.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;the-heat-equation&quot;&gt;The Heat Equation&lt;&#x2F;h2&gt;
+&lt;p&gt;On a periodic domain,&lt;&#x2F;p&gt;
+&lt;p&gt;$$
+\frac{\partial u}{\partial t} = \frac{\partial^2 u}{\partial x^2}.
+$$&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;strong&gt;Analytic solution.&lt;&#x2F;strong&gt; With $u(x,t) = \hat{u}_m(t),e^{i k_m x}$, each mode obeys
+$\dot{\hat{u}}_m = -k_m^2 \hat{u}_m$, so $\hat{u}_m(t) = \hat{u}_m(0),e^{-k_m^2 t}$.
+For the initial condition $u(x,0) = \sin(x) + 0.5\sin(2x) + 0.3\sin(3x)$ this
+gives the closed form (our ground truth)&lt;&#x2F;p&gt;
+&lt;p&gt;$$
+u(x,t) = e^{-t}\sin(x) + 0.5,e^{-4t}\sin(2x) + 0.3,e^{-9t}\sin(3x),
+$$&lt;&#x2F;p&gt;
+&lt;p&gt;which excites exactly three wavenumbers, $k = 1, 2, 3$.&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;yamahasetter.github.io&#x2F;blog&#x2F;fno-as-spectral-method&#x2F;analytic.png&quot; alt=&quot;Analytic solution&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;strong&gt;Spectral solution.&lt;&#x2F;strong&gt; The DFT sends $\partial_{xx} \to -k_m^2$, giving
+$\dot{\hat{u}}_m = -k_m^2 \hat{u}_m$. A backward (implicit) Euler step,
+$(\hat{u}_m^{,n+1} - \hat{u}_m^{,n})&#x2F;\Delta t = -k_m^2 \hat{u}_m^{,n+1}$,
+yields&lt;&#x2F;p&gt;
+&lt;p&gt;$$
+\hat{u}_m^{,n+1} = M_m, \hat{u}_m^{,n},
+\qquad
+M_m = \frac{1}{1 + \Delta t, k_m^2},
+$$&lt;&#x2F;p&gt;
+&lt;p&gt;the amplification factor that $R_\theta$ must reproduce.&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;python&quot; style=&quot;background-color:#191919;color:#f8f8f2;&quot; class=&quot;language-python &quot;&gt;&lt;code class=&quot;language-python&quot; data-lang=&quot;python&quot;&gt;&lt;span&gt;uhat &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span&gt;np.fft.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;fft&lt;&#x2F;span&gt;&lt;span&gt;(u0)                 &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6d6d6d;&quot;&gt;# FFT of initial condition (once)
+&lt;&#x2F;span&gt;&lt;span&gt;M    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;1.0 &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;&#x2F; &lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;1.0 &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;+ &lt;&#x2F;span&gt;&lt;span&gt;dt &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;* &lt;&#x2F;span&gt;&lt;span&gt;k&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;**&lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;2&lt;&#x2F;span&gt;&lt;span&gt;)        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6d6d6d;&quot;&gt;# amplification factor per mode
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;for &lt;&#x2F;span&gt;&lt;span&gt;n &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;in &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;range&lt;&#x2F;span&gt;&lt;span&gt;(nsteps):
+&lt;&#x2F;span&gt;&lt;span&gt;    uhat &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span&gt;uhat &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;* &lt;&#x2F;span&gt;&lt;span&gt;M                   &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6d6d6d;&quot;&gt;# backsolve in Fourier space
+&lt;&#x2F;span&gt;&lt;span&gt;u &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span&gt;np.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;real&lt;&#x2F;span&gt;&lt;span&gt;(np.fft.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;ifft&lt;&#x2F;span&gt;&lt;span&gt;(uhat))        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6d6d6d;&quot;&gt;# inverse FFT to physical space
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;yamahasetter.github.io&#x2F;blog&#x2F;fno-as-spectral-method&#x2F;fourier.png&quot; alt=&quot;Fourier spectral solution&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;results&quot;&gt;Results&lt;&#x2F;h2&gt;
+&lt;p&gt;I train a single integral-kernel layer (no $W$, no activation) on the snapshot
+pairs $u^n \to u^{n+1}$ generated above, learning one complex weight $R_\theta$
+per Fourier mode.&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;strong&gt;The FNO recovers the spectral method.&lt;&#x2F;strong&gt; On the modes the data actually excites
+($k = 1, 2, 3$), the learned weights match the analytic amplification factor,
+$R_\theta = M_m$, to ~$10^{-7}$. The network rediscovers
+$1&#x2F;(1 + \Delta t, k_m^2)$ from data alone.&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;yamahasetter.github.io&#x2F;blog&#x2F;fno-as-spectral-method&#x2F;full_fno.png&quot; alt=&quot;Full FNO result&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;strong&gt;The FNO self-selects the active modes.&lt;&#x2F;strong&gt; A proper orthogonal decomposition
+(POD) of the solution trajectory shows it is rank 3: only three singular values
+are nonzero, and the leading POD modes are exactly $\sin x, \sin 2x, \sin 3x$.
+The heat equation is linear and diagonal in Fourier space, so unexcited modes
+start at zero and stay there — during training those weights receive no gradient
+and remain ~0. The layer therefore learns only the modes it needs, which is
+precisely the subspace POD identifies.&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;strong&gt;Truncation is lossless.&lt;&#x2F;strong&gt; Zeroing every weight outside $k = 1, 2, 3$ and
+rolling the kernel forward reproduces the full solution through time to the same
+~$10^{-7}$ accuracy. A three-parameter spectral kernel captures the entire
+dynamics — the FNO, at its core, is a reduced-order Fourier spectral method.&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;yamahasetter.github.io&#x2F;blog&#x2F;fno-as-spectral-method&#x2F;trunc_fno.png&quot; alt=&quot;Truncated FNO result&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+</content>
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>Gradient-Based Airfoil Optimization with Graph Convolutional Networks</title>
+        <published>2026-06-08T00:00:00+00:00</published>
+        <updated>2026-06-08T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            Alyn Musselman
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://yamahasetter.github.io/blog/gcnn-airfoil-optimization/"/>
+        <id>https://yamahasetter.github.io/blog/gcnn-airfoil-optimization/</id>
+        
+        <content type="html" xml:base="https://yamahasetter.github.io/blog/gcnn-airfoil-optimization/">&lt;h2 id=&quot;motivation&quot;&gt;Motivation&lt;&#x2F;h2&gt;
+&lt;p&gt;Aerodynamic shape optimization is expensive. The usual loop wraps a CFD solver
+inside a black-box optimizer: propose a shape, mesh it, solve the Navier–Stokes
+equations, read off the lift-to-drag ratio, and repeat. Each evaluation costs
+minutes of solver time, and because the optimizer treats the solver as a black
+box it has no access to gradients — it must approximate them with finite
+differences or fall back on derivative-free search.&lt;&#x2F;p&gt;
+&lt;p&gt;This project recreates the results of Shukla, Oommen, Peyvan et al., but
+replaces their DeepONet surrogate with a &lt;strong&gt;Graph Convolutional Neural Network
+(GCNN)&lt;&#x2F;strong&gt;. The goal is a &lt;em&gt;differentiable&lt;&#x2F;em&gt; approximation to the CFD solver: once
+the surrogate is trained, the gradient of the lift-to-drag ratio with respect to
+the shape parameters is available directly through autograd, so the optimal
+airfoil can be found by plain gradient descent rather than a black-box search.&lt;&#x2F;p&gt;
+&lt;p&gt;Concretely, the problem is to find the NACA 4-digit parameters $(p, m)$ — the
+position and magnitude of maximum camber — that maximize the lift-to-drag ratio
+$L&#x2F;D$ of a 2D airfoil in steady, subsonic, viscous flow.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;governing-equations&quot;&gt;Governing Equations&lt;&#x2F;h2&gt;
+&lt;p&gt;The flow is governed by the 2D compressible Navier–Stokes equations:&lt;&#x2F;p&gt;
+&lt;p&gt;$$
+\frac{\partial \rho}{\partial t} + \nabla \cdot (\rho \mathbf{u}) = 0,
+$$&lt;&#x2F;p&gt;
+&lt;p&gt;$$
+\frac{\partial (\rho \mathbf{u})}{\partial t} + \nabla \cdot (\rho, \mathbf{u} \otimes \mathbf{u} + p\mathbf{I}) = \frac{1}{\mathrm{Re}}, \nabla \cdot \boldsymbol{\tau},
+$$&lt;&#x2F;p&gt;
+&lt;p&gt;$$
+\frac{\partial E}{\partial t} + \nabla \cdot \big((E + p)\mathbf{u}\big) = \frac{1}{\mathrm{Re}}, \nabla \cdot (\boldsymbol{\tau}\mathbf{u} + \kappa \nabla T),
+$$&lt;&#x2F;p&gt;
+&lt;p&gt;where $\rho$ is density, $\mathbf{u}$ the velocity vector, $p$ pressure, $E$
+total energy, $\boldsymbol{\tau}$ the viscous stress tensor, and $\kappa$ the
+thermal conductivity. Lift and drag follow from integrating pressure and wall
+shear stress over the airfoil surface.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;generating-training-data-with-su2&quot;&gt;Generating Training Data with SU2&lt;&#x2F;h2&gt;
+&lt;p&gt;Ground-truth flow fields come from &lt;a href=&quot;https:&#x2F;&#x2F;su2code.github.io&#x2F;&quot;&gt;SU2&lt;&#x2F;a&gt;, an
+open-source CFD solver that solves the compressible Navier–Stokes equations on
+unstructured meshes. SU2 produces the full volumetric field ($u, v, p, \rho, T$)
+as well as the surface quantities ($C_p$, $C_f$) needed for the surrogate&#x27;s
+labels. The pipeline for each airfoil is:&lt;&#x2F;p&gt;
+&lt;ol&gt;
+&lt;li&gt;Generate surface coordinates from the NACA equations.&lt;&#x2F;li&gt;
+&lt;li&gt;Mesh the flow domain with Gmsh (a body-fitted unstructured triangular mesh).&lt;&#x2F;li&gt;
+&lt;li&gt;Run SU2 with a config specifying $\mathrm{Re}$, $\mathrm{Ma}$, angle of attack, and boundary conditions.&lt;&#x2F;li&gt;
+&lt;li&gt;Extract surface $C_p$, $C_f$ and integrated $C_L$, $C_D$ from the output.&lt;&#x2F;li&gt;
+&lt;&#x2F;ol&gt;
+&lt;p&gt;The whole thing is scripted in Python via subprocess, so the full dataset is
+generated automatically — each run takes roughly one to five minutes depending on
+mesh resolution.&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;yamahasetter.github.io&#x2F;blog&#x2F;gcnn-airfoil-optimization&#x2F;flow_field.png&quot; alt=&quot;Flow field around a sample airfoil&quot; &#x2F;&gt;
+&lt;img src=&quot;https:&#x2F;&#x2F;yamahasetter.github.io&#x2F;blog&#x2F;gcnn-airfoil-optimization&#x2F;streamlines.png&quot; alt=&quot;Streamlines colored by pressure&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;solver-configuration&quot;&gt;Solver configuration&lt;&#x2F;h3&gt;
+&lt;table&gt;&lt;thead&gt;&lt;tr&gt;&lt;th&gt;Parameter&lt;&#x2F;th&gt;&lt;th&gt;Value&lt;&#x2F;th&gt;&lt;th&gt;Notes&lt;&#x2F;th&gt;&lt;&#x2F;tr&gt;&lt;&#x2F;thead&gt;&lt;tbody&gt;
+&lt;tr&gt;&lt;td&gt;Solver&lt;&#x2F;td&gt;&lt;td&gt;Laminar Navier–Stokes&lt;&#x2F;td&gt;&lt;td&gt;No turbulence model&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;
+&lt;tr&gt;&lt;td&gt;Spatial scheme&lt;&#x2F;td&gt;&lt;td&gt;Roe upwind&lt;&#x2F;td&gt;&lt;td&gt;2nd order, MUSCL reconstruction&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;
+&lt;tr&gt;&lt;td&gt;Slope limiter&lt;&#x2F;td&gt;&lt;td&gt;Venkatakrishnan&lt;&#x2F;td&gt;&lt;td&gt;Stabilizes near gradients&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;
+&lt;tr&gt;&lt;td&gt;Time integration&lt;&#x2F;td&gt;&lt;td&gt;Implicit (FGMRES + ILU)&lt;&#x2F;td&gt;&lt;td&gt;Marched to steady state&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;
+&lt;tr&gt;&lt;td&gt;CFL number&lt;&#x2F;td&gt;&lt;td&gt;0.5&lt;&#x2F;td&gt;&lt;td&gt;Conservative; suitable for low Re&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;
+&lt;tr&gt;&lt;td&gt;Convergence&lt;&#x2F;td&gt;&lt;td&gt;RMS($\rho$) ≤ 1e-8&lt;&#x2F;td&gt;&lt;td&gt;Max 10,000 iterations&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;
+&lt;tr&gt;&lt;td&gt;Domain&lt;&#x2F;td&gt;&lt;td&gt;$[-3, 11] \times [-3, 3]$&lt;&#x2F;td&gt;&lt;td&gt;Matching Shukla et al.&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;
+&lt;tr&gt;&lt;td&gt;Flow conditions&lt;&#x2F;td&gt;&lt;td&gt;Re = 500, Ma = 0.5, AoA = 0°&lt;&#x2F;td&gt;&lt;td&gt;&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;
+&lt;&#x2F;tbody&gt;&lt;&#x2F;table&gt;
+&lt;p&gt;The training set is 100 NACA 4-digit airfoils drawn uniformly over
+$p \in [0.2, 0.5]$, $m \in [0.0, 0.09]$ with thickness fixed at $t = 0.15$,
+split 60 train &#x2F; 40 test. Each airfoil is sampled at 100 cosine-spaced surface
+points and stored as a graph: nodes are surface points, edges connect adjacent
+points along the boundary curve.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;the-differentiable-surrogate&quot;&gt;The Differentiable Surrogate&lt;&#x2F;h2&gt;
+&lt;p&gt;The surrogate is a graph convolutional network operating on the 1D boundary
+curve of the airfoil. Each node is a surface point with features
+$(x, y, \kappa, \varphi)$ — position, local curvature, and normal angle — and
+graph convolution amounts to message-passing along arc length.&lt;&#x2F;p&gt;
+&lt;table&gt;&lt;thead&gt;&lt;tr&gt;&lt;th&gt;Component&lt;&#x2F;th&gt;&lt;th&gt;Detail&lt;&#x2F;th&gt;&lt;&#x2F;tr&gt;&lt;&#x2F;thead&gt;&lt;tbody&gt;
+&lt;tr&gt;&lt;td&gt;Node features&lt;&#x2F;td&gt;&lt;td&gt;$x, y, \kappa, \varphi$ (4 features)&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;
+&lt;tr&gt;&lt;td&gt;GCN layers&lt;&#x2F;td&gt;&lt;td&gt;4 × GCNConv, residual connections, BatchNorm&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;
+&lt;tr&gt;&lt;td&gt;Hidden dim&lt;&#x2F;td&gt;&lt;td&gt;128&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;
+&lt;tr&gt;&lt;td&gt;Activation&lt;&#x2F;td&gt;&lt;td&gt;ReLU&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;
+&lt;tr&gt;&lt;td&gt;Output&lt;&#x2F;td&gt;&lt;td&gt;per-node $(C_p, C_{fx}, C_{fy})$&lt;&#x2F;td&gt;&lt;&#x2F;tr&gt;
+&lt;&#x2F;tbody&gt;&lt;&#x2F;table&gt;
+&lt;h3 id=&quot;recovering-l-d-from-the-network-output&quot;&gt;Recovering L&#x2F;D from the network output&lt;&#x2F;h3&gt;
+&lt;p&gt;Let $\Phi_\theta$ denote the trained GCNN and $\mathbf{x} = (m, p)$ the shape
+parameters. The network predicts per-node fields
+${\tilde{C}&lt;em&gt;p, \tilde{C}&lt;&#x2F;em&gt;{fx}, \tilde{C}_{fy}}$, which are integrated over the
+surface to recover $L&#x2F;D$. For each panel between adjacent nodes $i$ and $i+1$:&lt;&#x2F;p&gt;
+&lt;p&gt;$$
+\Delta s_i = \sqrt{(x_{i+1}-x_i)^2 + (y_{i+1}-y_i)^2}, \qquad
+\hat{\mathbf{n}}_i = \frac{(-\Delta y_i,\ \Delta x_i)}{\Delta s_i},
+$$&lt;&#x2F;p&gt;
+&lt;p&gt;$$
+\tilde{C}_{Li} = \big(-\tilde{C}&lt;em&gt;p^{,\text{mid}}, \hat{n}&lt;em&gt;y + \tilde{C}&lt;&#x2F;em&gt;{fy}^{,\text{mid}}\big), \Delta s_i,
+\qquad
+\tilde{C}&lt;&#x2F;em&gt;{Di} = \big(-\tilde{C}_p^{,\text{mid}}, \hat{n}&lt;em&gt;x + \tilde{C}&lt;&#x2F;em&gt;{fx}^{,\text{mid}}\big), \Delta s_i,
+$$&lt;&#x2F;p&gt;
+&lt;p&gt;where &quot;mid&quot; denotes the midpoint average of adjacent node values. Summing over
+panels gives $\tilde{C}&lt;em&gt;L = \sum_i \tilde{C}&lt;&#x2F;em&gt;{Li}$, $\tilde{C}&lt;em&gt;D = \sum_i \tilde{C}&lt;&#x2F;em&gt;{Di}$,
+and $\tilde{L}&#x2F;\tilde{D} = \tilde{C}_L &#x2F; \tilde{C}_D$.&lt;&#x2F;p&gt;
+&lt;p&gt;Because $\Phi_\theta$ is implemented in PyTorch and the integration is itself
+differentiable, $\partial(\tilde{L}&#x2F;\tilde{D}) &#x2F; \partial(m, p)$ is available via
+autograd — which is the whole point. Optimization becomes gradient ascent on the
+shape parameters rather than a black-box search.&lt;&#x2F;p&gt;
+&lt;h3 id=&quot;loss-and-normalization&quot;&gt;Loss and normalization&lt;&#x2F;h3&gt;
+&lt;p&gt;Each field $f \in {C_p, C_{fx}, C_{fy}}$ is standardized independently before
+training, $\hat{y}&lt;em&gt;f = (y_f - \mu_f)&#x2F;\sigma_f$. This matters because $C_p$ is
+$O(1\text{–}3)$ while $C&lt;&#x2F;em&gt;{fx}, C_{fy}$ are $O(10^{-3})$ — without it the loss is
+dominated by $C_p$ and the network never learns the shear fields. Training
+minimizes MSE on the standardized values,&lt;&#x2F;p&gt;
+&lt;p&gt;$$
+\mathcal{L} = \frac{1}{3N} \sum_f \sum_i \big(\hat{\Phi}_f(i) - \hat{y}_f(i)\big)^2,
+$$&lt;&#x2F;p&gt;
+&lt;p&gt;and a relative $L_2$ error,
+$\text{rel} = \tfrac{1}{3}\sum_f \lVert \Phi_f - y_f\rVert &#x2F; \lVert y_f\rVert$,
+is reported in physical units as an interpretable metric (e.g. $0.05$ means
+predictions are 5% off the SU2 ground truth on average).&lt;&#x2F;p&gt;
+&lt;p&gt;Training uses Adam at a learning rate of $10^{-3}$ with cosine decay, batch
+size 16, for up to 500 epochs with early stopping (patience 50).&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;results&quot;&gt;Results&lt;&#x2F;h2&gt;
+&lt;p&gt;After training on 100 airfoil simulations, the surrogate is queried at 300
+sampled $(p, m)$ points to build an $L&#x2F;D$ landscape. The argmax of that sample
+set seeds a gradient-descent run that backpropagates through the surrogate to
+locate the true $(p, m)$ maximizing the lift-to-drag ratio — no external
+optimizer, just autograd.&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;yamahasetter.github.io&#x2F;blog&#x2F;gcnn-airfoil-optimization&#x2F;run_summary.png&quot; alt=&quot;Optimization run summary: L&#x2F;D landscape and gradient-descent trajectory&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;The differentiable-surrogate approach replaces minutes-per-evaluation black-box
+optimization with millisecond surrogate calls and exact gradients, recovering the
+optimal airfoil shape directly.&lt;&#x2F;p&gt;
+</content>
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>Learning the Cahn-Hilliard Equation with Fourier Neural Operators</title>
+        <published>2025-06-11T00:00:00+00:00</published>
+        <updated>2025-06-11T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            Alyn Musselman
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://yamahasetter.github.io/blog/learning-cahn-hilliard/"/>
+        <id>https://yamahasetter.github.io/blog/learning-cahn-hilliard/</id>
+        
+        <content type="html" xml:base="https://yamahasetter.github.io/blog/learning-cahn-hilliard/">&lt;h2 id=&quot;motivation&quot;&gt;Motivation&lt;&#x2F;h2&gt;
+&lt;p&gt;The Cahn-Hilliard equation models &lt;strong&gt;phase separation&lt;&#x2F;strong&gt; — the way a mixed binary
+system (two substances, or two phases of one) spontaneously un-mixes into distinct
+domains that slowly coarsen over time. It is a fourth-order, nonlinear, stiff PDE,
+and resolving its dynamics with a classical solver is expensive: the stiffness
+forces tiny timesteps, so marching a single simulation out to long times can mean
+hundreds of thousands of steps.&lt;&#x2F;p&gt;
+&lt;p&gt;This project asks whether a &lt;strong&gt;Fourier Neural Operator (FNO)&lt;&#x2F;strong&gt; can learn the
+equation&#x27;s dynamics and act as a fast surrogate. Unlike an ordinary network that
+maps vectors to vectors, an FNO learns a mapping between &lt;em&gt;functions&lt;&#x2F;em&gt; — here, from
+the recent history of the concentration field to its future. If it works, you get
+a solver that advances the field in a single forward pass instead of thousands of
+fine timesteps, and that generalizes across resolutions because its core operation
+lives in Fourier space.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;generating-the-data&quot;&gt;Generating the Data&lt;&#x2F;h2&gt;
+&lt;p&gt;Training data comes from a high-fidelity &lt;strong&gt;Dedalus&lt;&#x2F;strong&gt; spectral solver run on the
+non-dimensional Cahn-Hilliard equation,&lt;&#x2F;p&gt;
+&lt;p&gt;$$
+\frac{\partial u}{\partial t} = \nabla^2!\left(\alpha^2 u^3 - u - \nabla^2 u\right),
+$$&lt;&#x2F;p&gt;
+&lt;p&gt;on a $64 \times 64$ periodic grid with $\Delta t = 10^{-5}$, $\Delta x = 0.01$,
+and $\alpha = 0.1$. Each run starts from random noise and is integrated forward;
+the figure below shows a single sample evolving from initial static to fully
+coarsened phase domains.&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;yamahasetter.github.io&#x2F;blog&#x2F;learning-cahn-hilliard&#x2F;single_sample.png&quot; alt=&quot;A Cahn-Hilliard sample evolving from noise to coarsened phase domains&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;At $t = 0$ the field is pure noise; by a few steps in, fine structure begins to
+organize; and over thousands of steps the characteristic blob-like domains emerge
+and grow. This whole trajectory is what the FNO has to learn to reproduce.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;the-fourier-neural-operator&quot;&gt;The Fourier Neural Operator&lt;&#x2F;h2&gt;
+&lt;p&gt;The model is a standard 2D FNO. Its key building block is the &lt;strong&gt;spectral
+convolution layer&lt;&#x2F;strong&gt;, which transforms the field into Fourier space, keeps only the
+lowest modes, multiplies them by learned complex weights, and transforms back:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;python&quot; style=&quot;background-color:#191919;color:#f8f8f2;&quot; class=&quot;language-python &quot;&gt;&lt;code class=&quot;language-python&quot; data-lang=&quot;python&quot;&gt;&lt;span style=&quot;font-style:italic;color:#ff5e5e;&quot;&gt;class &lt;&#x2F;span&gt;&lt;span style=&quot;text-decoration:underline;color:#8cdaff;&quot;&gt;SpectralConv2d&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;text-decoration:underline;font-style:italic;color:#8cdaff;&quot;&gt;nn.Module&lt;&#x2F;span&gt;&lt;span&gt;):
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#ff5e5e;&quot;&gt;def &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;__init__&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fc9354;&quot;&gt;self&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fc9354;&quot;&gt;in_channels&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fc9354;&quot;&gt;out_channels&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fc9354;&quot;&gt;modes1&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fc9354;&quot;&gt;modes2&lt;&#x2F;span&gt;&lt;span&gt;):
+&lt;&#x2F;span&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;super&lt;&#x2F;span&gt;&lt;span&gt;().&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;__init__&lt;&#x2F;span&gt;&lt;span&gt;()
+&lt;&#x2F;span&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;self&lt;&#x2F;span&gt;&lt;span&gt;.modes1, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;self&lt;&#x2F;span&gt;&lt;span&gt;.modes2 &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span&gt;modes1, modes2   &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6d6d6d;&quot;&gt;# # of Fourier modes kept
+&lt;&#x2F;span&gt;&lt;span&gt;        scale &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;1 &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;&#x2F; &lt;&#x2F;span&gt;&lt;span&gt;(in_channels &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;* &lt;&#x2F;span&gt;&lt;span&gt;out_channels)
+&lt;&#x2F;span&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;self&lt;&#x2F;span&gt;&lt;span&gt;.weights1 &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span&gt;nn.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;Parameter&lt;&#x2F;span&gt;&lt;span&gt;(scale &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;* &lt;&#x2F;span&gt;&lt;span&gt;torch.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;rand&lt;&#x2F;span&gt;&lt;span&gt;(
+&lt;&#x2F;span&gt;&lt;span&gt;            in_channels, out_channels, modes1, modes2, &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fc9354;&quot;&gt;dtype&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;=&lt;&#x2F;span&gt;&lt;span&gt;torch.cfloat))
+&lt;&#x2F;span&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;self&lt;&#x2F;span&gt;&lt;span&gt;.weights2 &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span&gt;nn.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;Parameter&lt;&#x2F;span&gt;&lt;span&gt;(scale &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;* &lt;&#x2F;span&gt;&lt;span&gt;torch.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;rand&lt;&#x2F;span&gt;&lt;span&gt;(
+&lt;&#x2F;span&gt;&lt;span&gt;            in_channels, out_channels, modes1, modes2, &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fc9354;&quot;&gt;dtype&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;=&lt;&#x2F;span&gt;&lt;span&gt;torch.cfloat))
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#ff5e5e;&quot;&gt;def &lt;&#x2F;span&gt;&lt;span style=&quot;color:#8cdaff;&quot;&gt;compl_mul2d&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fc9354;&quot;&gt;self&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fc9354;&quot;&gt;input&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fc9354;&quot;&gt;weights&lt;&#x2F;span&gt;&lt;span&gt;):
+&lt;&#x2F;span&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6d6d6d;&quot;&gt;# FFT -&amp;gt; keep low modes -&amp;gt; multiply -&amp;gt; iFFT
+&lt;&#x2F;span&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;return &lt;&#x2F;span&gt;&lt;span&gt;torch.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;einsum&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ffffff;&quot;&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#fbe3bf;&quot;&gt;bixy,ioxy-&amp;gt;boxy&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ffffff;&quot;&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;input&lt;&#x2F;span&gt;&lt;span&gt;, weights)
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;Truncating to a fixed number of modes is what makes the operator &lt;em&gt;resolution
+independent&lt;&#x2F;em&gt;: the learned weights act on frequencies, not pixels, so the same
+model can be applied to grids of different sizes. I used &lt;strong&gt;16 modes&lt;&#x2F;strong&gt; and a
+channel &lt;strong&gt;width of 20&lt;&#x2F;strong&gt;.&lt;&#x2F;p&gt;
+&lt;p&gt;The learning task is set up as a sliding window in time: the input is a stack of
+&lt;strong&gt;10 consecutive timesteps&lt;&#x2F;strong&gt; of the field, and the target is the &lt;strong&gt;next 10
+timesteps&lt;&#x2F;strong&gt;.&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;python&quot; style=&quot;background-color:#191919;color:#f8f8f2;&quot; class=&quot;language-python &quot;&gt;&lt;code class=&quot;language-python&quot; data-lang=&quot;python&quot;&gt;&lt;span&gt;train_a &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span&gt;data[:n_train, :, :, :&lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;10&lt;&#x2F;span&gt;&lt;span&gt;]   &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6d6d6d;&quot;&gt;# input: 10 past frames
+&lt;&#x2F;span&gt;&lt;span&gt;train_u &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span&gt;data[:n_train, :, :, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;10&lt;&#x2F;span&gt;&lt;span&gt;:]   &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6d6d6d;&quot;&gt;# target: next 10 frames
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;Training uses an 80&#x2F;20 train&#x2F;test split, the Adam optimizer at a learning rate of
+$10^{-3}$, MSE loss, and a learning-rate scheduler, for up to 10 epochs. Both the
+training and test loss fall by more than an order of magnitude and track each
+other closely, so the model isn&#x27;t simply overfitting.&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;yamahasetter.github.io&#x2F;blog&#x2F;learning-cahn-hilliard&#x2F;loss.png&quot; alt=&quot;Training and test MSE over 10 epochs&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;results&quot;&gt;Results&lt;&#x2F;h2&gt;
+&lt;p&gt;On held-out data the FNO reproduces the true field strikingly well. The panels
+below compare the ground-truth field, the FNO prediction, and their pointwise
+difference (note the logarithmic color scale on the difference) for a single
+prediction window — the MSE is $\approx 1.5 \times 10^{-4}$, and the error is
+diffuse and tiny rather than concentrated on any structure.&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;yamahasetter.github.io&#x2F;blog&#x2F;learning-cahn-hilliard&#x2F;single_difference.png&quot; alt=&quot;True field, FNO prediction, and their difference (log scale)&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;The harder test is &lt;strong&gt;autoregressive rollout&lt;&#x2F;strong&gt;: feed the model&#x27;s own predictions
+back in as input and let it march far beyond the window it was trained on. Here the
+picture is more nuanced. Errors accumulate step by step, as they must for any
+learned time-stepper, but the amount of training matters enormously. Rolling out
+to 500 timesteps, the under-trained models saturate near $10^{-1}$ error almost
+immediately, while the fully trained 10-epoch model keeps its error around
+$10^{-2}$ across the entire horizon.&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;yamahasetter.github.io&#x2F;blog&#x2F;learning-cahn-hilliard&#x2F;auto_reg_err.png&quot; alt=&quot;Autoregressive rollout error vs. timestep for models trained for different numbers of epochs&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;The takeaways:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;As a one-shot surrogate, the FNO works well.&lt;&#x2F;strong&gt; It predicts the next block of
+Cahn-Hilliard evolution to ~$10^{-4}$ MSE in a single forward pass, far faster
+than re-running the fine-timestep Dedalus solver.&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;strong&gt;Long rollouts are the real challenge.&lt;&#x2F;strong&gt; Autoregressive error compounds, so
+pushing predictions hundreds of steps out degrades accuracy — though more
+training visibly flattens that growth, suggesting the rollout stability is
+partly a matter of how well the operator has been fit.&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;strong&gt;The spectral structure pays off.&lt;&#x2F;strong&gt; Because the model operates on a fixed set
+of Fourier modes, it is naturally tied to the same spectral picture that makes
+Cahn-Hilliard tractable in the first place, and it inherits resolution
+flexibility for free.&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;This is an encouraging proof of concept that operator learning can stand in for an
+expensive stiff PDE solver, with the next obvious direction being techniques to
+tame the autoregressive error growth for genuinely long-horizon prediction.&lt;&#x2F;p&gt;
+</content>
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>Homeomorphic AutoEncoder</title>
+        <published>2024-09-10T00:00:00+00:00</published>
+        <updated>2024-09-10T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            Alyn Musselman
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://yamahasetter.github.io/blog/autoencoder-coordinate-mappings/"/>
+        <id>https://yamahasetter.github.io/blog/autoencoder-coordinate-mappings/</id>
+        
+        <content type="html" xml:base="https://yamahasetter.github.io/blog/autoencoder-coordinate-mappings/">&lt;h2 id=&quot;motivation&quot;&gt;Motivation&lt;&#x2F;h2&gt;
+&lt;p&gt;A &lt;em&gt;homeomorphism&lt;&#x2F;em&gt; is a continuous, invertible map between two spaces whose inverse
+is also continuous — intuitively, a way to smoothly deform one shape into another
+without tearing or gluing. What makes homeomorphisms between &lt;strong&gt;coordinate systems&lt;&#x2F;strong&gt;
+so appealing is that they let you do hard work in an easy space and carry the
+answer back.&lt;&#x2F;p&gt;
+&lt;p&gt;The concrete payoff is in solving differential equations. Numerical methods are
+far simpler on a regular Cartesian grid — a plain square mesh — than on an awkward
+domain like a disk or an annulus. If you had a homeomorphic map between a square
+grid and, say, a polar grid, you could solve your equation on the friendly square,
+then map the solution onto the polar domain where you actually need it. Mesh
+generation, finite-difference stencils, boundary conditions: all of it gets easier
+if you can move freely between coordinate systems. That is the dream that started
+this project — could a neural network &lt;em&gt;learn&lt;&#x2F;em&gt; such a map directly from data?&lt;&#x2F;p&gt;
+&lt;p&gt;The honest answer this post arrives at is: &lt;strong&gt;not the way I tried it here.&lt;&#x2F;strong&gt; This
+was a failed experiment. But the failure is instructive, and the motivation is
+strong enough that I&#x27;m planning a better attempt.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;methodology&quot;&gt;Methodology&lt;&#x2F;h2&gt;
+&lt;p&gt;I framed the problem as learning the map from a &lt;strong&gt;square grid&lt;&#x2F;strong&gt; to a &lt;strong&gt;polar
+grid&lt;&#x2F;strong&gt;. The two point sets are generated directly:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;python&quot; style=&quot;background-color:#191919;color:#f8f8f2;&quot; class=&quot;language-python &quot;&gt;&lt;code class=&quot;language-python&quot; data-lang=&quot;python&quot;&gt;&lt;span style=&quot;color:#6d6d6d;&quot;&gt;# square grid
+&lt;&#x2F;span&gt;&lt;span&gt;x &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span&gt;np.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;linspace&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;-&lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;.5&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;.5&lt;&#x2F;span&gt;&lt;span&gt;, n_points_per_edge)
+&lt;&#x2F;span&gt;&lt;span&gt;X, Y &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span&gt;np.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;meshgrid&lt;&#x2F;span&gt;&lt;span&gt;(x, x)
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6d6d6d;&quot;&gt;# polar (target) grid
+&lt;&#x2F;span&gt;&lt;span&gt;theta &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span&gt;np.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;linspace&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;0&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;2&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;*&lt;&#x2F;span&gt;&lt;span&gt;np.pi, n_points_per_edge, &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fc9354;&quot;&gt;endpoint&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;=&lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff8942;&quot;&gt;False&lt;&#x2F;span&gt;&lt;span&gt;)
+&lt;&#x2F;span&gt;&lt;span&gt;r     &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span&gt;np.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;linspace&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;0&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;1&lt;&#x2F;span&gt;&lt;span&gt;, n_points_per_edge)
+&lt;&#x2F;span&gt;&lt;span&gt;radius_matrix, theta_matrix &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span&gt;np.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;meshgrid&lt;&#x2F;span&gt;&lt;span&gt;(r, theta)
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;The model is a small PyTorch &quot;autoencoder&quot;: an encoder that takes a 2D point down
+through hidden layers to a 2D latent code, and a decoder that expands it back to
+2D.&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;python&quot; style=&quot;background-color:#191919;color:#f8f8f2;&quot; class=&quot;language-python &quot;&gt;&lt;code class=&quot;language-python&quot; data-lang=&quot;python&quot;&gt;&lt;span style=&quot;font-style:italic;color:#ff5e5e;&quot;&gt;class &lt;&#x2F;span&gt;&lt;span style=&quot;text-decoration:underline;color:#8cdaff;&quot;&gt;Autoencoder&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;text-decoration:underline;font-style:italic;color:#8cdaff;&quot;&gt;nn.Module&lt;&#x2F;span&gt;&lt;span&gt;):
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#ff5e5e;&quot;&gt;def &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;__init__&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fc9354;&quot;&gt;self&lt;&#x2F;span&gt;&lt;span&gt;):
+&lt;&#x2F;span&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;super&lt;&#x2F;span&gt;&lt;span&gt;().&lt;&#x2F;span&gt;&lt;span style=&quot;color:#6699cc;&quot;&gt;__init__&lt;&#x2F;span&gt;&lt;span&gt;()
+&lt;&#x2F;span&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;self&lt;&#x2F;span&gt;&lt;span&gt;.encoder &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span&gt;nn.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;Sequential&lt;&#x2F;span&gt;&lt;span&gt;(
+&lt;&#x2F;span&gt;&lt;span&gt;            nn.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;Linear&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;2&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;64&lt;&#x2F;span&gt;&lt;span&gt;), nn.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;ReLU&lt;&#x2F;span&gt;&lt;span&gt;(),
+&lt;&#x2F;span&gt;&lt;span&gt;            nn.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;Linear&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;64&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;32&lt;&#x2F;span&gt;&lt;span&gt;), nn.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;ReLU&lt;&#x2F;span&gt;&lt;span&gt;(),
+&lt;&#x2F;span&gt;&lt;span&gt;            nn.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;Linear&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;32&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;2&lt;&#x2F;span&gt;&lt;span&gt;))           &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6d6d6d;&quot;&gt;# latent space
+&lt;&#x2F;span&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;self&lt;&#x2F;span&gt;&lt;span&gt;.decoder &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span&gt;nn.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;Sequential&lt;&#x2F;span&gt;&lt;span&gt;(
+&lt;&#x2F;span&gt;&lt;span&gt;            nn.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;Linear&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;2&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;32&lt;&#x2F;span&gt;&lt;span&gt;), nn.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;ReLU&lt;&#x2F;span&gt;&lt;span&gt;(),
+&lt;&#x2F;span&gt;&lt;span&gt;            nn.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;Linear&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;32&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;64&lt;&#x2F;span&gt;&lt;span&gt;), nn.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;ReLU&lt;&#x2F;span&gt;&lt;span&gt;(),
+&lt;&#x2F;span&gt;&lt;span&gt;            nn.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;Linear&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;64&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#fdb082;&quot;&gt;2&lt;&#x2F;span&gt;&lt;span&gt;))           &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6d6d6d;&quot;&gt;# back to (x, y)
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#ff5e5e;&quot;&gt;def &lt;&#x2F;span&gt;&lt;span style=&quot;color:#8cdaff;&quot;&gt;forward&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fc9354;&quot;&gt;self&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;font-style:italic;color:#fc9354;&quot;&gt;x&lt;&#x2F;span&gt;&lt;span&gt;):
+&lt;&#x2F;span&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;return &lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;self&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;decoder&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;self&lt;&#x2F;span&gt;&lt;span&gt;.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;encoder&lt;&#x2F;span&gt;&lt;span&gt;(x))
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;Training is a plain regression: feed in the square-grid points, ask for the
+polar-grid points, and minimize mean-squared error with Adam over a few hundred
+epochs.&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;python&quot; style=&quot;background-color:#191919;color:#f8f8f2;&quot; class=&quot;language-python &quot;&gt;&lt;code class=&quot;language-python&quot; data-lang=&quot;python&quot;&gt;&lt;span&gt;output &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;autoencoder&lt;&#x2F;span&gt;&lt;span&gt;(square_grid_points)
+&lt;&#x2F;span&gt;&lt;span&gt;loss   &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ff5e5e;&quot;&gt;= &lt;&#x2F;span&gt;&lt;span style=&quot;color:#e9fdac;&quot;&gt;criterion&lt;&#x2F;span&gt;&lt;span&gt;(output, polar_grid_points)   &lt;&#x2F;span&gt;&lt;span style=&quot;color:#6d6d6d;&quot;&gt;# MSE against the target grid
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;I also rendered the morph as an animation, watching the square grid deform toward
+the target polar grid frame by frame as training progressed.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;results&quot;&gt;Results&lt;&#x2F;h2&gt;
+&lt;p&gt;On the surface it looks like it works. The MSE loss falls steadily and the
+reconstructed polar grid lands roughly on top of the target.&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;yamahasetter.github.io&#x2F;blog&#x2F;autoencoder-coordinate-mappings&#x2F;grid_output.png&quot; alt=&quot;Input square grid, target polar grid, the network&amp;#39;s reconstruction, and the MSE training curve&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;But this is exactly where the experiment fails its own goal. What the network
+actually learned is &lt;strong&gt;not a homeomorphism&lt;&#x2F;strong&gt; — it&#x27;s a lookup table. A few things
+went wrong, and they&#x27;re baked into the setup:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Nothing enforces the map&#x27;s defining properties.&lt;&#x2F;strong&gt; A homeomorphism must be
+continuous &lt;em&gt;and&lt;&#x2F;em&gt; invertible &lt;em&gt;with a continuous inverse&lt;&#x2F;em&gt;. MSE regression imposes
+none of that. The model is free to learn a mapping that is discontinuous between
+the sampled points, or non-invertible, and the loss won&#x27;t care.&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;strong&gt;It memorizes a finite point correspondence.&lt;&#x2F;strong&gt; The network only ever sees the
+fixed set of grid points and their fixed targets, so it fits those pairs rather
+than a &lt;em&gt;function&lt;&#x2F;em&gt; defined everywhere on the square. Hand it a point that isn&#x27;t
+one of the training samples and there&#x27;s no reason its image is meaningful.&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;strong&gt;The &quot;autoencoder&quot; framing is cosmetic.&lt;&#x2F;strong&gt; A real autoencoder compresses to a
+latent space and reconstructs its &lt;em&gt;input&lt;&#x2F;em&gt;; here both halves are just an MLP
+regressing input → different target, so the encoder&#x2F;decoder split buys nothing
+and there&#x27;s no learned inverse map to carry solutions back the other way.&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;So while the picture is encouraging, the result is not a usable coordinate
+transform: I can&#x27;t take an arbitrary field on the square, push it through, and
+trust the polar version. As a tool for solving PDEs across coordinate systems —
+the entire point — it doesn&#x27;t deliver.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;what-s-next&quot;&gt;What&#x27;s Next&lt;&#x2F;h2&gt;
+&lt;p&gt;The motivation hasn&#x27;t gone anywhere; only the architecture was wrong. A grid is
+naturally a &lt;strong&gt;graph&lt;&#x2F;strong&gt; — nodes connected to their neighbors — and the property I
+actually care about (local continuity, neighbors staying neighbors) is exactly the
+kind of structure a graph neural network is built to respect. Now that I&#x27;ve
+started learning about GNNs, my next attempt will be to learn this square-to-polar
+mapping with a graph neural network, where the connectivity of the grid is part of
+the model rather than something MSE has to accidentally rediscover. That feels like
+the right tool for turning this failed experiment into a working one.&lt;&#x2F;p&gt;
+</content>
+        
+    </entry>
+    <entry xml:lang="en">
+        <title>Transformer Bitcoin Trading Bot</title>
+        <published>2021-12-15T00:00:00+00:00</published>
+        <updated>2021-12-15T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            Alyn Musselman
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://yamahasetter.github.io/blog/bitcoin-trade-bot/"/>
+        <id>https://yamahasetter.github.io/blog/bitcoin-trade-bot/</id>
+        
+        <content type="html" xml:base="https://yamahasetter.github.io/blog/bitcoin-trade-bot/">&lt;h2 id=&quot;motivation&quot;&gt;Motivation&lt;&#x2F;h2&gt;
+&lt;p&gt;I chose to make this project because I needed to get more familiar with ML. I had read all about CNN&#x27;s, Auto Encoders, Variational Auto Encoders, LSTM&#x27;s, RNN&#x27;s and even built a couple of them, but I wanted to make a stand alone ML project. I chose the transformer architecture for 2 reasons. Firstly, it was the most complex architecture out at the time. Secondly, it seemed to handle time-series data fairly well and with lower training cost than some of the other models.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;methodology&quot;&gt;Methodology&lt;&#x2F;h2&gt;
+&lt;p&gt;To do this project I needed to:
+- Build the model from scratch
+- Collect + Cleanup old Bitcoin data
+- Tokenize the data
+- Batchify the training data
+- Train the model
+- Test the model
+- Let it loose&lt;&#x2F;p&gt;
+&lt;p&gt;Building the model from scratch took a long time, even with the many tutorials I used:
+https:&#x2F;&#x2F;nlp.seas.harvard.edu&#x2F;2018&#x2F;04&#x2F;03&#x2F;attention.html
+https:&#x2F;&#x2F;jalammar.github.io&#x2F;illustrated-transformer&#x2F;
+https:&#x2F;&#x2F;rscircus.github.io&#x2F;posts&#x2F;2020-02-22-transformer&#x2F;&lt;&#x2F;p&gt;
+&lt;p&gt;Luckily the article &quot;The Annotated Transformer&quot; was so detailed that once I had built the model outlined there I only needed to do the data-handling in order to train the model.&lt;&#x2F;p&gt;
+&lt;p&gt;The dataset I used was taken from this Kaggle page:
+https:&#x2F;&#x2F;www.kaggle.com&#x2F;datasets&#x2F;mczielinski&#x2F;bitcoin-historical-data&lt;&#x2F;p&gt;
+&lt;p&gt;There were quite a few NaN and 0 values in the dataset that had to be removed, but lucky for me there ended up being just enough data remaining to train the model.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;results&quot;&gt;Results&lt;&#x2F;h2&gt;
+</content>
+        
+    </entry>
+</feed>

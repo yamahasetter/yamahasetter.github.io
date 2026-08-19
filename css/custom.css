@@ -1,0 +1,214 @@
+/* =========================================================================
+   custom.css — modern portfolio layer
+   Loaded AFTER generated.css. Purely additive: it restyles the homepage hero,
+   the navigation bar, and the project cards. It does not remove or depend on
+   removing any existing Tailwind classes, so the site degrades gracefully.
+   ========================================================================= */
+
+:root {
+  --pf-bg: #f7f8fa;
+  --pf-surface: #ffffff;
+  --pf-ink: #0f172a;
+  --pf-ink-soft: #475569;
+  --pf-ink-faint: #94a3b8;
+  --pf-accent: #6366f1;
+  --pf-accent-2: #0ea5e9;
+  --pf-border: rgba(15, 23, 42, 0.08);
+  --pf-shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.04), 0 2px 8px rgba(15, 23, 42, 0.05);
+  --pf-shadow-lg: 0 12px 28px -8px rgba(15, 23, 42, 0.18), 0 6px 12px -6px rgba(15, 23, 42, 0.12);
+  --pf-radius: 16px;
+  --pf-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI",
+    Roboto, Helvetica, Arial, sans-serif;
+}
+
+/* Gentle global polish (typography + page background) ---------------------- */
+body {
+  background-color: var(--pf-bg);
+  font-family: var(--pf-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* =========================================================================
+   NAVIGATION — glassy, sticky, subtle border instead of flat gray block
+   ========================================================================= */
+header .pf-nav {
+  background-color: rgba(17, 24, 39, 0.72);
+  -webkit-backdrop-filter: saturate(180%) blur(12px);
+  backdrop-filter: saturate(180%) blur(12px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: 0 1px 0 rgba(15, 23, 42, 0.04);
+}
+
+/* =========================================================================
+   HERO — replace the flat blue bar with a layered gradient + glow
+   ========================================================================= */
+.pf-hero {
+  position: relative;
+  overflow: hidden;
+  background: radial-gradient(1200px 480px at 12% -10%, rgba(99, 102, 241, 0.55), transparent 60%),
+    radial-gradient(900px 420px at 95% 0%, rgba(14, 165, 233, 0.45), transparent 55%),
+    linear-gradient(135deg, #0b1224 0%, #131a35 45%, #1b2350 100%);
+  color: #e7ecff;
+  box-shadow: none;
+}
+
+.pf-hero::after {
+  /* soft fade into the page below */
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 80px;
+  background: linear-gradient(to bottom, transparent, var(--pf-bg));
+  pointer-events: none;
+}
+
+.pf-hero .pf-hero-inner {
+  position: relative;
+  z-index: 1;
+  max-width: 80rem;
+  margin: 0 auto;
+  padding: 5.5rem 1.5rem 6rem;
+}
+
+.pf-hero .pf-eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: rgba(199, 210, 254, 0.85);
+  margin-bottom: 0.9rem;
+}
+
+.pf-hero .pf-name {
+  font-size: clamp(2.4rem, 6vw, 4rem);
+  line-height: 1.05;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin: 0 0 1rem;
+  background: linear-gradient(90deg, #ffffff 0%, #c7d2fe 60%, #7dd3fc 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.pf-hero .pf-tagline {
+  max-width: 46rem;
+  font-size: clamp(1.02rem, 1.6vw, 1.22rem);
+  line-height: 1.65;
+  color: rgba(226, 232, 240, 0.92);
+  margin: 0 0 1.75rem;
+}
+
+.pf-hero .pf-quote {
+  max-width: 48rem;
+  margin: 1.75rem 0 0;
+  padding: 1rem 1.25rem;
+  border-left: 3px solid rgba(125, 211, 252, 0.7);
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 0 12px 12px 0;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: rgba(203, 213, 225, 0.92);
+}
+
+.pf-hero .pf-quote .pf-quote-author {
+  display: block;
+  margin-top: 0.6rem;
+  font-style: normal;
+  font-weight: 600;
+  color: rgba(199, 210, 254, 0.95);
+}
+
+/* =========================================================================
+   PROJECT CARDS — rounded, soft layered shadow, hover lift + image zoom
+   ========================================================================= */
+.pf-grid {
+  gap: 1.75rem;
+}
+
+.pf-card {
+  position: relative;
+  border-radius: var(--pf-radius);
+  background: var(--pf-surface);
+  border: 1px solid var(--pf-border);
+  box-shadow: var(--pf-shadow-sm);
+  overflow: hidden;
+  transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.28s ease, border-color 0.28s ease;
+}
+
+.pf-card:hover,
+.pf-card:focus-within {
+  transform: translateY(-6px);
+  box-shadow: var(--pf-shadow-lg);
+  border-color: rgba(99, 102, 241, 0.35);
+}
+
+.pf-card .pf-card-media {
+  height: 13rem;
+  background: linear-gradient(135deg, #eef2ff, #e0f2fe);
+  overflow: hidden;
+}
+
+.pf-card .pf-card-media img {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.pf-card:hover .pf-card-media img {
+  transform: scale(1.06);
+}
+
+.pf-card .pf-card-title {
+  color: var(--pf-ink);
+  letter-spacing: -0.01em;
+  transition: color 0.2s ease;
+}
+
+.pf-card:hover .pf-card-title {
+  color: var(--pf-accent);
+}
+
+.pf-card .pf-card-desc {
+  color: var(--pf-ink-soft);
+}
+
+.pf-card time,
+.pf-card .pf-card-meta {
+  color: var(--pf-ink-faint);
+}
+
+/* Refresh the badge/tag pills to feel lighter and more modern */
+.pf-card .badge {
+  background: rgba(99, 102, 241, 0.10);
+  color: #4338ca;
+  border: 1px solid rgba(99, 102, 241, 0.18);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+/* =========================================================================
+   Entrance animation (respecting reduced-motion preferences)
+   ========================================================================= */
+@media (prefers-reduced-motion: no-preference) {
+  .pf-card {
+    animation: pf-fade-up 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  .pf-grid > *:nth-child(1)  { animation-delay: 0.02s; }
+  .pf-grid > *:nth-child(2)  { animation-delay: 0.06s; }
+  .pf-grid > *:nth-child(3)  { animation-delay: 0.10s; }
+  .pf-grid > *:nth-child(4)  { animation-delay: 0.14s; }
+  .pf-grid > *:nth-child(5)  { animation-delay: 0.18s; }
+  .pf-grid > *:nth-child(6)  { animation-delay: 0.22s; }
+  .pf-grid > *:nth-child(n+7){ animation-delay: 0.26s; }
+
+  @keyframes pf-fade-up {
+    from { opacity: 0; transform: translateY(14px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+}
